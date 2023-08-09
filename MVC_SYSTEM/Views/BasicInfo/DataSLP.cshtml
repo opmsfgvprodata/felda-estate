@@ -1,0 +1,88 @@
+﻿@model IEnumerable<MVC_SYSTEM.MasterModels.vw_SAPIODetails>
+
+@using MVC_SYSTEM.Class
+@using MVC_SYSTEM.MasterModels
+
+@{
+
+    GetConfig getconfig = new GetConfig();
+    MVC_SYSTEM_MasterModels db = new MVC_SYSTEM_MasterModels();
+    ChangeTimeZone time = new ChangeTimeZone();
+    DateTime Todaydate = time.gettimezone();
+
+    string dateformat = getconfig.GetData("dateformat3");
+    int bil = 0, bil1 = 0, bil2 = 0, bil3 = 0, bil4 = 0;
+}
+<div id="UpdateProgress1" style="display:none;">
+    <div class="progressTest">
+        <label>
+            @GlobalResEstate.msgWait
+        </label>
+    </div>
+</div>
+
+@if (Model != null && Model.Count() != 0)
+{
+    <div class="modal-header  col-sm-12">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">Senarai IO</h3>
+    </div>
+    <div class="modal-body col-sm-12" style="margin-left : 10px; margin-right : 7px">
+        <div class="panel-body col-sm-12">
+            <div id="scrollArea2" class="col-sm-12">
+                <div id="IOList">
+                    <table class="table table-hover">
+                        <thead>
+
+                            <tr>
+                                <th bgcolor="#ffcc80" width="1%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Wilayah</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Rancangan</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">IO Code</th>
+                                <th bgcolor="#ffcc80" width="5%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Indikator</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Peringkat</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Sub Peringkat</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Blok</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Luas Pkt</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Luas Kawasan Tanaman</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Luas Kawasan Berhasil</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan Oleh</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tarikh Download</th>
+                                <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Last Modified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var IODetails in Model)
+                            {
+                                bil4 = bil4 + 1;
+                                <tr>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@bil4</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_WlyhName</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_LdgName </td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_IOcode</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_LdgIndicator </td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_PktCode</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_SubPktCode</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_kodBlok</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_LuasPkt</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_LuasKawTnmn</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_LuasKawBerhasil</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@IODetails.fld_CreatedBy</td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"> @String.Format("{0:dd/MM/yyyy}", @IODetails.fld_DTCreated) </td>
+                                    <td align="center" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"> @String.Format("{0:dd/MM/yyyy}", @IODetails.fld_DTModified)</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @*<div>
+                <a href=@Url.Action("Index", "LevelsInfo") class="btn btn-warning" role="button" onclick="return DisplayProgressMessage(this);">@GlobalResEstate.btnBack</a>
+            </div>*@
+        </div>
+    </div>
+}
+
+
+

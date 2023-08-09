@@ -1,0 +1,136 @@
+﻿@model MVC_SYSTEM.ViewingModels.PagedList<MVC_SYSTEM.ViewingModels.tblUser>
+@using MVC_SYSTEM.Class;
+@{
+    ViewBag.Title = "User List";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    GetLadang GetLadang = new GetLadang();
+    GetWilayah GetWilayah = new GetWilayah();
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well">
+        @using (Html.BeginForm("index", null, FormMethod.Get))
+        {
+            <div class="row">
+                <div class="col-sm-5">
+                    <div class="input-group">
+                        <input type="text" name="filter" value="@ViewBag.filter" class="form-control" style="display: inline" placeholder="Search" />
+
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">Go</button>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:17px;">
+                @{
+                    var grid = new WebGrid(
+                        canPage: true,
+                        rowsPerPage: Model.PageSize,
+                        canSort: false,
+                        ajaxUpdateContainerId: "grid");
+
+                    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+                    //grid.Pager(WebGridPagerModes.All);
+
+                    if (@grid.TotalRowCount > 0)
+                    {
+                        @grid.GetHtml(htmlAttributes: new { id = "grid" },   // id for ajaxUpdateContainerId parameter
+                                                      tableStyle: "table table-bordered table-striped table-list table-hover",
+                                                      headerStyle: "header_table",
+                                                      alternatingRowStyle: "Grid-alt",
+                                                      selectedRowStyle: "Grid-selected",
+                                                      rowStyle: "Grid-rowstyle",
+                                                      footerStyle: "table-pager",
+                                                      mode: WebGridPagerModes.All,
+                                                      columns: grid.Columns(
+                                                        grid.Column(header: "No.", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, style: "count"),
+                                                        grid.Column("fldUserName", "Username", style: "kod"),
+                                                        grid.Column("fldUserFullName", "Full Name", style: "keterangan"),
+                                                        grid.Column("fldWilayahID", "Region Name", style: "keterangan", format: @<text>@(GetWilayah.GetWilayahName2(item.fldWilayahID))</text>),
+                                                                       grid.Column("fldLadangID", "Estate Name", style: "keterangan", format: @<text>@(GetLadang.GetLadangName(item.fldLadangID, item.fldWilayahID))</text>),
+                                                               grid.Column("Tindakkan", format: (item) =>
+                                                               {
+                                                                   if (item.fldDeleted == false)
+                                                                   {
+                                                                       var tindakan = "<a data-modal='' href='" + @Url.Action("Delete", "User") + "/?id=" + item.fldUserID + "' class='btn btn-danger' role='button' title='Delete' onclick='return DisplayProgressMessage(this);'><i class='fa fa-trash fa-lg'></i></a>&nbsp;";
+                                                                       return @Html.Raw(tindakan);
+                                                                   }
+
+                                                                   else
+                                                                   {
+                                                                       var tindakan = "<p class='btn btn-warning'>Tidak Aktif</p>";
+                                                                       return @Html.Raw(tindakan);
+                                                                   }
+
+                                                               }, canSort: false, style: "tindakan")
+                                                               ))
+                    }
+                }
+
+            </div>
+        }
+    </div>
+</section>
+
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .kod {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .keterangan {
+        width: 150px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .tetapan1 {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tetapan2 {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 80px !important;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+</style>
+
+<!-- modal placeholder-->
+<div id='myModal' class='modal fade in'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    @Scripts.Render("~/Asset/Scripts/appjs.js")
+}

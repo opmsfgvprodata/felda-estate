@@ -1,0 +1,133 @@
+﻿@using MVC_SYSTEM.Class
+@model MVC_SYSTEM.Models.tbl_ProduktivitiGroupModelViewCreate
+
+@{
+    int bil = 0;
+    GetConfig getConfig = new GetConfig();
+}
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 class="modal-title">@GlobalResEstate.titleRegisterGroupProductvt</h3>
+</div>
+
+<div id="divLoading1" style="display:none;">
+    <div class="progressTest">
+        <label>
+            @GlobalResEstate.msgWait
+        </label>
+    </div>
+</div>
+
+@using (Html.BeginForm("_GroupProductivityAdd", "WorkerInfo", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+<div class="modal-body">
+    <div class="panel panel-primary">
+        <div class="panel-heading">@GlobalResEstate.lblProductvtInfo</div>
+        <div class="panel-body">
+            <div class="form-horizontal">
+
+                <div class="form-group">
+                    <label class="control-label col-md-3">@GlobalResEstate.hdrGroupCode : </label>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(model => model.fld_KumpulanID, htmlAttributes: new { @class = "form-control", @disabled = "true", @Value = getConfig.GetGroupCodeFromID(Model.fld_KumpulanID, Model.fld_NegaraID, Model.fld_SyarikatID, Model.fld_WilayahID, Model.fld_LadangID, Model.host, Model.user, Model.catalog, Model.pass) })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">@GlobalResEstate.hdrWorkAktvt : </label>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(model => model.fld_KumpulanID, htmlAttributes: new { @class = "form-control", @disabled = "true", @Value = getConfig.GetGroupAcitivityCodeFromID(Model.fld_KumpulanID, Model.fld_NegaraID, Model.fld_SyarikatID, Model.fld_WilayahID, Model.fld_LadangID, Model.host, Model.user, Model.catalog, Model.pass) })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">@GlobalResEstate.hdrDesc : </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.fld_KumpulanID, htmlAttributes: new { @class = "form-control", @disabled = "true", @Value = getConfig.GetGroupDescFromID(Model.fld_KumpulanID, Model.fld_NegaraID, Model.fld_SyarikatID, Model.fld_WilayahID, Model.fld_LadangID, Model.host, Model.user, Model.catalog, Model.pass) })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3">@GlobalResEstate.hdrCategory :</label>
+                    <div class="col-sm-3">
+                        @Html.DropDownListFor(model => model.fld_JenisPelan, new SelectList(ViewBag.JenisKategoriList, "Value", "Text"), htmlAttributes: new { @class = "form-control col-sm-2" })
+                        @Html.ValidationMessageFor(model => model.fld_JenisPelan, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3">@GlobalResEstate.hdrTarget :</label>
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(model => model.fld_Targetharian, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.fld_Targetharian, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-sm-2">
+                        @Html.DropDownListFor(model => model.fld_Unit, new SelectList(ViewBag.UnitList, "Value", "Text"), htmlAttributes: new { @class = "form-control col-sm-2" })
+                        @Html.ValidationMessageFor(model => model.fld_Unit, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3">@GlobalResEstate.hdrTargetWorkingDay :</label>
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(model => model.fld_HadirKerja, htmlAttributes: new { @class = "form-control", @readonly = "true" })
+                    </div>
+                </div>
+                @Html.HiddenFor(model => model.fld_KumpulanID)
+            </div>
+        </div>
+    </div>
+
+    @Html.Action("_GroupProductivityAddSub", "WorkerInfo", new { id = Model.fld_KumpulanID })
+</div>
+
+    <div class="modal-footer">
+        <input class="btn btn-success" type="submit" value=@GlobalResEstate.btnAdd />
+        <button class="btn btn-warning" id="incentiveAddBackButton" data-dismiss="modal">@GlobalResEstate.btnBack</button>
+    </div>
+}
+
+<script>
+    function resetSearch() {
+        document.getElementById("txtfilter").value = "";
+        document.getElementById('btnCari').click();
+    }
+</script>
+
+<script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    $("form").removeData("validator");
+    $("form").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse("form");
+
+    $(function () {
+        $('#fld_JenisPelan').on('change',
+            function () {
+                var jenisPelan = $('#fld_JenisPelan').val();
+                var unit = $('#fld_Unit').val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("checkCategoryType", "WorkerInfo")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify({ jenisPelan: jenisPelan }),
+                    success: function (result) {
+                        $('#fld_Unit').prop("disabled", false);
+                        $('#fld_Unit').empty();
+                        for (var i = 0; i < result.UnitList.length; i++) {
+                            $('#fld_Unit').append("<option value=" +
+                                result.UnitList[i].Value +
+                                ">" +
+                                result.UnitList[i].Text +
+                                "</option>");
+                        }
+                        if (jenisPelan === '' || jenisPelan === null) {
+                            $('#fld_Unit').prop("disabled", true);
+                        }
+                    }
+                });
+            });
+    });
+</script>
+
+

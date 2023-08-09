@@ -1,0 +1,38 @@
+﻿@model IEnumerable<MVC_SYSTEM.CustomModels.CustMod_AttWorkAuditTrail>
+@{ 
+    int i = 1;
+}
+<Table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Data</th>
+            <th>Tindakan Yang Dilakukan</th>
+            <th>Tarikh Dan Masa</th>
+            <th>Tindakan Oleh</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@i</td>
+                <td>
+                    @foreach (var subitem in item.ListKerja)
+                    {
+                        <p>No Pekerja : @subitem.fld_Nopkj</p>
+                        <p>Kod Kumpulan : @subitem.fld_Kum</p>
+                        <p>Tarikh Data : @subitem.fld_Tarikh</p>
+                        <p>Kod Kerja : @subitem.fld_KodAktvt</p>
+                        <p>Jumlah (RM) : @subitem.fld_OverallAmount</p>
+                        <hr>
+                    }
+                </td>
+                <td>@item.ActionFor</td>
+                <td>@item.ActionDT</td>
+                <td>@item.ActionBy</td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</Table>

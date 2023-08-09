@@ -1,0 +1,483 @@
+﻿@model IEnumerable<MVC_SYSTEM.Models.sp_RptPurataGajiBulanan_Result>
+@using MVC_SYSTEM.Class;
+
+@{
+    ViewBag.Title = "AverageMonthlySalaryReportDetail";
+    //Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+    GetTriager GetTriager = new GetTriager();
+    string monthname = "";
+    int bill = 0;
+    decimal TotalGaji = 0;
+    decimal TotalHariHadir = 0;
+    decimal TotalPurata = 0;
+    int TotalAbsent = 0;
+    decimal TotalAbsentInYear = 0;
+    decimal HariTawaranKerja = 0;
+    decimal PeratusAbsent = 0;
+    ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+    DateTime Todaydate = ChangeTimeZone.gettimezone();
+    //GetConfig GetConfig = new GetConfig();
+
+    //farahin comment
+    //string uniquefilename = "AccountReport_" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+    //farahin ubah uniquefilename
+    string uniquefilename = "PurataGajiBulananReport_" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+}
+
+
+@if (ViewBag.DataCount < 1)
+{
+    <p style="color:red">@GlobalResEstate.msgErrorSearch</p>
+}
+else
+{
+    //farahin tukar ubah layout display
+    <div id="scrollArea2" class="modal-body">
+        <logo />
+        <table class="table table-hover table-bordered" style="font-size: 11px;" border="0">
+            <thead>
+                <tr>
+                    <th colspan="21" style="text-align:center;vertical-align:middle;">
+                        @ViewBag.NamaSyarikat
+                        <br />
+                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        <br />
+                        @*@GlobalResEstate.lblAverageMonthlySalaryReport*@ @*Shazana 29/11/2022*@
+                        @GlobalResEstate.lblAverageMonthlySalaryReport  @ViewBag.YearSelection @*Shazana 29/11/2022*@
+                        <br />
+                        @*@mfi.GetMonthName(Convert.ToInt32(ViewBag.MonthSelection)) - @ViewBag.YearSelection*@
+                    </th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-hover" style="font-size: 11px;" cellspacing="0" border="0">
+            <thead>
+                <tr>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrNo</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrNoPkj</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrName</th>
+                    <th colspan="14" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblMonth</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrWorkerWorkday</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrPercentAbsent</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrWorkerAnnualLeave</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrAnnualLeavePayment</th>
+                </tr>
+                <tr>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1"> </th>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        monthname = mfi.GetAbbreviatedMonthName(i);
+                        <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@monthname</th>
+                    }
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @*@foreach (var item in Model.Select(s => new { s.fld_Nopkj, s.fld_Nama, s.fld_CutiTahunan, s.fld_HariTawaranKerja }).Distinct())*@ @*Shazana 7/12/2022*@
+                @*Shazana 7/12/2022*@
+                @foreach (var item in Model.Select(s => new { s.fld_Nopkj, s.fld_Nama, s.fld_CutiTahunan }).Distinct())
+                {
+                    bill = bill + 1;
+                    TotalGaji = 0;
+                    TotalHariHadir = 0;
+                    TotalPurata = 0;
+                    TotalAbsent = 0;
+                    TotalAbsentInYear = Convert.ToDecimal(Model.Where(x => x.fld_Nopkj == item.fld_Nopkj).Select(s => s.fld_TotalAbsent).Sum());
+                    //HariTawaranKerja = Convert.ToDecimal(Model.Where(x => x.fld_Nopkj == item.fld_Nopkj).Select(s => s.fld_HariTawaranKerja).Sum()); /*Shazana 29/11/2022*/
+                    HariTawaranKerja = Convert.ToDecimal(Model.Where(x => x.fld_Nopkj == item.fld_Nopkj).Select(s => s.fld_HariTawaranKerja).Sum()); /*Shazana 29/11/2022*/
+                    PeratusAbsent = TotalAbsentInYear / HariTawaranKerja * 100;
+                    int? CutiDiambil = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj).Select(s => s.fld_CutiDiambil).Sum();
+                    decimal? KadarCuti = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj).OrderBy(o => o.fld_Month).Select(s => s.fld_PurataGaji12bln).FirstOrDefault();
+                    decimal BayaranCuti = KadarCuti.GetValueOrDefault() * CutiDiambil.GetValueOrDefault();
+                    <tr>
+                        <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @bill
+                        </td>
+                        <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_Nopkj
+                        </td>
+                        <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_Nama
+                        </td>
+
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GlobalResEstate.lblSalary
+                        </td>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+
+                            var data1 = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i).Count();
+                            if (data1 < 1)
+                            {
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    -
+                                </td>
+                            }
+                            else
+                            {
+                                foreach (var gaji in Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i))
+                                {
+                                    TotalGaji = TotalGaji + gaji.fld_GajiBersih.Value;
+                                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                        @gaji.fld_GajiBersih
+                                    </td>
+                                }
+                            }
+                        }
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @TotalGaji
+                        </td>
+                        <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @*@item.fld_HariTawaranKerja  Shazana 6/12/2022*@
+                            @HariTawaranKerja @*Shazana 6/12/2022*@
+                        </td>
+                        <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @PeratusAbsent.ToString("0.00") %
+                        </td>
+                        <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_CutiTahunan
+                        </td>
+                        <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @BayaranCuti
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GlobalResEstate.lblPresentDay
+                        </td>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            var data2 = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i).Count();
+                            if (data2 < 1)
+                            {
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    -
+                                </td>
+                            }
+                            else
+                            {
+                                foreach (var hdr in Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i))
+                                {
+                                    TotalHariHadir = TotalHariHadir + hdr.fld_HdrCapai.Value;
+                                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                        @hdr.fld_HdrCapai.GetValueOrDefault()
+                                    </td>
+                                }
+                            }
+
+                        }
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @TotalHariHadir
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GlobalResEstate.lblAverage
+                        </td>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            var data3 = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i).Count();
+                            if (data3 < 1)
+                            {
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    -
+                                </td>
+                            }
+                            else
+                            {
+                                foreach (var purata in Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i))
+                                {
+                                    TotalPurata = TotalPurata + purata.fld_PurataGaji.Value;
+                                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                        @purata.fld_PurataGaji.GetValueOrDefault()
+                                    </td>
+                                }
+                            }
+                        }
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @TotalPurata
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GlobalResEstate.lblNoAbsent
+                        </td>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            var data3 = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i).Count();
+                            if (data3 < 1)
+                            {
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    -
+                                </td>
+                            }
+                            else
+                            {
+                                foreach (var absent in Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i))
+                                {
+                                    TotalAbsent = TotalAbsent + absent.fld_TotalAbsent.GetValueOrDefault();
+                                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                        @absent.fld_TotalAbsent.GetValueOrDefault()
+                                    </td>
+                                }
+                            }
+                        }
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @TotalAbsent
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <newpage />
+    </div>
+
+    //farahin comment original layout
+    @*<div id="scrollArea" class="modal-body">
+        <logo />
+        <table class="table table-hover table-bordered" style="font-size: 11px;" border="0">
+            <thead>
+                <tr>
+                    <th colspan="45" style="text-align:center;vertical-align:middle;">
+                        @ViewBag.NamaSyarikat
+                        <br />
+                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        <br />
+                        @GlobalResEstate.lblAverageMonthlySalaryReport
+                        <br />
+                        //@mfi.GetMonthName(Convert.ToInt32(ViewBag.MonthSelection)) - @ViewBag.YearSelection
+                    </th>
+                    </tr>
+                    <tr>
+                        <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrNo</th>
+                        <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrNoPkj</th>
+                        <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrName</th>
+                        <th colspan="14" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblMonth</th>
+                        <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrWorkerWorkday</th>
+                        <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrPercentAbsent</th>
+                        <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrWorkerAnnualLeave</th>
+                        <th rowspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrAnnualLeavePayment</th>
+                    </tr>
+                    <tr>
+                        <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1"> </th>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            monthname = mfi.GetAbbreviatedMonthName(i);
+                            <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@monthname</th>
+                        }
+                        <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Select(s => new { s.fld_Nopkj, s.fld_Nama, s.fld_CutiTahunan, s.fld_HariTawaranKerja }).Distinct())
+                        {
+                            bill = bill + 1;
+                            TotalGaji = 0;
+                            TotalHariHadir = 0;
+                            TotalPurata = 0;
+                            TotalAbsent = 0;
+                            TotalAbsentInYear = Convert.ToDecimal(Model.Where(x => x.fld_Nopkj == item.fld_Nopkj).Select(s => s.fld_TotalAbsent).Sum());
+                            HariTawaranKerja = Convert.ToDecimal(item.fld_HariTawaranKerja.Value);
+                            PeratusAbsent = TotalAbsentInYear / HariTawaranKerja * 100;
+                            int? CutiDiambil = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj).Select(s => s.fld_CutiDiambil).Sum();
+                            decimal? KadarCuti = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj).OrderBy(o => o.fld_Month).Select(s => s.fld_PurataGaji12bln).FirstOrDefault();
+                            decimal BayaranCuti = KadarCuti.GetValueOrDefault() * CutiDiambil.GetValueOrDefault();
+                            <tr>
+                                <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @bill
+                                </td>
+                                <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @item.fld_Nopkj
+                                </td>
+                                <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @item.fld_Nama
+                                </td>
+
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @GlobalResEstate.lblSalary
+                                </td>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+
+                                    var data1 = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i).Count();
+                                    if (data1 < 1)
+                                    {
+                                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                            -
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        foreach (var gaji in Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i))
+                                        {
+                                            TotalGaji = TotalGaji + gaji.fld_GajiBersih.Value;
+                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                                @gaji.fld_GajiBersih
+                                            </td>
+                                        }
+                                    }
+                                }
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @TotalGaji
+                                </td>
+                                <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @item.fld_HariTawaranKerja
+                                </td>
+                                <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @PeratusAbsent.ToString("0.00") %
+                                </td>
+                                <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @item.fld_CutiTahunan
+                                </td>
+                                <td rowspan="4" align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @BayaranCuti
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @GlobalResEstate.lblPresentDay
+                                </td>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    var data2 = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i).Count();
+                                    if (data2 < 1)
+                                    {
+                                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                            -
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        foreach (var hdr in Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i))
+                                        {
+                                            TotalHariHadir = TotalHariHadir + hdr.fld_HdrCapai.Value;
+                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                                @hdr.fld_HdrCapai.GetValueOrDefault()
+                                            </td>
+                                        }
+                                    }
+
+                                }
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @TotalHariHadir
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @GlobalResEstate.lblAverage
+                                </td>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    var data3 = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i).Count();
+                                    if (data3 < 1)
+                                    {
+                                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                            -
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        foreach (var purata in Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i))
+                                        {
+                                            TotalPurata = TotalPurata + purata.fld_PurataGaji.Value;
+                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                                @purata.fld_PurataGaji.GetValueOrDefault()
+                                            </td>
+                                        }
+                                    }
+                                }
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @TotalPurata
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @GlobalResEstate.lblNoAbsent
+                                </td>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    var data3 = Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i).Count();
+                                    if (data3 < 1)
+                                    {
+                                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                            -
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        foreach (var absent in Model.Where(x => x.fld_Nopkj == item.fld_Nopkj && x.fld_Month == i))
+                                        {
+                                            TotalAbsent = TotalAbsent + absent.fld_TotalAbsent.GetValueOrDefault();
+                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                                @absent.fld_TotalAbsent.GetValueOrDefault()
+                                            </td>
+                                        }
+                                    }
+                                }
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @TotalAbsent
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    </table>
+                    <newpage />
+                    </div>*@
+
+    <div style="text-align:right; margin-top:10px">
+        <a class="btn btn-default btn-sm" href="#" id="printpage">
+            <span class="glyphicon glyphicon-print"> </span> @GlobalResEstate.btnPrint
+        </a>
+        <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+            <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadPdf
+        </a>
+        @* tambah uniquefilename - farahin *@
+        <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@uniquefilename')">
+            <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+        </a>
+    </div>
+}
+@* farahin tambah *@
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+
+<script>
+    $(Document).ready(function () {
+        $("#printpage").click(function () {
+            //farahin ubah getelementbyid
+            var DivElement = document.getElementById("scrollArea2").innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+        })
+
+        $("#downloadpdf").click(function () {
+
+            //farahin tukar getelementbyid
+            var myHtml = document.getElementById('scrollArea2').innerHTML;
+            $.ajax({
+                type: 'POST',
+                //farahin tukar action
+                url: '@Url.Action("ConvertPDF2", "Report")',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ myHtml: myHtml, filename: "@uniquefilename", reportname: "AverageMonthlySalaryReport" }),
+                success: function (result) {
+                    if (result.success) {
+                        var win = window.open(result.link, '_blank');
+                        win.focus();
+                    } else {
+                        $.simplyToast(result.msg, result.status);
+                    }
+                },
+                error: function (error) {
+                    $.simplyToast('Sorry to many data', 'danger');
+                }
+            });
+            return false;
+        });
+    });
+</script>
+

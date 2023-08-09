@@ -1,0 +1,329 @@
+﻿@model IEnumerable<MVC_SYSTEM.Models.tbl_Kerja>
+@using MVC_SYSTEM.Class
+@using MVC_SYSTEM.Models
+@* farahin tambah 23/02/2021 *@
+@using MVC_SYSTEM.MasterModels
+@{
+    ViewBag.Title = "HasilReport";
+    //Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+    GetIdentity GetIdentity = new GetIdentity();
+    GetEstateDetail GetWorkerDetail = new GetEstateDetail();
+    GetConfig GetConfig = new GetConfig();
+    ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+    DateTime Todaydate = ChangeTimeZone.gettimezone();
+    //farahin comment  - 23/02/2021
+    //string uniquefilename = "AccountReport_" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+    //farahin tukar uniquefilename
+    string uniquefilename = "HasilReport_" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+    int bill = 0;
+    string nama = "";
+    decimal JumlahKadar = 0;
+    decimal JumlahHasil = 0;
+
+    // farahin tambah
+    KadarOT kadar = new KadarOT();
+    GetTriager Triager = new GetTriager();
+    tbl_CostCentre Costcenter = new tbl_CostCentre();
+    Decimal OTRate = 46.16M;
+    decimal JumlahOT = 0;
+    decimal JamOT = 0;
+    decimal JumlahBonus = 0;
+    decimal JumlahSkar = 0;
+    decimal JumlahOverall = 0;
+    decimal JumlahAmount = 0;
+}
+
+@if (Model != null && Model.Count() != 0)
+{
+    @*<div class="panel panel-primary">
+        <div class="panel-heading">@GlobalResEstate.lblHasilReport.ToUpper()</div>
+        <div class="panel-body">
+            @if (ViewBag.DataCount < 1)
+            {
+                <p style="color:red">@GlobalResEstate.msgErrorSearch</p>
+            }
+            else
+            {*@
+    <div id="scrollArea2" class="modal-body">
+        <logo />
+        @* farahin tambah column *@
+        <table class="table table-hover table-bordered" style="font-size: 11px;" border="0" width="100%">
+
+
+            @*//bill = 0;
+                //JumlahKadar = 0;
+                //JumlahHasil = 0;*@
+
+            <thead>
+                <tr>
+                    <th colspan="16" style="text-align:center;vertical-align:middle;">
+                        @ViewBag.NamaSyarikat
+                        <br />
+                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        <br />
+                        @GlobalResEstate.lblHasilReport
+                        <br />
+                        @mfi.GetMonthName(Convert.ToInt32(ViewBag.MonthSelection)) - @ViewBag.YearSelection
+                    </th>
+                </tr>
+                @*<tr>
+                        <th colspan="10" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">
+                            @pkj.fld_Nopkj - @nama
+                        </th>
+                    </tr>*@
+                <tr>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrNo</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblDate</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrNoPkj</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrName</th>
+                    @* farahin tambah column Cost Center *@
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblGL</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrActvtCode</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrWorkAktvt</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblLevel</th>
+
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrRate (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrOutcome (Tan)</th>
+                    @* farahin tambah column Jam Lebih Kerja *@
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblOvertimeHour</th>
+                    @* farahin tambah column Kadar Jam Lebihan Kerja*@
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotalOt (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Harga Kawasan Skar (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblBonusPrice (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal (RM)</th>
+                    @*  farahin tambah column Jumlah Keseluruhan*@
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotalOverall (RM)</th>
+                </tr>
+            </thead>
+
+            @foreach (var pkj in Model.Select(s => new { s.fld_Nopkj, s.fld_WilayahID, s.fld_NegaraID, s.fld_SyarikatID, s.fld_LadangID }).Distinct())
+            {
+
+                nama = GetWorkerDetail.Name(pkj.fld_Nopkj, pkj.fld_WilayahID.Value, pkj.fld_SyarikatID.Value, pkj.fld_NegaraID.Value, pkj.fld_LadangID.Value);
+                <tbody>
+
+                    @foreach (var item in Model.Where(x => x.fld_Nopkj == pkj.fld_Nopkj))
+                    {
+                        //string Amt = @GetTriager.GetTotalForMoney(item.fldKredit);
+                        bill = bill + 1;
+                        JumlahKadar = JumlahKadar + item.fld_Amount.Value;
+                        JumlahHasil = JumlahHasil + item.fld_JumlahHasil.Value;
+                        //farahin tambah kiraan
+                        JamOT = JamOT + Convert.ToDecimal(@item.fld_JamOT);
+                        JumlahOT = @kadar.mul(Convert.ToDecimal(@JamOT), OTRate);
+                        JumlahBonus = JumlahBonus + item.fld_Bonus.Value;
+                        JumlahSkar = JumlahSkar + item.fld_HrgaKwsnSkar.Value;
+                        JumlahAmount = JumlahAmount + item.fld_Amount.Value;
+                        JumlahOverall = JumlahOverall + item.fld_OverallAmount.Value;
+
+                        <tr>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @bill
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_Tarikh.Value.ToString("dd/MM/yyyy")
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @pkj.fld_Nopkj
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @nama
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @GetConfig.GetGLDesc(item.fld_KodGL, item.fld_NegaraID.Value, item.fld_SyarikatID.Value)
+
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_KodAktvt
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @GetConfig.GetAktvt(item.fld_KodAktvt, item.fld_NegaraID.Value, item.fld_SyarikatID.Value)
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_KodPkt
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_KadarByr
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_JumlahHasil
+                            </td>
+
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @Convert.ToInt32(@item.fld_JamOT)
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @Triager.GetTotalForMoney(@kadar.mul(Convert.ToDecimal(@item.fld_JamOT), OTRate))
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_HrgaKwsnSkar
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_Bonus
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_Amount
+                            </td>
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @item.fld_OverallAmount
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            }
+            <tfoot>
+                <tr>
+                    <td colspan="8" bgcolor="#ffcc80" style="color:black; text-align: right; vertical-align:middle !important;border:1px solid black;" border="1">
+                        <strong>@GlobalResEstate.lblTotal</strong>
+                    </td>
+                    <td align="center" bgcolor="#ffcc80" style="color:black; vertical-align:middle !important;border:1px solid black;" border="1">
+                        @JumlahKadar.ToString("N")
+                    </td>
+                    <td align="center" bgcolor="#ffcc80" style="color:black; vertical-align:middle !important;border:1px solid black;" border="1">
+                        @JumlahHasil.ToString("N")
+                    </td>
+                    <td align="center" bgcolor="#ffcc80" style="color:black; vertical-align:middle !important;border:1px solid black;" border="1"></td>
+                    <td align="center" bgcolor="#ffcc80" style="color:black; vertical-align:middle !important;border:1px solid black;" border="1">
+                        @kadar.mul(Convert.ToDecimal(@JamOT), OTRate).ToString("N")
+                    </td>
+
+                    <td align="center" bgcolor="#ffcc80" style="color:black; vertical-align:middle !important;border:1px solid black;" border="1">
+                        @JumlahSkar.ToString("N")
+                    </td>
+                    <td align="center" bgcolor="#ffcc80" style="color:black; vertical-align:middle !important;border:1px solid black;" border="1">
+                        @JumlahBonus.ToString("N")
+                    </td>
+                    <td align="center" bgcolor="#ffcc80" style="color:black; vertical-align:middle !important;border:1px solid black;" border="1">
+                        @JumlahAmount.ToString("N")
+                    </td>
+                    <td align="center" bgcolor="#ffcc80" style="color:black; vertical-align:middle !important;border:1px solid black;" border="1">
+                        @JumlahOverall.ToString("N")
+                    </td>
+                </tr>
+                @*<tr>
+                        <td colspan="7" bgcolor="#ffcc80" style="color:black; text-align: right; vertical-align:middle !important;border:1px solid black;" border="1">
+                            <strong>Jumlah</strong>
+                        </td>
+                        <td colspan="7" bgcolor="#ffcc80" style="color:black; text-align: right; vertical-align:middle !important;border:1px solid black;" border="1">
+                            @JumlahKadar
+                        </td>
+                    </tr>*@
+            </tfoot>
+
+
+        </table>
+        @*< newpage />*@
+    </div>
+
+    if (ViewBag.Print == null)
+    {
+        <div style="text-align:right; margin-top:10px">
+            <a class="btn btn-default btn-sm" href="#" id="printpage">
+                <span class="glyphicon glyphicon-print"> </span> @GlobalResEstate.btnPrint
+            </a>
+            <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+                <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadPdf
+            </a>
+            @* farahin tambah uniquefilename *@
+            <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@uniquefilename')">
+                <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+            </a>
+        </div>
+
+    }
+}
+
+
+@if (Model == null || Model.Count() == 0)
+{
+    <div id="scrollArea2" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+
+    </div>
+}
+
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+</style>
+@* farahin tambah *@
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#printpage").click(function () {
+            var DivElement = document.getElementById("scrollArea2").innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+        })
+
+        //farahin tambah 23022021
+        $("#downloadpdf").click(function () {
+
+          var myHtml = document.getElementById('scrollArea2').innerHTML;
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ConvertPDF2", "Report")',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ myHtml: myHtml, filename: "@uniquefilename", reportname: "HasilReport" }),
+                success: function (result) {
+                    if (result.success) {
+                        var win = window.open(result.link, '_blank');
+                        win.focus();
+                    } else {
+                        $.simplyToast(result.msg, result.status);
+                    }
+                },
+                error: function (error) {
+                    $.simplyToast('Sorry to many data', 'danger');
+                }
+            });
+            return false;
+        });
+        //farahin comment - 23022021
+        @*$("#downloadpdf").click(function () {
+            var RadioGroup = $('input[name=RadioGroup]:checked').val();
+            var MonthList = $("#MonthList").val();
+            var YearList = $("#YearList").val();
+            var SelectionList = $("#SelectionList").val();
+            //var StatusList = $("#StatusList").val();
+            //var WorkCategoryList = $("#WorkCategoryList").val();
+
+            //var StatusList = '';
+            //var WorkCategoryList = '';
+
+            var param = '/?RadioGroup=' + RadioGroup + '&MonthList=' + MonthList + '&YearList=' + YearList + '&SelectionList=' + SelectionList;
+            var controller = 'Report';
+            var action = 'PrintHasilPdf';
+
+            var ajxfn = {};
+            ajxfn.url = "@Url.Action("PDFIndetifier", "PdfCreator")";
+            ajxfn.type = "POST";
+            ajxfn.data = JSON.stringify({ controller: controller, action: action, param: param });
+            ajxfn.datatype = "json";
+            ajxfn.contentType = "application/json";
+            ajxfn.success = function (result) {
+                //var win = window.open(result.link, '_blank');
+                //win.focus();
+                PDFObject.embed(result.link, "#searchHasil", { height: "450px" });
+            };
+
+            ajxfn.error = function () {
+                $.simplyToast('@GlobalResEstate.msgError', 'danger');
+                $("#UpdateProgress1").css("display", "none");
+            };
+            $.ajax(ajxfn);
+
+            return false;
+        });*@
+    });
+</script>
+
+

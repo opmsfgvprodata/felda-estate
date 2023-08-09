@@ -1,0 +1,164 @@
+﻿@*@model MVC_SYSTEM.Models.tbl_MklmtKeluargaPkj*@
+
+@{
+    ViewBag.Title = "DependentsInfoCreate";
+    //Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>*@
+        <h3 class="modal-title">Penambahan Maklumat</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Penambahan Maklumat</div>
+                <div class="panel-body">
+                    <span id="progress" class="text-center" style="display: none;">
+                        <img src="~/Asset/Images/wait.gif" alt="wait" />
+                    </span>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4">No Pekerja</label>
+                            <div class="col-md-8">
+                                @Html.DropDownList("NoPkj", null, htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4">Nama Waris</label>
+                            <div class="col-md-8">
+                                @Html.TextBox("NamaWaris", "", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="control-label col-md-5">Hubungan Waris</label>
+                            <div class="col-md-5">
+                                @Html.DropDownList("HubunganWaris", null, htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4">No Tel Waris</label>
+                            <div class="col-md-8">
+                                @Html.TextBox("NoTelWaris", "", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4">Nama Isteri 1 (Jika ada)</label>
+                            <div class="col-md-8">
+                                @Html.TextBox("NamaIsteri1", "", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="control-label col-md-5">Bilangan Anak (Isteri 1)</label>
+                            <div class="col-md-5">
+                                @Html.TextBox("BilAnk1", "", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4">No Tel Isteri 1</label>
+                            <div class="col-md-8">
+                                @Html.TextBox("NoTelIsteri1", "", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div id="mklmtAnk1">
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4">Nama Isteri 2 (Jika ada)</label>
+                            <div class="col-md-8">
+                                @Html.TextBox("NamaIsteri2", "", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="control-label col-md-5">Bilangan Anak (Isteri 2)</label>
+                            <div class="col-md-5">
+                                @Html.TextBox("BilAnk2", "", new { @class = "form-control" })
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4">No Tel Isteri 2</label>
+                            <div class="col-md-8">
+                                @Html.TextBox("NoTelIsteri2", "", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div id="mklmtAnk2">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input class="btn btn-primary" type="submit" value=@GlobalResEstate.btnSave />
+        <button class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack</button>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $("#BilAnk1").change(function () {
+            var bilAnk = $("#BilAnk1").val();
+            console.log(bilAnk);
+            document.getElementById('mklmtAnk1').innerHTML = "";
+            if (bilAnk => 0) {
+                for (var i = 0; i < bilAnk; i++) {
+                    var addGroup = document.createElement('div');
+                    var addName = document.createElement('div');
+                    var addAge = document.createElement('div');
+                    addGroup.className = 'form-group';
+                    addName.className = 'col-sm-6';
+                    addAge.className = 'col-sm-5';
+                    addName.innerHTML = '<label class="control-label col-md-4">Nama Anak</label><div class="col-md-8"><input id="txtAnak1Name' + i + '" name="txtAnak1Name' + i + '" type= "text" class="form-control" /></div>';
+                    addAge.innerHTML = '<label class="control-label col-md-5">Umur Anak (Tahun)</label><div class="col-md-5"><input id="txtAnak1Age' + i + '" name="txtAnak1Age' + i + '" type= "text" class="form-control" /></div>';
+                    addGroup.appendChild(addName);
+                    addGroup.appendChild(addAge);
+                    document.getElementById('mklmtAnk1').appendChild(addGroup);
+                    //document.getElementById('mklmtAnk1').appendChild(addAge);
+                };
+            };
+        });
+
+        $("#BilAnk2").change(function () {
+            var bilAnk = 0;
+            bilAnk = $("#BilAnk2").val();
+            console.log(bilAnk);
+            document.getElementById('mklmtAnk2').innerHTML = "";
+            if (bilAnk => 0) {
+                for (var i = 0; i < bilAnk; i++) {
+                    var addGroup = document.createElement('div');
+                    var addName = document.createElement('div');
+                    var addAge = document.createElement('div');
+                    addGroup.className = 'form-group';
+                    addName.className = 'col-sm-6';
+                    addAge.className = 'col-sm-5';
+                    addName.innerHTML = '<label class="control-label col-md-4">Nama Anak</label><div class="col-md-8"><input id="txtAnak2Name' + i + '" name="txtAnak2Name' + i + '" type= "text" class="form-control" /></div>';
+                    addAge.innerHTML = '<label class="control-label col-md-5">Umur Anak (Tahun)</label><div class="col-md-5"><input id="txtAnak2Age' + i + '" name="txtAnak2Age' + i + '" type= "text" class="form-control" /></div>';
+                    addGroup.appendChild(addName);
+                    addGroup.appendChild(addAge);
+                    document.getElementById('mklmtAnk2').appendChild(addGroup);
+                    //document.getElementById('mklmtAnk2').appendChild(addAge);
+                };
+            };
+        });
+    });
+
+</script>

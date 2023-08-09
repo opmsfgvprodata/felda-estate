@@ -1,0 +1,349 @@
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">SOHAN SINGH</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="black">-</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">0</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+-                </td>
+            </tr>
+
+</tbody>
+
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">SOHAN SINGH</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Hadir Hari Biasa</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Tidak</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">Hadir Dan Tiada Data Kerja</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">0</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FELAEZANE</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+                            <button id="deleteAtt_1" name="deleteAtt_1" class="btn btn-danger" title="Padam" onclick="return DeleteAttInfo('b75065be-3961-4064-9e7a-5f6402f8def9');"><i class='fa fa-trash fa-lg'></i></button>
+                </td>
+            </tr>
+
+</tbody>
+
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">SOHAN SINGH</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="black">-</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">0</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+-                </td>
+            </tr>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">2</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018002</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">RAKESH KUMAR</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="black">-</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">0</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+-                </td>
+            </tr>
+
+</tbody>
+
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">SOHAN SINGH</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Hadir Hari Biasa</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Tidak</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">Hadir Dan Tiada Data Kerja</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">0</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FELAEZANE</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+                            <button id="deleteAtt_1" name="deleteAtt_1" class="btn btn-danger" title="Padam" onclick="return DeleteAttInfo('da34d138-f2d9-4361-ac7d-2c7e3e19c9b2');"><i class='fa fa-trash fa-lg'></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">2</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018002</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">RAKESH KUMAR</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Hadir Hari Biasa</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Tidak</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">Hadir Dan Tiada Data Kerja</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">0</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FELAEZANE</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+                            <button id="deleteAtt_2" name="deleteAtt_2" class="btn btn-danger" title="Padam" onclick="return DeleteAttInfo('c8b848cf-2e1f-4d62-8ad3-82cba6f62cb4');"><i class='fa fa-trash fa-lg'></i></button>
+                </td>
+            </tr>
+
+</tbody>
+
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">SOHAN SINGH</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="black">-</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">46.16</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+-                </td>
+            </tr>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">2</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018002</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">RAKESH KUMAR</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="black">-</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">46.16</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+-                </td>
+            </tr>
+
+</tbody>
+
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">SOHAN SINGH</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Hadir Hari Biasa</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Tidak</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="green">Hadir Dan Ada Data Kerja</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">46.16</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FELAEZANE</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+                            <button id="deleteAtt_1" name="deleteAtt_1" class="btn btn-danger" title="Padam" onclick="return DeleteAttInfo('da34d138-f2d9-4361-ac7d-2c7e3e19c9b2');"><i class='fa fa-trash fa-lg'></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">2</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018002</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">RAKESH KUMAR</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Hadir Hari Biasa</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Tidak</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="green">Hadir Dan Ada Data Kerja</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">46.16</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FELAEZANE</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+                            <button id="deleteAtt_2" name="deleteAtt_2" class="btn btn-danger" title="Padam" onclick="return DeleteAttInfo('c8b848cf-2e1f-4d62-8ad3-82cba6f62cb4');"><i class='fa fa-trash fa-lg'></i></button>
+                </td>
+            </tr>
+
+</tbody>
+
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">SOHAN SINGH</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="black">-</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">46.16</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+-                </td>
+            </tr>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">2</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018002</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">RAKESH KUMAR</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="black">-</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">46.16</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+-                </td>
+            </tr>
+
+</tbody>
+
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">SOHAN SINGH</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Hadir Hari Biasa</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Tidak</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">Hadir Dan Tiada Data Kerja</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">46.16</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FELAEZANE</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+                            <button id="deleteAtt_1" name="deleteAtt_1" class="btn btn-danger" title="Padam" onclick="return DeleteAttInfo('0a01b74f-78a3-444d-a955-6d439ee2b2bd');"><i class='fa fa-trash fa-lg'></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">2</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FD23018002</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">RAKESH KUMAR</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">B001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Hadir Hari Biasa</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">Tidak</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">Hadir Dan Tiada Data Kerja</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">46.16</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FELAEZANE</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+                            <button id="deleteAtt_2" name="deleteAtt_2" class="btn btn-danger" title="Padam" onclick="return DeleteAttInfo('7ae452aa-3b49-4974-a69c-68500660f8c3');"><i class='fa fa-trash fa-lg'></i></button>
+                </td>
+            </tr>
+
+</tbody>
+

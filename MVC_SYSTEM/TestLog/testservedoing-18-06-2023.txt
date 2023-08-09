@@ -1,0 +1,35 @@
+Data 1 : 
+
+<thead>
+    <tr>
+        <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Bil.</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Nama Pekerja</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Kumpulan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hadir / Cuti</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Hujan</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Status</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Hari Ini (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Gaji Terkumpul (RM)</th>
+        <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">ID Pengguna</th>
+        <th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">Tindakan</th>
+    </tr>
+</thead>
+<tbody>
+            <tr>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">1</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">FI00720016</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">AHMAD MUHTASIM</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">P001</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="black">-</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">0</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1"><font color="red">1092.75</font></td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">-</td>
+                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
+-                </td>
+            </tr>
+
+</tbody>
+

@@ -1,0 +1,33 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <div id="UpdateProgress3" style="display:none;">
+        <div class="progressTest">
+            <label>
+                Sila Tunggu
+            </label>
+        </div>
+    </div>
+    <nav class="navbar navbar-default sidebar" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="glyphicon glyphicon-list"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+                <ul class="nav navbar-nav" style="float: unset;">
+                    <li @ViewBag.User><a href="@Url.Action("Index", "User")" onclick="return DisplayProgressMessage2(this);">User <span style="font-size:16px;padding-left:10px" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li> 
+                </ul>
+            </div>
+        </div>
+    </nav>
+}
+<script>
+    function DisplayProgressMessage3(ctl) {
+        //$("body").addClass("submit-progress-bg");
+        //$(".submit-progress").removeClass("hidden");
+        $("#UpdateProgress3").css("display", "");
+        return true;
+    }
+</script>

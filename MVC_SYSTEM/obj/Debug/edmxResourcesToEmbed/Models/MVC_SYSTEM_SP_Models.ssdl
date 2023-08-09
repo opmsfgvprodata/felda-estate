@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="OPMSESTFELKUANTANModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <Function Name="fn_GetRangeUmrAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+    <Parameter Name="RengeUmrCheck" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="fld_WilayahID" Type="int" Mode="In" />
+    <Parameter Name="fld_Kdaktf" Type="int" Mode="In" />
+  </Function>
+  <Function Name="fn_GetRangeUmrLadang" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+    <Parameter Name="RengeUmrCheck" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="fld_WilayahID" Type="int" Mode="In" />
+    <Parameter Name="fld_LadangID" Type="int" Mode="In" />
+    <Parameter Name="fld_UniqueID" Type="uniqueidentifier" Mode="In" />
+    <Parameter Name="fld_Kdaktf" Type="int" Mode="In" />
+  </Function>
+  <Function Name="fn_GetRangeUmrWilayah" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+    <Parameter Name="RengeUmrCheck" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="fld_WilayahID" Type="int" Mode="In" />
+    <Parameter Name="fld_LadangID" Type="int" Mode="In" />
+    <Parameter Name="fld_Kdaktf" Type="int" Mode="In" />
+  </Function>
+  <Function Name="fn_GetSumPaymentMode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="numeric">
+    <Parameter Name="PaymentMode" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_DashAllKerakyatan" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_DashPermitExpired" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_DashStatusAkaun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="Wilayah" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_DashTransactionListing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_DatatableKerakyatan" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="Kerakyatan" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="sp_DatatablePermitExpired" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="Wilayah" Type="int" Mode="In" />
+    <Parameter Name="Type" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_KerjaInfoDetails" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="KategoriPilih" Type="int" Mode="In" />
+    <Parameter Name="PilihanCari" Type="nvarchar" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_Payslip" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="Nopkj" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="sp_RptBulPenPekLad" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DataSource" Type="nvarchar" Mode="In" />
+    <Parameter Name="DatabaseName" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="LevelAccess" Type="nvarchar" Mode="In" />
+    <Parameter Name="Kdrytan" Type="nvarchar" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="UserID" Type="int" Mode="In" />
+    <Parameter Name="SelectionCategory" Type="smallint" Mode="In" />
+  </Function>
+  <Function Name="sp_RptGajiMinima" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DataSource" Type="nvarchar" Mode="In" />
+    <Parameter Name="DatabaseName" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="LevelAccess" Type="nvarchar" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="UserID" Type="int" Mode="In" />
+    <Parameter Name="SelectionCategory" Type="smallint" Mode="In" />
+  </Function>
+  <Function Name="sp_RptMakPekTem" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DataSource" Type="nvarchar" Mode="In" />
+    <Parameter Name="DatabaseName" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="AktifStatus" Type="int" Mode="In" />
+    <Parameter Name="LevelAccess" Type="nvarchar" Mode="In" />
+    <Parameter Name="UserID" Type="int" Mode="In" />
+    <Parameter Name="SelectionCategory" Type="smallint" Mode="In" />
+  </Function>
+  <Function Name="sp_RptMasterDataPkj" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DataSource" Type="nvarchar" Mode="In" />
+    <Parameter Name="DatabaseName" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="LevelAccess" Type="nvarchar" Mode="In" />
+    <Parameter Name="Kdrytan" Type="nvarchar" Mode="In" />
+    <Parameter Name="StatusAktif" Type="nvarchar" Mode="In" />
+    <Parameter Name="KategoriPkj" Type="nvarchar" Mode="In" />
+    <Parameter Name="UserID" Type="int" Mode="In" />
+    <Parameter Name="SelectionCategory" Type="smallint" Mode="In" />
+  </Function>
+  <Function Name="sp_RptPaymentMode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DataSource" Type="nvarchar" Mode="In" />
+    <Parameter Name="DatabaseName" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="UserID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_RptProduktiviti" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="NoPkj" Type="nvarchar" Mode="In" />
+    <Parameter Name="Unit" Type="nvarchar" Mode="In" />
+    <Parameter Name="Peringkat" Type="nvarchar" Mode="In" />
+    <Parameter Name="Status" Type="char" Mode="In" />
+  </Function>
+  <Function Name="sp_RptPurataGajiBulanan" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_RptRumKedKepPekLad" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DataSource" Type="nvarchar" Mode="In" />
+    <Parameter Name="DatabaseName" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="AktifStatus" Type="int" Mode="In" />
+    <Parameter Name="LevelAccess" Type="nvarchar" Mode="In" />
+    <Parameter Name="UserID" Type="int" Mode="In" />
+    <Parameter Name="SelectionCategory" Type="smallint" Mode="In" />
+  </Function>
+  <Function Name="sp_RptSkb" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_RptTransPek" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DataSource" Type="nvarchar" Mode="In" />
+    <Parameter Name="DatabaseName" Type="nvarchar" Mode="In" />
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="LevelAccess" Type="nvarchar" Mode="In" />
+    <Parameter Name="Month" Type="int" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="UserID" Type="int" Mode="In" />
+    <Parameter Name="SelectionCategory" Type="smallint" Mode="In" />
+  </Function>
+  <Function Name="sp_YieldBracketTable" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="JnsPkt" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_YieldBracketTableSum" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+    <Parameter Name="JnsPkt" Type="int" Mode="In" />
+  </Function>
+  <Function Name="spTest" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="NegaraID" Type="int" Mode="In" />
+    <Parameter Name="SyarikatID" Type="int" Mode="In" />
+    <Parameter Name="WilayahID" Type="int" Mode="In" />
+    <Parameter Name="LadangID" Type="int" Mode="In" />
+  </Function>
+  <EntityContainer Name="OPMSESTFELKUANTANModelStoreContainer" />
+</Schema>

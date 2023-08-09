@@ -1,0 +1,231 @@
+﻿@model IEnumerable<MVC_SYSTEM.ViewingModels.ContributionReport>
+
+@{
+    int bill = 1;
+    @* fatin added  - 06/03/2023 *@
+    decimal? TotalAllSalaryForKwsp = 0;
+    decimal? TotalAllKwspContributionEmplyee = 0;
+    decimal? TotalKwspContributionEmplyer = 0;
+    decimal? TotalAllSalaryForPerkeso = 0;
+    decimal? TotalSocsoContributionEmplyee = 0;
+    decimal? TotalSocsoContributionEmplyer = 0;
+    decimal? TotalSipContributionEmplyee = 0;
+    decimal? TotalSipContributionEmplyer = 0;
+    decimal? TotalSbkpContributionEmplyee = 0;
+    decimal? TotalSbkpContributionEmplyer = 0;
+    @* end *@
+    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+    GetTriager GetTriager = new GetTriager();
+    ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+    DateTime Todaydate = ChangeTimeZone.gettimezone();
+    string uniquefilename = "ContributionReport" + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+}
+
+@if (Model != null && Model.Count() != 0)
+{
+    <div id="scrollArea2" class="modal-body">
+        <logo />
+        <table class="table table-bordered" style="font-size: 11px;" border="0" width="100%">
+            <thead>
+                <tr>
+                    <th colspan="13" style="text-align:center;vertical-align:middle;">
+                        @ViewBag.NamaSyarikat
+                        <br />
+                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        <br />
+                        Monthly Contribution Report
+                        <br />
+                        @GlobalResEstate.lblMonth : @ViewBag.MonthSelection
+                        <br />
+                        @GlobalResEstate.lblYear : @ViewBag.YearSelection
+                    </th>
+                </tr>
+                <tr>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrNo</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrNoPkj</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.hdrName</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">IC/Passport</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Salary For Contribution KWSP (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">KWSP Employee Contribution (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">KWSP Employer Contribution (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Salary For Contribution Perkeso (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">SOCSO Employee Contribution (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">SOCSO Employer Contribution (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">SIP Employee Contribution (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">SIP Employer Contribution (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">SBKP Employee Contribution (RM)</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">SBKP Employer Contribution (RM)</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @bill
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.WorkerNo
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.WorkerName
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.WorkerIDNo
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.TotalSalaryForKwsp.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.KwspContributionEmplyee.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.KwspContributionEmplyer.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.TotalSalaryForPerkeso.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.SocsoContributionEmplyee.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.SocsoContributionEmplyer.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.SipContributionEmplyee.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.SipContributionEmplyer.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.SbkpContributionEmplyee.ToString())
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetTriager.GetDashForNull(item.SbkpContributionEmplyer.ToString())
+                        </td>
+                    </tr>
+                    @* fatin added  - 06/03/2023 *@
+                    {
+                        TotalAllSalaryForKwsp = TotalAllSalaryForKwsp + item.TotalSalaryForKwsp;
+                        TotalAllKwspContributionEmplyee = TotalAllKwspContributionEmplyee + item.KwspContributionEmplyee;
+                        TotalKwspContributionEmplyer = TotalKwspContributionEmplyer + item.KwspContributionEmplyer;
+                        TotalAllSalaryForPerkeso = TotalAllSalaryForPerkeso + item.TotalSalaryForPerkeso;
+                        TotalSocsoContributionEmplyee = TotalSocsoContributionEmplyee + item.SocsoContributionEmplyee;
+                        TotalSocsoContributionEmplyer = TotalSocsoContributionEmplyer + item.SocsoContributionEmplyer;
+                        TotalSipContributionEmplyee = TotalSipContributionEmplyee + item.SipContributionEmplyee;
+                        TotalSipContributionEmplyer = TotalSipContributionEmplyer + item.SipContributionEmplyer;
+                        TotalSbkpContributionEmplyee = TotalSbkpContributionEmplyee + item.SbkpContributionEmplyee;
+                        TotalSbkpContributionEmplyer = TotalSbkpContributionEmplyer + item.SbkpContributionEmplyer;
+
+                    }
+                    @* end *@
+                    bill++;
+                }
+
+                @* fatin added  - 06/03/2023 *@
+                <tr>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>Jumlah</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalAllSalaryForKwsp</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalAllKwspContributionEmplyee</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalKwspContributionEmplyer</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalAllSalaryForPerkeso</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalSocsoContributionEmplyee</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalSocsoContributionEmplyer</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalSipContributionEmplyee</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalSipContributionEmplyer</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalSbkpContributionEmplyee</b>
+                    </td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                        <b>RM @TotalSbkpContributionEmplyer</b>
+                    </td>
+                </tr>
+                @* end *@
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align:right; margin-top:10px">
+        <a class="btn btn-default btn-sm" href="#" id="printpage">
+            <span class="glyphicon glyphicon-print"> </span> @GlobalResEstate.btnPrint
+        </a>
+        @* farahin uncomment button pdf  - 23/02/2021 *@
+        <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+            <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadPdf
+        </a>
+        <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@uniquefilename')">
+            <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+        </a>
+    </div>
+}
+else
+{
+    <div id="scrollArea2" class="modal-body" style="text-align: center">
+        <p style="color: red">No Data</p>
+    </div>
+}
+
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#printpage").click(function () {
+            var DivElement = document.getElementById("scrollArea2").innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+        })
+        //farahin   - 23/02/2021
+          //cater download PDF
+         $("#downloadpdf").click(function () {
+
+          var myHtml = document.getElementById('scrollArea2').innerHTML;
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ConvertPDF2", "Report")',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ myHtml: myHtml, filename: "@uniquefilename", reportname: "WorkerContributionReport" }),
+                success: function (result) {
+                    if (result.success) {
+                        var win = window.open(result.link, '_blank');
+                        win.focus();
+                    } else {
+                        $.simplyToast(result.msg, result.status);
+                    }
+                },
+                error: function (error) {
+                    $.simplyToast('Sorry to many data', 'danger');
+                }
+            });
+            return false;
+        });
+    });
+</script>

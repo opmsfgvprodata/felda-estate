@@ -1,0 +1,164 @@
+﻿@using MVC_SYSTEM.Class
+@using MVC_SYSTEM.Models
+@model IEnumerable<MVC_SYSTEM.Models.tbl_Pkjmast>
+    @{
+    //GetTriager GetTriager = new GetTriager();
+    //GetEstateDetail GetGroup = new GetEstateDetail();
+    GetConfig GetConfig = new GetConfig();
+
+    ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+    int year = ChangeTimeZone.gettimezone().Year;
+    int month = ChangeTimeZone.gettimezone().Month;
+    int day = ChangeTimeZone.gettimezone().Day;
+    int hour = ChangeTimeZone.gettimezone().Hour;
+    int minute = ChangeTimeZone.gettimezone().Minute;
+    int second = ChangeTimeZone.gettimezone().Second;
+    int bil = 0;
+    string uniquefilename = "RumusanRpt_" + year.ToString() + month.ToString() + day.ToString() + hour.ToString() + minute.ToString() + second.ToString();
+    }
+    @if (Model != null && Model.Count() != 0)
+    {
+    <div id="scrollArea2" class="modal-body">
+
+        <table class="table table-hover" style="font-size: 11px;" border="0">
+            <thead>
+                <tr>
+                    <th colspan="11" bgcolor="#CC6600" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @ViewBag.NamaSyarikat
+                        <br />
+                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        <br />
+                        @* yana update - 050523*@
+                        (@GlobalResEstate.lblWorkerReport : FELDA @ViewBag.NamaLadang)
+                        @* end here*@
+                        <font color="white">
+                        </font>
+                    </th>
+                </tr>
+                <tr>
+                    @* yana added - 050523*@
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.hdrNo</th>
+                    @* end here*@
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.hdrNoPkj</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.hdrName</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.hdrNoKp</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.lblDOB</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.lblGender</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.lblMarriageStatus</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.lblPeneroka</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.lblRace</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.lblReligion</th>
+                    <th width="10%" bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">@GlobalResEstate.lblCitizen</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var workerMasterData in Model)
+                {
+                @* yana added - 050523*@
+                bil += 1;
+                <tr>
+                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @bil
+                    </td>
+                    @* end here*@
+                    @* yana updated align - 050523*@
+                    <td align="left" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @workerMasterData.fld_Nopkj
+                    </td>
+                    <td align="left" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @workerMasterData.fld_Nama
+                    </td>
+                    <td align="left" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @workerMasterData.fld_Nokp
+                    </td>
+                    @* end here*@
+                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @String.Format("{0:dd/MM/yyyy}", @workerMasterData.fld_Trlhr)
+                    </td>
+                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @GetConfig.GetWebConfigDesc(workerMasterData.fld_Kdjnt, "jantina", workerMasterData.fld_NegaraID, workerMasterData.fld_SyarikatID)
+                    </td>
+                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @GetConfig.GetWebConfigDesc(@workerMasterData.fld_Kdkwn, "tarafKahwin", workerMasterData.fld_NegaraID, workerMasterData.fld_SyarikatID)
+                    </td>
+                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @GetConfig.GetWebConfigDesc(workerMasterData.fld_Kpenrka, "statusPeneroka", workerMasterData.fld_NegaraID, workerMasterData.fld_SyarikatID)
+                    </td>
+                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @GetConfig.GetWebConfigDesc(workerMasterData.fld_Kdbgsa, "bangsa", workerMasterData.fld_NegaraID, workerMasterData.fld_SyarikatID)
+                    </td>
+                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @GetConfig.GetWebConfigDesc(workerMasterData.fld_Kdagma, "agama", workerMasterData.fld_NegaraID, workerMasterData.fld_SyarikatID)
+                    </td>
+                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                        @GetConfig.GetWebConfigDesc(workerMasterData.fld_Kdrkyt, "krytnlist", workerMasterData.fld_NegaraID, workerMasterData.fld_SyarikatID)
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align:right; margin-top:10px">
+        <a class="btn btn-default btn-sm" href="#" id="printpage">
+            <span class="glyphicon glyphicon-print"> </span> @GlobalResEstate.btnPrint
+        </a>
+        <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+            <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadPdf
+        </a>
+        <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@uniquefilename')">
+            <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+        </a>
+    </div>
+
+
+    }
+
+    @if (Model.Count() == 0)
+    {
+    <div class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+
+    </div>
+    }
+
+    <script src="~/Asset/Scripts/FromHTML.js"></script>
+    <script src="~/Asset/Scripts/FileSaver.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // js utk print function  - 23/02/2021
+            $("#printpage").click(function () {
+                var DivElement = document.getElementById("scrollArea2").innerHTML;
+                var oldPage = document.body.innerHTML;
+                document.body.innerHTML = DivElement;
+                window.print();
+                document.body.innerHTML = oldPage;
+            })
+
+            // js utk download pdf
+            $("#downloadpdf").click(function () {
+                //cater download PDF
+                var myHtml = document.getElementById('scrollArea2').innerHTML;
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("ConvertPDF2", "Report")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ myHtml: myHtml, filename: "@uniquefilename", reportname: "RumusanReport" }),
+                    success: function (result) {
+                        if (result.success) {
+                            var win = window.open(result.link, '_blank');
+                            win.focus();
+                        } else {
+                            $.simplyToast(result.msg, result.status);
+                        }
+                    },
+                    error: function (error) {
+                        $.simplyToast('Sorry to many data', 'danger');
+                    }
+                });
+                return false;
+            });
+        });
+    </script>

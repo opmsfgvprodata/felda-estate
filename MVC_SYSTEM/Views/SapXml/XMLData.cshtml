@@ -1,0 +1,314 @@
+﻿
+@model IEnumerable<MVC_SYSTEM.Models.vw_SAPPostData>
+
+
+@using System.Linq.Dynamic
+@using Microsoft.Ajax.Utilities
+@using MVC_SYSTEM.Class
+
+
+@{
+
+    ViewBag.Title = "XML Structure";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+
+
+    GetConfig GetConfig = new GetConfig();
+    GlobalFunction GlobalFunction = new GlobalFunction();
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "unitMaintenanceDetails",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+    int dataCount = 0, dataCount1 = 0, dataCount2 = 0, dataCount3 = 0, dataCount4 = 0;
+}
+
+@if (Model.Any())
+{
+
+    var header = Model.Where(x => x.fld_DocType == "A2").OrderBy(o => o.fld_ItemNo).Distinct().FirstOrDefault();
+
+<div class="modal-body">
+    <div class="well" style="margin-top: 7px;">
+        <div>
+            <table >
+                <tr>
+                    <th  bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">
+                        <label style="font-weight:bold; font-size:medium;">GL to GL</label>
+                    </th>
+                    <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">
+                        <label style="font-weight:bold; font-size:medium">GL to Vendor</label>
+                    </th>
+                    <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">
+                        <label style="font-weight:bold; font-size:medium">GL to Customer</label>
+                    </th>
+                </tr>
+                <tr>
+                    <th align="left" style="vertical-align: top !important; padding-left:10px; padding-right: 10px; border: 1px solid black;" border="1">
+                        <br /><br />
+                        <label>
+                            [{"Documentheader" : {"item" : {
+                        </label><br />
+                        <label>
+                            "CompCode" :  "@header.fld_CompCode",
+                        </label><br />
+                        <label>
+                            "DocDate" : "@ViewBag.Docdate",
+                        </label><br />
+                        <label>
+                            "DocType" : "@header.fld_DocType",
+                        </label><br />
+                        <label>
+                            "HeaderTxt" : "@header.fld_HeaderText",
+                        </label><br />
+                        <label>
+                            "PstgDate" : "@ViewBag.PstgDate",
+                        </label><br />
+                        <label>
+                            "RefDocNo" : "@header.fld_RefNo",
+                        </label><br />
+                        <label>
+                            "Username" : "@ViewBag.Username"}}},
+                        </label><br />
+                        <br /><br />
+
+                        <label>
+                            {"AccountGL":{
+                        </label><br />
+                        @foreach (var accountGL in Model.Where(x => x.fld_DocType == "A2").OrderBy(o => o.fld_ItemNo).Distinct())
+                        {
+                            if (dataCount != (ViewBag.CountDataA2 - 1))
+                            {
+
+                                <label>"item":{</label><br />
+                                <label>"ItemnoAcc" : "@accountGL.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                if (accountGL.fld_GL.Length == 8)
+                                {
+                                    <label>"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                }
+                                else
+                                {
+                                    <label style="background-color:goldenrod">"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                }
+                                <label> "ItemText" : "@accountGL.fld_Desc",</label><br />
+                                <label>"Orderid" : "@accountGL.fld_IO"},</label><br /><br />
+
+                            }
+                            else
+                            {
+
+                                <label>"item":{</label><br />
+                                <label>"ItemnoAcc" : "@accountGL.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                if (accountGL.fld_GL.Length == 8)
+                                {
+                                    <label>"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                }
+                                else
+                                {
+                                    <label style="background-color:goldenrod">"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                }
+                                <label> "ItemText" : "@accountGL.fld_Desc",</label><br />
+                                <label>"Orderid" : "@accountGL.fld_IO"}}},</label><br /><br />
+
+                            }
+
+                            dataCount++;
+                        }
+                        <br /><br />
+
+                        <label>
+                            {"Currencyamount":{
+                        </label><br />
+                        @foreach (var currency in Model.Where(x => x.fld_DocType == "A2").OrderBy(o => o.fld_ItemNo).Distinct())
+                        {
+                            if (dataCount1 != (ViewBag.CountDataA2 - 1))
+                            {
+                                <label>"item":{</label><br />
+                                <label>"ItemnoAcc" : "@currency.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                <label>"Currency":"RM",</label><br />
+                                <label>"AmtDoccur":"@currency.fld_Amount"},</label><br /><br />
+
+                            }
+                            else
+                            {
+
+                                <label>"item":{</label><br />
+                                <label>"ItemnoAcc" : "@currency.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                <label>"Currency":"RM",</label><br />
+                                <label>"AmtDoccur":"@currency.fld_Amount" }}}]</label><br /><br />
+
+                            }
+
+                            dataCount1++;
+                        }
+
+
+
+                    </th>
+
+                    <th align="left" style="vertical-align: top !important; padding-left:10px; padding-right: 10px; border: 1px solid black;" border="1">
+                        <br /><br />
+                        <label>
+                            [{"Documentheader" : {"item" : {
+                        </label><br />
+                        <label>
+                            "CompCode" :  "@header.fld_CompCode",
+                        </label><br />
+                        <label>
+                            "DocDate" : "@ViewBag.Docdate",
+                        </label><br />
+                        <label>
+                            "DocType" : "@header.fld_DocType",
+                        </label><br />
+                        <label>
+                            "HeaderTxt" : "@header.fld_HeaderText",
+                        </label><br />
+                        <label>
+                            "PstgDate" : "@ViewBag.PstgDate",
+                        </label><br />
+                        @foreach (var flag in Model.Where(x => x.fld_DocType == "KR").Select(s => s.fld_flag).Distinct())
+                        {
+                            <label>
+                                "RefDocNo" : "@header.fld_RefNo-@flag",
+                            </label><br />
+                        }
+                        <label>
+                            "Username" : "@ViewBag.Username"}}},
+                        </label><br />
+                        <br /><br />
+
+
+                        @foreach (var accountGL in Model.Where(x => x.fld_DocType == "KR" && x.fld_GL != null).OrderBy(o => o.fld_ItemNo).Distinct())
+                        {
+                            if (dataCount2 != (ViewBag.CountDataGLKR - 1))
+                            {
+                                if (dataCount2 == 0)
+                                {
+                                    <label> {"AccountGL":{ </label><br />
+                                    <label>"item":{</label><br />
+                                    <label>"ItemnoAcc" : "@accountGL.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                    if (accountGL.fld_GL.Length == 8)
+                                    {
+                                        <label>"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                    }
+                                    else
+                                    {
+                                        <label style="background-color:goldenrod">"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                    }
+                                    <label> "ItemText" : "@accountGL.fld_Desc",</label><br />
+                                    <label>"Orderid" : "@accountGL.fld_IO"},</label><br /><br />
+                                }
+                                else
+                                {
+                                    <label>"item":{</label><br />
+                                    <label>"ItemnoAcc" : "@accountGL.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                    if (accountGL.fld_GL.Length == 8)
+                                    {
+                                        <label>"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                    }
+                                    else
+                                    {
+                                        <label style="background-color:goldenrod">"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                    }
+                                    <label> "ItemText" : "@accountGL.fld_Desc",</label><br />
+                                    <label>"Orderid" : "@accountGL.fld_IO"},</label><br /><br />
+                                }
+                            }
+                            else if (dataCount2 == (ViewBag.CountDataGLKR - 1))
+                            {
+                                <label>"item":{</label><br />
+                                <label>"ItemnoAcc" : "@accountGL.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                if (accountGL.fld_GL.Length == 8)
+                                {
+                                    <label>"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                }
+                                else
+                                {
+                                    <label style="background-color:goldenrod">"GlAccount":"@accountGL.fld_GL.ToString().PadLeft(10, '0')",</label><br />
+                                }
+                                <label> "ItemText" : "@accountGL.fld_Desc",</label><br />
+                                <label>"Orderid" : "@accountGL.fld_IO"}}},</label><br /><br />
+                            }
+                            dataCount2++;
+                        }
+                        <br /><br />
+
+                        @foreach (var accountVD in Model.Where(x => x.fld_DocType == "KR" && x.fld_VendorCode != null).OrderBy(o => o.fld_ItemNo).Distinct())
+                        {
+                            if (dataCount3 != (ViewBag.CountDataVNKR - 1))
+                            {
+                                if (dataCount3 == 0)
+                                {
+                                    <label>{"AccountPayable":{</label><br />
+                                    <label>"item":{</label><br />
+                                    <label>"ItemnoAcc" : "@accountVD.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                    <label>"VendorNo" : "@accountVD.fld_VendorCode",</label><br />
+                                    <label>"BlineDate" : "@ViewBag.BlineDate",</label><br />
+                                    <label>"ItemText" : "@accountVD.fld_Desc"},</label><br /><br />
+                                }
+                                else
+                                {
+                                    <label>"item":{</label><br />
+                                    <label>"ItemnoAcc" : "@accountVD.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                    <label>"VendorNo" : "@accountVD.fld_VendorCode",</label><br />
+                                    <label>"BlineDate" : "@ViewBag.BlineDate",</label><br />
+                                    <label>"ItemText" : "@accountVD.fld_Desc"},</label><br /><br />
+                                }
+                            }
+                            else
+                            {
+                                <label>"item":{</label><br />
+                                <label>"ItemnoAcc" : "@accountVD.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                <label>"VendorNo" : "@accountVD.fld_VendorCode",</label><br />
+                                <label>"BlineDate" : "@ViewBag.BlineDate",</label><br />
+                                <label>"ItemText" : "@accountVD.fld_Desc"}}},</label><br /><br />
+                            }
+
+                            dataCount3++;
+                        }
+
+
+                        <label>
+                            {"Currencyamount":{
+                        </label><br />
+                        @foreach (var currency in Model.Where(x => x.fld_DocType == "KR").OrderBy(o => o.fld_ItemNo).Distinct())
+                        {
+                            if (dataCount4 != (ViewBag.CountDataKR - 1))
+                            {
+                                <label>"item":{</label><br />
+                                <label>"ItemnoAcc" : "@currency.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                <label>"Currency":"RM",</label><br />
+                                <label>"AmtDoccur":"@currency.fld_Amount"},</label><br /><br />
+
+                            }
+                            else
+                            {
+
+                                <label>"item":{</label><br />
+                                <label>"ItemnoAcc" : "@currency.fld_ItemNo.ToString().PadLeft(10, '0')",</label><br />
+                                <label>"Currency":"RM",</label><br />
+                                <label>"AmtDoccur":"@currency.fld_Amount" }}}]</label><br /><br />
+
+                            }
+
+                            dataCount4++;
+                        }
+
+
+
+                    </th>
+
+                    <th align="left" style="vertical-align: top !important; border: 1px solid black;" border="1">
+
+                    </th>
+                </tr>
+            </table>
+           
+            
+        
+        </div>
+    </div>
+</div>
+}

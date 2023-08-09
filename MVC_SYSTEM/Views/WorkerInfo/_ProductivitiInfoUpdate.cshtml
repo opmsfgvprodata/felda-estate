@@ -1,0 +1,105 @@
+﻿@using MVC_SYSTEM.Class
+@model MVC_SYSTEM.Models.tbl_ProduktivitiModelViewEdit
+@{
+    @Scripts.Render("~/bundles/jqueryval")
+    GetConfig config = new GetConfig();
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">@GlobalResEstate.lblProductivityInfoEdit</h3>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">@GlobalResEstate.lblProductvtInfo</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">@GlobalResEstate.hdrNoPkj:</label>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.fld_Nopkj, htmlAttributes: new { @class = "form-control", @readonly = "true" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">@GlobalResEstate.hdrName:</label>
+                            <div class="col-sm-7">
+                                @Html.TextBoxFor(model => model.fld_Nopkj, htmlAttributes: new { @class = "form-control", @readonly = "true", @Value = config.getPkjNameFromPkjNo(Model.fld_Nopkj, Model.fld_NegaraID, Model.fld_SyarikatID, Model.fld_WilayahID, Model.fld_LadangID, ViewBag.host, ViewBag.user, ViewBag.catalog, ViewBag.pass) })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">@GlobalResEstate.hdrCategory:</label>
+                            <div class="col-sm-2">
+                                @Html.DropDownListFor(model => model.fld_JenisPelan, new SelectList(ViewBag.JenisKategoriList, "Value", "Text", Model.fld_JenisPelan), htmlAttributes: new { @class = "form-control col-sm-2" })
+                                @Html.ValidationMessageFor(model => model.fld_JenisPelan, "", new { @class = "text-danger" })
+                            </div>
+                            <label class="control-label col-sm-3">@GlobalResEstate.hdrTarget:</label>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.fld_Targetharian, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.fld_Targetharian, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">@GlobalResEstate.hdrUnit:</label>
+                            <div class="col-sm-2">
+                                @Html.DropDownListFor(model => model.fld_Unit, new SelectList(ViewBag.UnitList, "Value", "Text", Model.fld_Unit), htmlAttributes: new { @class = "form-control col-sm-2" })
+                                @Html.ValidationMessageFor(model => model.fld_Unit, "", new { @class = "text-danger" })
+                            </div>
+                            <label class="control-label col-sm-3">@GlobalResEstate.hdrTargetWorkingDay:</label>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.fld_HadirKerja, htmlAttributes: new { @class = "form-control", @readonly = "true" })
+                            </div>
+                        </div>
+                        @Html.HiddenFor(model => model.fld_ProduktivitifID)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input class="btn btn-success" type="submit" value=@GlobalResEstate.btnSave>
+            <button class="btn btn-danger" data-dismiss="modal">@GlobalResEstate.btnBack</button>
+        </div>
+    }
+</section>
+
+<script>
+    $("form").removeData("validator");
+    $("form").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse("form");
+
+    $(function() {
+        $('#fld_JenisPelan').on('change',
+            function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("checkCategoryType", "WorkerInfo")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify({ jenisPelan: $('#fld_JenisPelan').val() }),
+                    success: function(result) {
+                        $('#fld_Unit').prop("disabled", false);
+                        $('#fld_Unit').empty();
+                        for (var i = 0; i < result.UnitList.length; i++) {
+                            $('#fld_Unit').append("<option value=" +
+                                result.UnitList[i].Value +
+                                ">" +
+                                result.UnitList[i].Text +
+                                "</option>");
+                        }
+
+                        if ($('#fld_JenisPelan').val() === '' || $('#fld_JenisPelan').val() === null) {
+                            $('#fld_Unit').prop("disabled", true);
+                        }
+                    }
+                });
+            });
+    });
+</script>
+
+
+
+

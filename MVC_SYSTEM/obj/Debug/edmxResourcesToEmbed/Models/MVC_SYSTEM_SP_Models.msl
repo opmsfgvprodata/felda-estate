@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="OPMSESTFELKUANTANModelStoreContainer" CdmEntityContainer="Entities">
+    <FunctionImportMapping FunctionImportName="sp_DashAllKerakyatan" FunctionName="OPMSESTFELKUANTANModel.Store.sp_DashAllKerakyatan">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_DashAllKerakyatan_Result">
+          <ScalarProperty Name="fld_KodKerakyatan" ColumnName="fld_KodKerakyatan" />
+          <ScalarProperty Name="fld_Kerakyatan" ColumnName="fld_Kerakyatan" />
+          <ScalarProperty Name="fld_Jumlah" ColumnName="fld_Jumlah" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_DashPermitExpired" FunctionName="OPMSESTFELKUANTANModel.Store.sp_DashPermitExpired">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_DashPermitExpired_Result">
+          <ScalarProperty Name="fld_SyarikatID" ColumnName="fld_SyarikatID" />
+          <ScalarProperty Name="fld_WilayahID" ColumnName="fld_WilayahID" />
+          <ScalarProperty Name="fld_WlyhName" ColumnName="fld_WlyhName" />
+          <ScalarProperty Name="fld_LdgName" ColumnName="fld_LdgName" />
+          <ScalarProperty Name="total3month" ColumnName="total3month" />
+          <ScalarProperty Name="total2month" ColumnName="total2month" />
+          <ScalarProperty Name="total1month" ColumnName="total1month" />
+          <ScalarProperty Name="totalmonth" ColumnName="totalmonth" />
+          <ScalarProperty Name="totalexpired" ColumnName="totalexpired" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_DashStatusAkaun" FunctionName="OPMSESTFELKUANTANModel.Store.sp_DashStatusAkaun">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_DashStatusAkaun_Result">
+          <ScalarProperty Name="fld_SyarikatID" ColumnName="fld_SyarikatID" />
+          <ScalarProperty Name="fld_WilayahID" ColumnName="fld_WilayahID" />
+          <ScalarProperty Name="fld_LadangID" ColumnName="fld_LadangID" />
+          <ScalarProperty Name="fld_LdgName" ColumnName="fld_LdgName" />
+          <ScalarProperty Name="fld_Month" ColumnName="fld_Month" />
+          <ScalarProperty Name="fld_Year" ColumnName="fld_Year" />
+          <ScalarProperty Name="TutupUrusNiaga" ColumnName="TutupUrusNiaga" />
+          <ScalarProperty Name="Verify" ColumnName="Verify" />
+          <ScalarProperty Name="KelulusanPengurus" ColumnName="KelulusanPengurus" />
+          <ScalarProperty Name="KelulusanPegKewangan" ColumnName="KelulusanPegKewangan" />
+          <ScalarProperty Name="KelulusanPegWilayahFelda" ColumnName="KelulusanPegWilayahFelda" />
+          <ScalarProperty Name="GLToGL" ColumnName="GLToGL" />
+          <ScalarProperty Name="GLToVendor" ColumnName="GLToVendor" />
+          <ScalarProperty Name="progress" ColumnName="progress" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_DatatableKerakyatan" FunctionName="OPMSESTFELKUANTANModel.Store.sp_DatatableKerakyatan">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_DatatableKerakyatan_Result">
+          <ScalarProperty Name="fld_Nopkj" ColumnName="fld_Nopkj" />
+          <ScalarProperty Name="fld_Nokp" ColumnName="fld_Nokp" />
+          <ScalarProperty Name="fld_Nama" ColumnName="fld_Nama" />
+          <ScalarProperty Name="fld_WlyhName" ColumnName="fld_WlyhName" />
+          <ScalarProperty Name="fld_Krkytn" ColumnName="fld_Krkytn" />
+          <ScalarProperty Name="fld_LdgName" ColumnName="fld_LdgName" />
+          <ScalarProperty Name="fld_DateApply" ColumnName="fld_DateApply" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_DatatablePermitExpired" FunctionName="OPMSESTFELKUANTANModel.Store.sp_DatatablePermitExpired">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_DatatablePermitExpired_Result">
+          <ScalarProperty Name="fld_Nopkj" ColumnName="fld_Nopkj" />
+          <ScalarProperty Name="fld_Nokp" ColumnName="fld_Nokp" />
+          <ScalarProperty Name="fld_Nama" ColumnName="fld_Nama" />
+          <ScalarProperty Name="fld_Krkytn" ColumnName="fld_Krkytn" />
+          <ScalarProperty Name="fld_LdgName" ColumnName="fld_LdgName" />
+          <ScalarProperty Name="fld_T1prmt" ColumnName="fld_T1prmt" />
+          <ScalarProperty Name="fld_T2prmt" ColumnName="fld_T2prmt" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_KerjaInfoDetails" FunctionName="OPMSESTFELKUANTANModel.Store.sp_KerjaInfoDetails">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_KerjaInfoDetails_Result">
+          <ScalarProperty Name="fld_ID" ColumnName="fld_ID" />
+          <ScalarProperty Name="fld_Nopkj" ColumnName="fld_Nopkj" />
+          <ScalarProperty Name="fld_Nama" ColumnName="fld_Nama" />
+          <ScalarProperty Name="fld_Kum" ColumnName="fld_Kum" />
+          <ScalarProperty Name="fld_Tarikh" ColumnName="fld_Tarikh" />
+          <ScalarProperty Name="fld_Hujan" ColumnName="fld_Hujan" />
+          <ScalarProperty Name="fld_Kdhdct" ColumnName="fld_Kdhdct" />
+          <ScalarProperty Name="fld_JnisAktvt" ColumnName="fld_JnisAktvt" />
+          <ScalarProperty Name="fld_KodAktvt" ColumnName="fld_KodAktvt" />
+          <ScalarProperty Name="fld_Unit" ColumnName="fld_Unit" />
+          <ScalarProperty Name="fld_JnsPkt" ColumnName="fld_JnsPkt" />
+          <ScalarProperty Name="fld_KodPkt" ColumnName="fld_KodPkt" />
+          <ScalarProperty Name="fld_KodGL" ColumnName="fld_KodGL" />
+          <ScalarProperty Name="fld_KadarByr" ColumnName="fld_KadarByr" />
+          <ScalarProperty Name="fld_JumlahHasil" ColumnName="fld_JumlahHasil" />
+          <ScalarProperty Name="fld_Amount" ColumnName="fld_Amount" />
+          <ScalarProperty Name="fld_JamOT" ColumnName="fld_JamOT" />
+          <ScalarProperty Name="fld_KadarOT" ColumnName="fld_KadarOT" />
+          <ScalarProperty Name="fld_JumlahOT" ColumnName="fld_JumlahOT" />
+          <ScalarProperty Name="fld_Bonus" ColumnName="fld_Bonus" />
+          <ScalarProperty Name="fld_KadarBonus" ColumnName="fld_KadarBonus" />
+          <ScalarProperty Name="fld_JumlahBonus" ColumnName="fld_JumlahBonus" />
+          <ScalarProperty Name="fld_CreatedBy" ColumnName="fld_CreatedBy" />
+          <ScalarProperty Name="fld_CreatedDT" ColumnName="fld_CreatedDT" />
+          <ScalarProperty Name="fld_HrgaKwsnSkar" ColumnName="fld_HrgaKwsnSkar" />
+          <ScalarProperty Name="fld_OverallAmount" ColumnName="fld_OverallAmount" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_Payslip" FunctionName="OPMSESTFELKUANTANModel.Store.sp_Payslip">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_Payslip_Result">
+          <ScalarProperty Name="fldID" ColumnName="fldID" />
+          <ScalarProperty Name="fldNopkj" ColumnName="fldNopkj" />
+          <ScalarProperty Name="fldKodPkt" ColumnName="fldKodPkt" />
+          <ScalarProperty Name="fldKod" ColumnName="fldKod" />
+          <ScalarProperty Name="fldKeterangan" ColumnName="fldKeterangan" />
+          <ScalarProperty Name="fldKuantiti" ColumnName="fldKuantiti" />
+          <ScalarProperty Name="fldUnit" ColumnName="fldUnit" />
+          <ScalarProperty Name="fldKadar" ColumnName="fldKadar" />
+          <ScalarProperty Name="fldGandaan" ColumnName="fldGandaan" />
+          <ScalarProperty Name="fldJumlah" ColumnName="fldJumlah" />
+          <ScalarProperty Name="fldBulan" ColumnName="fldBulan" />
+          <ScalarProperty Name="fldTahun" ColumnName="fldTahun" />
+          <ScalarProperty Name="fldNegaraID" ColumnName="fldNegaraID" />
+          <ScalarProperty Name="fldSyarikatID" ColumnName="fldSyarikatID" />
+          <ScalarProperty Name="fldWilayahID" ColumnName="fldWilayahID" />
+          <ScalarProperty Name="fldLadangID" ColumnName="fldLadangID" />
+          <ScalarProperty Name="fldFlag" ColumnName="fldFlag" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_RptBulPenPekLad" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptBulPenPekLad" />
+    <FunctionImportMapping FunctionImportName="sp_RptGajiMinima" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptGajiMinima" />
+    <FunctionImportMapping FunctionImportName="sp_RptMakPekTem" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptMakPekTem" />
+    <FunctionImportMapping FunctionImportName="sp_RptMasterDataPkj" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptMasterDataPkj" />
+    <FunctionImportMapping FunctionImportName="sp_RptPaymentMode" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptPaymentMode" />
+    <FunctionImportMapping FunctionImportName="sp_RptProduktiviti" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptProduktiviti">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_RptProduktiviti_Result">
+          <ScalarProperty Name="fldID" ColumnName="fldID" />
+          <ScalarProperty Name="fld_Nopkj" ColumnName="fld_Nopkj" />
+          <ScalarProperty Name="fld_Nama" ColumnName="fld_Nama" />
+          <ScalarProperty Name="fld_TargetHarian" ColumnName="fld_TargetHarian" />
+          <ScalarProperty Name="fld_UnitTargetHarian" ColumnName="fld_UnitTargetHarian" />
+          <ScalarProperty Name="fld_HariBekerjaSebenar" ColumnName="fld_HariBekerjaSebenar" />
+          <ScalarProperty Name="fld_Hasil" ColumnName="fld_Hasil" />
+          <ScalarProperty Name="fld_Unit" ColumnName="fld_Unit" />
+          <ScalarProperty Name="fld_KodPkt" ColumnName="fld_KodPkt" />
+          <ScalarProperty Name="fld_AmaunBayar" ColumnName="fld_AmaunBayar" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_RptPurataGajiBulanan" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptPurataGajiBulanan">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_RptPurataGajiBulanan_Result">
+          <ScalarProperty Name="fld_ID" ColumnName="fld_ID" />
+          <ScalarProperty Name="fld_Nopkj" ColumnName="fld_Nopkj" />
+          <ScalarProperty Name="fld_Nama" ColumnName="fld_Nama" />
+          <ScalarProperty Name="fld_Year" ColumnName="fld_Year" />
+          <ScalarProperty Name="fld_Month" ColumnName="fld_Month" />
+          <ScalarProperty Name="fld_GajiBersih" ColumnName="fld_GajiBersih" />
+          <ScalarProperty Name="fld_HdrCapai" ColumnName="fld_HdrCapai" />
+          <ScalarProperty Name="fld_PurataGaji" ColumnName="fld_PurataGaji" />
+          <ScalarProperty Name="fld_CutiTahunan" ColumnName="fld_CutiTahunan" />
+          <ScalarProperty Name="fld_GroupID" ColumnName="fld_GroupID" />
+          <ScalarProperty Name="fld_TotalAbsent" ColumnName="fld_TotalAbsent" />
+          <ScalarProperty Name="fld_HariTawaranKerja" ColumnName="fld_HariTawaranKerja" />
+          <ScalarProperty Name="fld_PurataGaji12bln" ColumnName="fld_PurataGaji12bln" />
+          <ScalarProperty Name="fld_CutiDiambil" ColumnName="fld_CutiDiambil" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_RptRumKedKepPekLad" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptRumKedKepPekLad" />
+    <FunctionImportMapping FunctionImportName="sp_RptSkb" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptSkb">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_RptSkb_Result">
+          <ScalarProperty Name="fld_ID" ColumnName="fld_ID" />
+          <ScalarProperty Name="fld_Bulan" ColumnName="fld_Bulan" />
+          <ScalarProperty Name="fld_Tahun" ColumnName="fld_Tahun" />
+          <ScalarProperty Name="fld_NoSkb" ColumnName="fld_NoSkb" />
+          <ScalarProperty Name="fld_Amount" ColumnName="fld_Amount" />
+          <ScalarProperty Name="fld_ApplyBy" ColumnName="fld_ApplyBy" />
+          <ScalarProperty Name="fld_ApplyDate" ColumnName="fld_ApplyDate" />
+          <ScalarProperty Name="fld_SemakWil_By" ColumnName="fld_SemakWil_By" />
+          <ScalarProperty Name="fld_SemakWil_DT" ColumnName="fld_SemakWil_DT" />
+          <ScalarProperty Name="fld_SokongWilGM_By" ColumnName="fld_SokongWilGM_By" />
+          <ScalarProperty Name="fld_SokongWilGM_DT" ColumnName="fld_SokongWilGM_DT" />
+          <ScalarProperty Name="fld_TerimaHQ_By" ColumnName="fld_TerimaHQ_By" />
+          <ScalarProperty Name="fld_TerimaHQ_DT" ColumnName="fld_TerimaHQ_DT" />
+          <ScalarProperty Name="fld_LdgCode" ColumnName="fld_LdgCode" />
+          <ScalarProperty Name="fld_LdgName" ColumnName="fld_LdgName" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_RptTransPek" FunctionName="OPMSESTFELKUANTANModel.Store.sp_RptTransPek" />
+    <FunctionImportMapping FunctionImportName="sp_YieldBracketTable" FunctionName="OPMSESTFELKUANTANModel.Store.sp_YieldBracketTable">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_YieldBracketTable_Result">
+          <ScalarProperty Name="fldID" ColumnName="fldID" />
+          <ScalarProperty Name="fldKod" ColumnName="fldKod" />
+          <ScalarProperty Name="fldHasilTan" ColumnName="fldHasilTan" />
+          <ScalarProperty Name="fldLuasHektar" ColumnName="fldLuasHektar" />
+          <ScalarProperty Name="fldBulan" ColumnName="fldBulan" />
+          <ScalarProperty Name="fldTahun" ColumnName="fldTahun" />
+          <ScalarProperty Name="fldNegaraID" ColumnName="fldNegaraID" />
+          <ScalarProperty Name="fldSyarikatID" ColumnName="fldSyarikatID" />
+          <ScalarProperty Name="fldWilayahID" ColumnName="fldWilayahID" />
+          <ScalarProperty Name="fldLadangID" ColumnName="fldLadangID" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="sp_YieldBracketTableSum" FunctionName="OPMSESTFELKUANTANModel.Store.sp_YieldBracketTableSum" />
+    <FunctionImportMapping FunctionImportName="spTest" FunctionName="OPMSESTFELKUANTANModel.Store.spTest" />
+    <FunctionImportMapping FunctionImportName="sp_DashTransactionListing" FunctionName="OPMSESTFELKUANTANModel.Store.sp_DashTransactionListing">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_DashTransactionListing_Result">
+          <ScalarProperty Name="fld_KdCaj" ColumnName="fld_KdCaj" />
+          <ScalarProperty Name="fld_AmtFELDA" ColumnName="fld_AmtFELDA" />
+          <ScalarProperty Name="fld_AmtFPM" ColumnName="fld_AmtFPM" />
+          <ScalarProperty Name="fld_Year" ColumnName="fld_Year" />
+          <ScalarProperty Name="fld_Month" ColumnName="fld_Month" />
+          <ScalarProperty Name="fld_NegaraID" ColumnName="fld_NegaraID" />
+          <ScalarProperty Name="fld_SyarikatID" ColumnName="fld_SyarikatID" />
+          <ScalarProperty Name="fld_Month2" ColumnName="fld_Month2" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+  </EntityContainerMapping>
+</Mapping>

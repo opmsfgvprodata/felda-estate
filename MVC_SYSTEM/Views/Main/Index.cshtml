@@ -1,0 +1,807 @@
+﻿@*aini modified 28042023*@
+@model IEnumerable<MVC_SYSTEM.Models.sp_DashAllKerakyatan_Result>
+@using MVC_SYSTEM.Class
+@{
+    ViewBag.Title = "Main";
+    //aini update layout
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    GetIdentity getidentity = new GetIdentity();
+    GetConfig getconfig = new GetConfig();
+    int getuserid = getidentity.ID(User.Identity.Name);
+    int? roleid = getidentity.getRoleID(getuserid);
+}
+<link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
+<section class="content-wrapper main-content clear-fix">
+    <div class="well">
+        <div class="container" style="max-width: 100%;">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Maklumat Pengguna</div>
+
+                                <div class="panel-body">
+                                    <table border="0" width="100%">
+                                        <tr>
+                                            <td style="font-size: 14px;">1.</td>
+                                            <td style="font-size: 14px;">Name</td>
+                                            <td style="font-size: 14px;">: @getidentity.MyNameFullName(getuserid)</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size: 14px;">2.</td>
+                                            <td style="font-size: 14px;">Email</td>
+                                            <td style="font-size: 14px;">: @getidentity.Email(getuserid)</td>
+                                        </tr>
+                                        @*<tr>
+            <td style="font-size: 14px;">3.</td>
+            <td style="font-size: 14px;">Role</td>
+            <td style="font-size: 14px;">: @getidentity.Roles(roleid)</td>
+        </tr>*@
+                                        <tr>
+                                            @*aini add position 18072023*@
+                                            <td style="font-size: 14px;">3.</td>
+                                            <td style="font-size: 14px;">Position</td>
+                                            <td style="font-size: 14px;">: @ViewBag.Position</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size: 14px;">4.</td>
+                                            <td style="font-size: 14px;">Last Access</td>
+                                            <td style="font-size: 14px;">: @getidentity.LastAccess(getuserid)</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    <br />
+                                    @*Aini update info helpdesk 15062023*@
+                                <center>
+                                    <b>
+                                        <u>HELPDESK</u><br />
+                                        03-27891388<br />
+                                    </b>
+                                    groupopms@fgvholdings.com<br />
+                                    8:30AM - 5:30PM (Monday - Friday)
+                                    <br />
+                                </center>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Jumlah Pekerja Mengikut Kerakyatan</div>
+
+                                <div class="panel-body">
+                                    <table border="0" width="100%">
+                                        <tr>
+                                            @if (Model.Count() != 0)
+                                            {
+                                                foreach (var item in Model)
+                                                {
+                                                    <td width="10%">
+                                                        <h3 class="no-margins">@item.fld_Jumlah</h3>
+                                                        <div class="font-bold text-navy"><small>@item.fld_Kerakyatan</small></div>
+                                                    </td>
+                                                }
+                                            }
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-primary" style="height: 327px;">
+                        <div class="panel-heading">
+                            <table border="0" width="100%">
+                                <tr>
+                                    <td style="font-size: 14px;">Mesej</td>
+                                    <td style="text-align: right; font-size: 16px;font-weight:bold;">CLOSING PERIOD : @ViewBag.month/@ViewBag.year</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="panel-body">
+                            @Html.Action("_ShowBroadcast", "Messaging")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="max-width: 100%;">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Jumlah Pekerja Mengikut Kerakyatan</div>
+
+                        <div class="panel-body">
+                            <br />
+                            <div id="chartkerakyatan"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Tamat Tempoh Permit</div>
+
+                        <div class="panel-body">
+                            <div id="permitchart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Status Akaun @ViewBag.month/@ViewBag.year</div>
+
+                        <div class="panel-body">
+                            <div id='akaun'></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                @*aini add new trans 05072023*@
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Transaction Listing @ViewBag.year</div>
+
+                        <div class="panel-body">
+                            <div id='trans'></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Kalendar</div>
+
+                        <div class="panel-body">
+                            <div id='calendar'></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<div id='myModal' class='modal fade in'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent' data-refresh="true"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal fade " id="modalTable" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="width:80%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="modalSubview"></div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="modalwindow" width="100%"></table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal inmodal fade " id="modalTable2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="width:80%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title2"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="modalSubview"></div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="modalwindow2" width="100%"></table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!getidentity.NegaraSumber(User.Identity.Name))
+{
+    //aini add 24042023
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    @*<script type="text/javascript">
+            $(window).on("load", function () {
+                window.open("@Url.Action("Index", "PopupRemainder", null, "http")", null, "height=600,width=800,status=yes,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=no");
+            });
+        </script>*@
+<script type="text/javascript">
+
+        //aini add function 01062023
+        $(document).ready(function () {
+            $('.dropdown-toggle').dropdown();
+        });
+
+        //aini add function destroy datatable 25042023
+        function destroyDataTable() {
+            if ($.fn.DataTable.isDataTable("#modalwindow")) {
+                $('#modalwindow').DataTable().destroy();
+            }
+
+            //aini add destroy datatable 2
+            if ($.fn.DataTable.isDataTable("#modalwindow2")) {
+                $('#modalwindow2').DataTable().destroy();
+            }
+        }
+
+        //aini add calendar 24042023
+         var calendar = function () {
+             data1 = [];
+             data2 = [];
+             data3 = [];
+             dataset = [];
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Calendar", "Main")',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (cuti2) {
+
+                    $.each(cuti2, function (index, obj) {
+                        data1.push(obj.fld_KeteranganCuti);
+                        var date = moment(obj.fld_TarikhCuti).format("YYYY-MM-DD");
+                        data2.push(date);
+                        data3.push({title:  obj.fld_KeteranganCuti, allDay: true, start: date });
+
+                    });
+
+                    var calendarEl = document.getElementById('calendar');
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                        timeZone: 'UTC',
+                        initialView: 'dayGridMonth',
+
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+
+                        views: {
+                            timeGridDay: { buttonText: 'hari' },
+                            timeGridWeek: { buttonText: 'minggu' },
+                            dayGridMonth: { buttonText: 'bulan' }
+                        },
+                        events: data3,
+                        eventColor: '#4187E1'
+                    });
+
+                    calendar.render();
+                },
+            });
+
+        };
+        calendar();
+
+        //chart permit
+        var permitchart = function () {
+            dataLabel = [];
+            total3month = [];
+            total2month = [];
+            total1month = [];
+            total0month = [];
+            totalmonth = [];
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DashPermitExpiry", "Dashboard")',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (dashpermitresult) {
+                    $.each(dashpermitresult, function (index, obj) {
+                        dataLabel.push(obj.fld_LdgName);
+                    });
+
+                    $.each(dashpermitresult, function (index, obj) {
+                        total3month.push(obj.total3month);
+                        total2month.push(obj.total2month);
+                        total1month.push(obj.total1month);
+                        total0month.push(obj.totalmonth);
+                        totalmonth.push(obj.totalexpired);
+                    });
+
+                    //console.log(dataSeries);
+
+                    var options = {
+                        series: [{
+                            name: '3 Bulan',
+                            data: total3month
+                        }, {
+                            name: '2 Bulan',
+                            data: total2month
+                        }, {
+                            name: '1 Bulan',
+                            data: total1month
+                        }, {
+                            name: 'Semasa',
+                            data: total0month
+                        }, {
+                            name: 'Telah Tamat Tempoh',
+                            data: totalmonth
+                        }
+                        ],
+                        chart: {
+                            type: 'bar',
+                            height: 268,
+                            //stacked: true, aini hide 20062023
+                            events: {
+                                click(event, chartContext, config) {
+                                    datatablePermit(
+                                        'Tempoh Tamat Permit: ' + config.config.series[config.seriesIndex].name, config.config.series[config.seriesIndex].name
+                                    );
+                                }
+                            }
+                        },
+                        plotOptions: {
+                            bar: {
+                                horizontal: false,
+                                columnWidth: '55%',
+                                endingShape: 'rounded'
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        stroke: {
+                            show: true,
+                            colors: ['transparent']
+                        },
+                        xaxis: {
+                            categories: dataLabel
+
+                        },
+                        fill: {
+                            opacity: 1
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) {
+                                    return val
+                                }
+                            }
+                        }
+                    };
+
+                    var chart = new ApexCharts(document.querySelector("#permitchart"), options);
+                    chart.render();
+                },
+            });
+
+        };
+        permitchart();
+
+        var barchartaccount = function () {
+            dataLabelLadang = [];
+            dataSeriesProgress = [];
+            dataStatus = [];
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DashStatusAkaun", "Dashboard")',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (dashStatusAkaun) {
+                    $.each(dashStatusAkaun, function (index, obj) {
+                        dataLabelLadang.push(obj.fld_LdgName);
+                    });
+                    $.each(dashStatusAkaun, function (index, obj) {
+                        dataSeriesProgress.push(obj.progress);
+                    });
+                    $.each(dashStatusAkaun, function (index, obj) {
+                        dataStatus.push(obj.statuspostSAP);
+                    });
+                    var options = {
+                        series: dataSeriesProgress,
+                        chart: {
+                            type: 'radialBar',
+                            height: 300,
+                            events: {
+                                dataPointSelection: (event, chartContext, config) => {
+                                    datatableakaun('STATUS AKAUN WILAYAH ' + config.w.config.labels[config.dataPointIndex]);
+                                }
+                            }
+                        },
+                        plotOptions: {
+                            radialBar: {
+                                dataLabels: {
+                                    total: {
+                                        show: true,
+                                        label: 'TOTAL'
+                                    }
+                                }
+                            }
+                        },
+                        labels: dataLabelLadang
+                    };
+
+                    var chart = new ApexCharts(document.querySelector("#akaun"), options);
+                    chart.render();
+                },
+            });
+
+        };
+        barchartaccount();
+
+        function datatablePermit(title, permit) {
+            destroyDataTable();
+            $('.modal-title').html(title);
+            $.ajax({
+                url: 'Dashboard/DatatablePermit?permit=' + permit,
+                method: 'post',
+                dataType: 'json',
+                success: function (datatablepermit) {
+
+                    console.log(datatablepermit);
+
+                    $("#modalwindow").DataTable({
+                        data: datatablepermit,
+                        columns: [
+                            { "data": 'fld_Nopkj', title: 'No' },
+                            { "data": 'fld_Nopkj', title: 'No Pekerja' },
+                            { "data": 'fld_Nokp', title: 'No Kad Pengenalan' },
+                            { "data": 'fld_Nama', title: 'Nama' },
+                            { "data": 'fld_Krkytn', title: 'Kerakyatan' },
+                            { "data": 'fld_LdgName', title: 'Ladang' },
+                            { "data": 'fld_T1prmt', title: 'Tarikh Mula Permit' },
+                            { "data": 'fld_T2prmt', title: 'Tarikh Tamat Permit' }
+                            // { "data": 'fld_DateApply', title: 'Apply Date' }
+                        ],
+                        columnDefs: [
+                            {
+                                targets: 0,
+                                render: function (data, type, row, meta) {
+                                    return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+
+            $('#modalTable').modal('show');
+        };
+
+        var kerakyatanchart = function () {
+            dataLabelk = [];
+            dataSeriesk = [];
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ChartKerakyatan", "Dashboard")',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (dashkerakyatan) {
+                    $.each(dashkerakyatan, function (index, obj) {
+                        dataLabelk.push(obj.fld_Kerakyatan);
+                    });
+
+                    $.each(dashkerakyatan, function (index, obj) {
+                        dataSeriesk.push(obj.fld_Jumlah);
+                    });
+
+
+                    var options = {
+                        series: dataSeriesk, //count kerakyatan
+                        labels: dataLabelk, //kerakyatan
+                        colors: ["#EC7063", "#A569BD", "#3498DB", "#1ABC9C", "#2ECC71", "#F4D03F", "#F39C12", "#D35400", "#95A5A6", "#2C3E50"],
+                        chart: {
+                            type: 'donut',
+                            height: 261,
+                            events: {
+                                dataPointSelection: (event, chartContext, config) => {
+                                    datatableKerakyatan('Pekerja mengikut kerakyatan ' + config.w.config.labels[config.dataPointIndex], config.w.config.labels[config.dataPointIndex]);
+                                }
+                            }
+                        },
+                        responsive: [{
+                            breakpoint: 480,
+                            options: {
+                                chart: {
+                                    width: 200
+                                },
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }],
+                        plotOptions: {
+                            pie: {
+                                donut: {
+                                    labels: {
+                                        show: true,
+                                        name: {
+                                            show: true,
+                                            fontSize: '22px',
+                                            fontFamily: 'Rubik',
+                                            color: '#dfsda',
+                                            offsetY: -10
+                                        },
+                                        value: {
+                                            show: true,
+                                            fontSize: '30px',
+                                            fontFamily: 'Helvetica, Arial, sans-serif',
+                                            color: undefined,
+                                            offsetY: 16,
+                                            formatter: function (val) {
+                                                return val
+                                            }
+                                        },
+                                        total: {
+                                            show: true,
+                                            label: 'Total',
+                                            color: '#373d3f',
+                                            formatter: function (w) {
+                                                return w.globals.seriesTotals.reduce((a, b) => {
+                                                    return a + b
+                                                }, 0)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    };
+
+                    var chart = new ApexCharts(document.querySelector("#chartkerakyatan"), options);
+                    chart.render();
+                },
+            });
+
+        };
+        kerakyatanchart();
+
+        function datatableKerakyatan(title, krytn) {
+            destroyDataTable();
+            $('.modal-title').html(title);
+            $.ajax({
+                url: 'Dashboard/DatatableKerakyatan?krytn=' + krytn,
+                method: 'post',
+                dataType: 'json',
+                success: function (kerakyatan) {
+
+                    $("#modalwindow").DataTable({
+                        data: kerakyatan,
+                        columns: [
+                            { "data": 'fld_Nopkj', title: 'No' },
+                            { "data": 'fld_Nopkj', title: 'No Pekerja' },
+                            { "data": 'fld_Nokp', title: 'No Kad Pengenalan' },
+                            { "data": 'fld_Nama', title: 'Nama' },
+                            { "data": 'fld_WlyhName', title: 'Wilayah' },
+                            { "data": 'fld_Krkytn', title: 'Kerakyatan' },
+                            { "data": 'fld_LdgName', title: 'Ladang' },
+                            { "data": 'fld_LdgName', title: 'Ladang' }
+                            // { "data": 'fld_DateApply', title: 'Apply Date' }
+                        ],
+                        columnDefs: [
+                            {
+                                targets: 0,
+                                render: function (data, type, row, meta) {
+                                    return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+
+            $('#modalTable').modal('show');
+        };
+
+        function datatableakaun(title) {
+            destroyDataTable();
+            $('.modal-title2').html(title);
+            $.ajax({
+                url: '@Url.Action("DashStatusAkaun", "Dashboard")',
+                method: 'post',
+                dataType: 'json',
+                success: function (DashStatusAkaun) {
+
+                    $("#modalwindow2").DataTable({
+                        data: DashStatusAkaun,
+                        columns: [
+                            { "data": 'fld_LdgName', title: 'No' },
+                            { "data": 'fld_LdgName', title: 'Ladang' },
+                            { "data": 'TutupUrusNiaga', title: 'Tutup Urusniaga' },
+                            { "data": 'Verify', title: 'Verify' },
+                            { "data": 'KelulusanPengurus', title: 'Kelulusan Pengurus' },
+                            { "data": 'KelulusanPegKewangan', title: 'Kelulusan Peg. Kewangan' },
+                            { "data": 'KelulusanPegWilayahFelda', title: 'Kelulusan Peg. Wilayah FELDA' },
+                            { "data": 'GLToGL', title: 'Post to SAP GL to GL' },
+                            { "data": 'GLToVendor', title: 'Post to SAP GL to Vendor' }
+                        ],
+                        columnDefs: [
+                            {
+                                targets: 0,
+                                render: function (data, type, row, meta) {
+                                    return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            },//aini updated add icon pending 20062023
+                            {
+                                targets: 2,
+                                render: function (data, type, row, meta) {
+                                    if (row['TutupUrusNiaga'] == 1)
+                                        return '<td align="center"><center><div class="okstatus"></div></center></td>';
+                                    else if (row['TutupUrusNiaga'] == 2) {
+                                        return '<td align="center"><center><div class="pendingstatus"></div></center></td>';
+                                    }
+                                    else {
+                                        return '<td align="center"><center><div class="kostatus"></div></center></td>';
+                                    }
+                                }
+                            },
+                            {
+                                targets: 3,
+                                render: function (data, type, row, meta) {
+                                    if (row['Verify'] == 1)
+                                        return '<td align="center"><center><div class="okstatus"></div></center></td>';
+                                    else if (row['Verify'] == 2) {
+                                        return '<td align="center"><center><div class="pendingstatus"></div></center></td>';
+                                    }
+                                    else {
+                                        return '<td align="center"><center><div class="kostatus"></div></center></td>';
+                                    }
+                                }
+                            },
+                            {
+                                targets: 4,
+                                render: function (data, type, row, meta) {
+                                    if (row['KelulusanPengurus'] == 1)
+                                        return '<td align="center"><center><div class="okstatus"></div></center></td>';
+                                    else if (row['KelulusanPengurus'] == 2) {
+                                        return '<td align="center"><center><div class="pendingstatus"></div></center></td>';
+                                    }
+                                    else {
+                                        return '<td align="center"><center><div class="kostatus"></div></center></td>';
+                                    }
+                                }
+                            },
+                            {
+                                targets: 5,
+                                render: function (data, type, row, meta) {
+                                    if (row['KelulusanPegKewangan'] == 1)
+                                        return '<td align="center"><center><div class="okstatus"></div></center></td>';
+                                    else if (row['KelulusanPegKewangan'] == 2) {
+                                        return '<td align="center"><center><div class="pendingstatus"></div></center></td>';
+                                    }
+                                    else {
+                                        return '<td align="center"><center><div class="kostatus"></div></center></td>';
+                                    }
+                                }
+                            },
+                            {
+                                targets: 6,
+                                render: function (data, type, row, meta) {
+                                    if (row['KelulusanPegWilayahFelda'] == 1)
+                                        return '<td align="center"><center><div class="okstatus"></div></center></td>';
+                                    else if (row['KelulusanPegWilayahFelda'] == 2) {
+                                        return '<td align="center"><center><div class="pendingstatus"></div></center></td>';
+                                    }
+                                    else {
+                                        return '<td align="center"><center><div class="kostatus"></div></center></td>';
+                                    }
+                                }
+                            },
+                            {
+                                targets: 7,
+                                render: function (data, type, row, meta) {
+                                    if (row['GLToGL'] == 1)
+                                        return '<td align="center"><center><div class="okstatus"></div></center></td>';
+                                    else if (row['GLToGL'] == 2) {
+                                        return '<td align="center"><center><div class="pendingstatus"></div></center></td>';
+                                    }
+                                    else {
+                                        return '<td align="center"><center><div class="kostatus"></div></center></td>';
+                                    }
+                                }
+                            },
+                            {
+                                targets: 8,
+                                render: function (data, type, row, meta) {
+                                    if (row['GLToVendor'] == 1)
+                                        return '<td align="center"><center><div class="okstatus"></div></center></td>';
+                                    else if (row['GLToVendor'] == 2) {
+                                        return '<td align="center"><center><div class="pendingstatus"></div></center></td>';
+                                    }
+                                    else {
+                                        return '<td align="center"><center><div class="kostatus"></div></center></td>';
+                                    }
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+
+            $('#modalTable2').modal('show');
+    };
+
+        //aini add new function transaction listing 05072023
+        var charttrans = function () {
+            dataMonth = [];
+            dataAmountFELDA = [];
+            dataAmountFPM = [];
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DashTrans", "Dashboard")',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (dashTrans) {
+                    $.each(dashTrans, function (index, obj) {
+                        dataMonth.push(obj.fld_Month);
+                        //dataAmount.push(obj.fld_Amt.toLocaleString("en-US"));
+                        dataAmountFELDA.push(obj.fld_AmtFELDA);
+                        dataAmountFPM.push(obj.fld_AmtFPM);
+                    });
+                    //console.log(dataMonth);
+
+                    var options = {
+                        series: [{
+                            name: "Amount FELDA (RM)",
+                            data: dataAmountFELDA
+                        },
+                        {
+                            name: "Amount FPM (RM)",
+                            data: dataAmountFPM
+                        }],
+                        chart: {
+                            height: 350,
+                            type: 'line',
+                            zoom: {
+                                enabled: false
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        stroke: {
+                            curve: 'straight'
+                        },
+                        grid: {
+                            row: {
+                                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                                opacity: 0.5
+                            },
+                        },
+                        colors: ['#FF6F16', '#35C332'],
+                        xaxis: {
+                            categories: dataMonth,
+                        }
+                    };
+
+                    var chart = new ApexCharts(document.querySelector("#trans"), options);
+                    chart.render();
+                },
+            });
+
+        };
+        charttrans();
+
+</script>
+}
+

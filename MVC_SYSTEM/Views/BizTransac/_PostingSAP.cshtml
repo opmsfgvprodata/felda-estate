@@ -1,0 +1,1010 @@
+﻿@model IEnumerable<MVC_SYSTEM.Models.vw_SAPPostData>
+
+
+@using System.Linq.Dynamic
+@using Microsoft.Ajax.Utilities
+@using MVC_SYSTEM.Class
+
+@{
+    GetConfig GetConfig = new GetConfig();
+    GetTriager GetTriager = new GetTriager(); //added by kamalia 24/12/21
+    GlobalFunction GlobalFunction = new GlobalFunction();
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "unitMaintenanceDetails",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+    bool? closing = ViewBag.ClosingStatus;
+    string ClosingStatus = "False";
+    if (closing != null)
+    {
+        if (closing == true)
+        {
+            ClosingStatus = "True";
+        }
+        else
+        {
+            ClosingStatus = "False";
+        }
+    }
+    else
+    {
+        ClosingStatus = "False";
+    }
+
+    //farahin - 30/12/2021
+    bool? statusProceedA2 = ViewBag.statusProceedA2;
+    string statusA2 = "False";
+    if (statusProceedA2 != null)
+    {
+        if (statusProceedA2 == true)
+        {
+            statusA2 = "True";
+        }
+        else
+        {
+            statusA2 = "False";
+        }
+    }
+    else
+    {
+        statusA2 = "False";
+    }
+
+    bool? statusProceedKR = ViewBag.statusProceedKR;
+    string statusKR = "False";
+    if (statusProceedKR != null)
+    {
+        if (statusProceedKR == true)
+        {
+            statusKR = "True";
+        }
+        else
+        {
+            statusKR = "False";
+        }
+    }
+    else
+    {
+        statusKR = "False";
+    }
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">SAP File Posting Information</div>
+    <div class="panel-body">
+        @if (Model.Any())
+        {
+            var dataCount = 0;
+            int flag = 1;
+            var EstateDetail = Model.Take(1).FirstOrDefault();
+            //int NegaraID = EstateDetail.fld_NegaraID;
+            //int SyarikatID = EstateDetail.fld_SyarikatID;
+            //int WilayahID = EstateDetail.fld_WilayahID;
+            //int LadangID = EstateDetail.fld_LadangID;
+            //var GetPDSAPData = GlobalFunction.GetSAPPDData(Model);
+
+            foreach (var postItem in Model.DistinctBy(s => s.fld_Year).DistinctBy(s => s.fld_Month))
+            {
+                <div class="modal-body">
+                    <div class="panel with-nav-tabs panel-info">
+                        <div class="panel-heading">
+                            <ul class="nav nav-tabs">
+                                <li class="active" id="li1" onclick="getheading(this.id)"><a href="#tab1primary" data-toggle="tab">GL To GL</a></li>
+                                <li class="" id="li2" onclick="getheading(this.id)"><a href="#tab2primary" data-toggle="tab">GL To Vendor</a></li>
+                                <li class="" id="li4" onclick="getheading(this.id)"><a href="#tab4primary" data-toggle="tab">GL To Customer</a></li>
+                            </ul>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" id="tab1primary">
+                                    <div class="form-horizontal">
+                                        @if (Model.Any(x => x.fld_DocType == "A2"))
+                                        {
+                                            dataCount++;
+                                            foreach (var GLtoGL in Model.DistinctBy(s => s.fld_SAPPostRefID).Where(x => x.fld_DocType == "A2"))
+                                            {
+                                                var postRefGuid = Model.Where(x => x.fld_DocType == "A2").Select(s => s.fld_SAPPostRefID).Distinct().FirstOrDefault();
+                                                @Html.HiddenFor(model => GLtoGL.fld_SAPPostRefID, htmlAttributes: new { @class = "idSA" })
+                                                //farahin tambah 25/02/2022
+                                                @Html.HiddenFor(model => GLtoGL.fld_LdgCode, htmlAttributes: new { @class = "ldgCode" })
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Checkrol Ref No:</label>
+                                                    <div class="col-sm-2">
+                                                        @Html.TextBoxFor(model => GLtoGL.fld_RefNo, htmlAttributes: new { @class = "form-control col-sm-2 refNoSA", @disabled = "True" })
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <button type="button" class="btn btn-success generateGLRefNo">Generate</button>
+                                                    </div>
+                                                    <label class="control-label col-sm-2">Sap Document No:</label>
+                                                    <div class="col-sm-2">
+                                                        @Html.TextBoxFor(model => GLtoGL.fld_NoDocSAP, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sapReturnModal1">Status</button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Date Generated:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLtoGL.fld_DocDate, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Header Text:</label>
+                                                    <div class="col-sm-9">
+                                                        @Html.TextBoxFor(model => GLtoGL.fld_HeaderText, htmlAttributes: new { @class = "form-control col-sm-2 hdrTxtSA", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <label class="control-label col-sm-2">Document Type:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLtoGL.fld_DocType, htmlAttributes: new { @class = "form-control col-sm-2 docTypeSA", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Posting Month:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLtoGL.fld_Month, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                    <label class="control-label col-sm-3">Posting Year:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLtoGL.fld_Year, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Posting Date:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLtoGL.fld_PostingDate, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div id="sapReturnModal1" class="modal fade sapReturnModal" role="dialog">
+                                                    <div class="modal-dialog">
+                                                        <!-- Modal content-->
+                                                        <div class="modal-content">
+                                                            @Html.Action("_SAPReturnMsg", "BizTransac", new { postRefID = postRefGuid })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Item No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">GL</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">IO</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Activity Code</th>
+                                                        @*<th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">WBS Cost Center</th>*@
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Description</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Amount</th>
+                                                        @*Added by Shazana 23/6/2023*@
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var GLtoGLDetails in Model.Where(x => x.fld_DocType == "A2").OrderBy(o => o.fld_ItemNo).Distinct())
+                                                    {
+
+                                                        <tr>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_ItemNo</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_GL</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_IO</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_SAPActivityCode</td>
+                                                            @*<td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1"></td>*@
+                                                            <td align="left" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_Desc</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black; text-align: right !important;" border="1">@GetTriager.GetTotalForMoney(GLtoGLDetails.fld_Amount)</td> @*modified by kamalia 24/12/2021 betulkan format duit*@
+                                                            @*Added by Shazana 23/6/2023*@
+                                                            @if (ViewBag.RoleUser == 1 || ViewBag.RoleUser == 2 || ViewBag.RoleUser == 3 || ViewBag.RoleUser == 4 || ViewBag.RoleUser == 10)
+                                                            {
+                                                                <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoGLDetails.fld_ItemNo, SAPPostRefID = GLtoGLDetails.fld_PostRefID })' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center">
+                                                @Html.Label(GlobalResEstate.msgErrorSearch)
+                                            </div>
+                                            <hr />}
+
+                                    </div>
+
+                                    @*Modified by Shazana 25/2/2023*@
+                                    @*Commented by Shazana 20/2/2023*@
+                                    <div style="text-align:right; margin-top:10px">
+                                        <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+                                            @*Modified by Shazana 5/7/2023*@
+                                            <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> Muat Turun PDF
+                                        </a>
+                                        @*Added by Shazana 5/7/2023*@
+                                        <button class="btn btn-default btn-sm" type="button" onclick="location.href='@Url.Action("exportExcelGLtoGL", "BizTransac", new { MonthList = @ViewBag.Month, YearList = @ViewBag.Year })'">
+                                            <img alt="New" title="New" src="~/Asset/Images/excel-icon.png" width="20px" height="20px"> Muat Turun Excel
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab2primary">
+                                    <div class="form-horizontal">
+
+                                        @if (Model.Any(x => x.fld_DocType == "KR"))
+                                        {
+                                            dataCount++;
+                                            foreach (var GLToVendor in Model.DistinctBy(s => s.fld_SAPPostRefID).Where(x => x.fld_DocType == "KR"))
+                                            {
+                                                var postRefGuid = Model.Where(x => x.fld_DocType == "KR").Select(s => s.fld_SAPPostRefID).Distinct().FirstOrDefault();
+
+                                                @Html.HiddenFor(model => GLToVendor.fld_SAPPostRefID, htmlAttributes: new { @class = "idKR" })
+                                                //farahin tambah 25/02/2022
+                                                @Html.HiddenFor(model => GLToVendor.fld_LdgCode, htmlAttributes: new { @class = "ldgCode2" })
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Checkroll Group No:</label>
+                                                    <div class="col-sm-2">
+                                                        @Html.TextBoxFor(model => GLToVendor.fld_RefNo, htmlAttributes: new { @class = "form-control col-sm-2 refNoKR", @disabled = "True" })
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <button type="button" class="btn btn-success  generateVendorRefNo">Generate</button>
+                                                    </div>
+                                                    <label class="control-label col-sm-2">SAP Return Status:</label>
+                                                    <div class="col-sm-2">
+                                                        @*@Html.TextBoxFor(model => GLToVendor.fld_NoDocSAP, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })*@
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sapReturnModal2">Details</button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Date Generated:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToVendor.fld_DocDate, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Header Text:</label>
+                                                    <div class="col-sm-9">
+                                                        @Html.TextBoxFor(model => GLToVendor.fld_HeaderText, htmlAttributes: new { @class = "form-control col-sm-2 hdrTxtKR", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <label class="control-label col-sm-2">Document Type:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToVendor.fld_DocType, htmlAttributes: new { @class = "form-control col-sm-2 docTypeKR", @disabled = "True" })
+                                                    </div>
+                                                    @* farahin comment - 22022022 *@
+                                                    @*<label class="control-label col-sm-3">CustomerCPD:</label>*@
+                                                    <div class="col-sm-3">
+                                                        @*@Html.TextBoxFor(model => GLToVendor.fld_CustCPD, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })*@
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Posting Month:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToVendor.fld_Month, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                    <label class="control-label col-sm-3">Posting Year:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToVendor.fld_Year, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Posting Date:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToVendor.fld_PostingDate, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div id="sapReturnModal2" class="modal fade sapReturnModal" role="dialog">
+                                                    <div class="modal-dialog">
+                                                        <!-- Modal content-->
+                                                        <div class="modal-content">
+                                                            @Html.Action("_SAPReturnMsg", "BizTransac", new { postRefID = postRefGuid })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            foreach (var krFlag in Model.DistinctBy(s => s.fld_flag).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag))
+                                            {
+                                                var DocNo = Model.DistinctBy(s => s.fld_DocNoSAP).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag).Select(s => s.fld_DocNoSAP).FirstOrDefault();
+                                                int bill = 0;
+
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="control-label" colspan="2" bgcolor="#ffcc80" style="color: black; text-align: left; vertical-align: middle !important; border: 1px solid black;" border="1">
+                                                                Reference No: @krFlag.fld_RefNo-@flag
+                                                            </th>
+                                                            @*Modified by Shazana 23/6/2023 modify colspan*@
+                                                            <th class="control-label" colspan="4" bgcolor="#ffcc80" style="color: black; text-align: left; vertical-align: middle !important; border: 1px solid black;" border="1">
+                                                                SAP Document No: @krFlag.fld_DocNoSAP
+                                                            </th>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Item No</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">GL</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Vendor No</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Description</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Amount</th>
+                                                            @*Added by Shazana 23/6/2023*@
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var GLtoVendorDetails in Model.Where(x => x.fld_DocType == "KR" && x.fld_flag == flag).OrderBy(o => o.fld_ItemNo).Distinct())
+                                                        {
+                                                            bill = bill + 1;
+                                                            <tr>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@bill</td>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_GL</td>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_VendorCode</td>
+                                                                <td align="left" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_Desc</td>
+                                                                @*modified by kamalia 28/2/22*@
+                                                                <td align="center" style="vertical-align: middle !important; text-align: right !important; border: 1px solid black;" border="1">@GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount)</td>
+                                                                @*Added by Shazana 23/6/2023*@
+                                                                @if (ViewBag.RoleUser == 1 || ViewBag.RoleUser == 2 || ViewBag.RoleUser == 3 || ViewBag.RoleUser == 4 || ViewBag.RoleUser == 10)
+                                                                {
+                                                                    <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoVendorDetails.fld_ItemNo, SAPPostRefID= GLtoVendorDetails.fld_PostRefID })' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
+                                                                }
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                flag++;
+                                            }
+                                        }
+
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center">
+                                                @Html.Label(GlobalResEstate.msgErrorSearch)
+                                            </div>
+                                            <hr />}
+                                    </div>
+                                    @*Added by Shazana 25/2/2023*@
+                                    <div style="text-align:right; margin-top:10px">
+                                        <a class="btn btn-default btn-sm" href="#" id="downloadpdfGLtoVendor">
+                                            @*Modified by Shazana 5/7/2023*@
+                                            <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> Muat Turun PDF
+                                        </a>
+                                        @*Added by Shazana 19/6/2023*@
+                                        @*Commented by Shazana 5/7/2023*@
+                                        @*@Html.ActionLink("Excel", "exportExcelGLtoVendor", new { MonthList = @ViewBag.Month, YearList = @ViewBag.Year }, new { @class = "btn btn-default btn-sm", @id = "btnExcel" })*@
+
+                                        @*Added by Shazana 5/7/2023*@
+                                        <button class="btn btn-default btn-sm" type="button" onclick="location.href='@Url.Action("exportExcelGLtoVendor", "BizTransac", new { MonthList = @ViewBag.Month, YearList = @ViewBag.Year })'">
+                                            <img alt="New" title="New" src="~/Asset/Images/excel-icon.png" width="20px" height="20px"> Muat Turun Excel
+                                        </button>
+
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab4primary">
+                                    <div class="form-horizontal">
+
+                                        @if (Model.Any(x => x.fld_DocType == "DR"))
+                                        {
+                                            dataCount++;
+                                            foreach (var GLToCustomer in Model.DistinctBy(s => s.fld_SAPPostRefID).Where(x => x.fld_DocType == "DR"))
+                                            {
+                                                var postRefGuid = Model.Where(x => x.fld_DocType == "DR").Select(s => s.fld_SAPPostRefID).Distinct().FirstOrDefault();
+
+                                                @Html.HiddenFor(model => GLToCustomer.fld_SAPPostRefID, htmlAttributes: new { @class = "idDR" })
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Checkroll Ref No:</label>
+                                                    <div class="col-sm-2">
+                                                        @Html.TextBoxFor(model => GLToCustomer.fld_RefNo, htmlAttributes: new { @class = "form-control col-sm-2 refNoDR", @disabled = "True" })
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <button type="button" class="btn btn-success  generateCustomerRefNo">Generate</button>
+                                                    </div>
+                                                    <label class="control-label col-sm-2">SAP Document No:</label>
+                                                    <div class="col-sm-2">
+                                                        @Html.TextBoxFor(model => GLToCustomer.fld_NoDocSAP, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sapReturnModal3">Status</button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Date Generated:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToCustomer.fld_DocDate, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Header Text:</label>
+                                                    <div class="col-sm-9">
+                                                        @Html.TextBoxFor(model => GLToCustomer.fld_HeaderText, htmlAttributes: new { @class = "form-control col-sm-2 hdrTxtDR", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <label class="control-label col-sm-2">Document Type:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToCustomer.fld_DocType, htmlAttributes: new { @class = "form-control col-sm-2 docTypeDR", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Posting Month:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToCustomer.fld_Month, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                    <label class="control-label col-sm-3">Posting Year:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToCustomer.fld_Year, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2">Posting Date:</label>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(model => GLToCustomer.fld_PostingDate, htmlAttributes: new { @class = "form-control col-sm-2", @disabled = "True" })
+                                                    </div>
+                                                </div>
+                                                <div id="sapReturnModal3" class="modal fade sapReturnModal" role="dialog">
+                                                    <div class="modal-dialog">
+                                                        <!-- Modal content-->
+                                                        <div class="modal-content">
+                                                            @Html.Action("_SAPReturnMsg", "BizTransac", new { postRefID = postRefGuid })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Item No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">GL</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">IO</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Description</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var GLtoCustomerDetails in Model.Where(x => x.fld_DocType == "DR").OrderBy(o => o.fld_ItemNo))
+                                                    {
+                                                        <tr>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoCustomerDetails.fld_ItemNo</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoCustomerDetails.fld_GL</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoCustomerDetails.fld_IO</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoCustomerDetails.fld_Desc</td>
+                                                            <td align="center" style="vertical-align: middle !important; text-align: right !important; border: 1px solid black;" border="1">@GetTriager.GetTotalForMoney(GLtoCustomerDetails.fld_Amount)</td>
+                                                            @*modified by kamalia 24/12/2021 betulkan format duit*@
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+
+                                        }
+
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center">
+                                                @Html.Label(GlobalResEstate.msgErrorSearch)
+                                            </div>
+                                            <hr />}
+                                    </div>
+
+                                </div>
+                            </div>
+                            @Html.Hidden("dataCount", null, htmlAttributes: new { @class = "dataCountClass", @Value = @dataCount })
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        else
+        {
+            <hr />
+            <div class="text-center">
+                @Html.Label((string)@ViewBag.Message)
+            </div>
+
+            <hr />
+        }
+    </div>
+</div>
+@*commented by kamalia 24/11/21**@
+@*<div class="modal-footer col-md-12">
+    @if (Model.Any())
+    {
+        <button class="btn btn-success postSAPBtn">Post To SAP</button>
+        <input id="ClosingStatus" name="ClosingStatus" type="hidden" value="@ClosingStatus" />
+        @*if (ViewBag.GetApproval)
+            {
+                <button class="btn btn-success postSAPBtn" disabled>Post To SAP</button>
+            }*@
+
+@*else if(ViewBag.AfterRequest)
+        {postSAPBtn
+            <button class='btn btn-warning' disabled>HQ Review</button>
+        }
+        else
+        {
+            <a data-modal1='' href='@Url.Action("RegionReview", "ApprovalSalary", new { year = ViewBag.Year, month = ViewBag.Month})' class='btn btn-warning' role='button' onclick='return DisplayProgressMessage2(this);'>HQ Review</a>
+        }
+        }
+    </div>*@
+
+@*added by kamalia 24/11/21**@
+<div class="modal-footer col-md-12">
+    @if (Model.Any())
+    {
+        <input id="ClosingStatus" name="ClosingStatus" type="hidden" value="@ClosingStatus" />
+
+        //if (ViewBag.LadangID == 1 || ViewBag.LadangID == 17 || ViewBag.LadangID == 30)
+        //{
+        if (ViewBag.Existing)
+        {
+            //modified by kamalia 17/12/21
+            //Modified by Shazana 6/3/2023
+            if (ViewBag.GetSokongWil && ViewBag.GetTerimaHQ)
+            {
+                @*<button class="btn btn-success postSAPBtn" disabled>Post To SAP</button>*@
+                //farahin modified - 30/12/2021
+                //sarah modified - 16/12/2022
+                if (ViewBag.statusProceedA2 == true && ViewBag.statusProceedKR == true && (ViewBag.RefNoA2 != null && ViewBag.RefNoKR != null))
+                {
+                    <button class="btn btn-success  disabled" aria-disabled="true">Post To SAP</button>
+                }
+                else
+                {
+                    <button class="btn btn-success postSAPBtn" disabled>Post To SAP</button>
+                }
+            }
+            //Modified by Shazana 21/12/2022
+            //else if (ViewBag.ClosingStatus && ViewBag.GetJumPermohonan == 0)
+            else if (ViewBag.ClosingStatus && ViewBag.GetJumPermohonan == 0 && ViewBag.berjayaverify == "1")
+            {
+                <a data-modal1='' href='@Url.Action("RegionVerify", "ApprovalSalary", new { year = ViewBag.Year, month = ViewBag.Month })' class='btn btn-success verifyBtn' role='button' onclick='return DisplayProgressMessage2(this);'>Verify</a>
+            }
+            //Modified by Shazana 21/12/2022
+            //else if (ViewBag.ClosingStatus && (ViewBag.GetTolakHQ || ViewBag.GetTolakWilGM || ViewBag.GetTolakWil))
+            else if (ViewBag.ClosingStatus && (ViewBag.GetTolakHQ || ViewBag.GetTolakWilGM || ViewBag.GetTolakWil && ViewBag.berjayaverify == "1"))
+            {
+                <a data-modal1='' href='@Url.Action("RegionVerify", "ApprovalSalary", new { year = ViewBag.Year, month = ViewBag.Month })' class='btn btn-success verifyBtn' role='button' onclick='return DisplayProgressMessage2(this);'>Verify</a>
+            }
+            else
+            {
+                <button class="btn btn-success" disabled>Verified</button>
+
+            }
+        }
+        else
+        {
+            //Modified by Shazana 21/12/2022
+            //if (ViewBag.ClosingStatus)
+            if (ViewBag.ClosingStatus && ViewBag.berjayaverify == "1")
+            {
+                <a data-modal1='' href='@Url.Action("RegionVerify", "ApprovalSalary", new { year = ViewBag.Year, month = ViewBag.Month })' class='btn btn-success verifyBtn' role='button' onclick='return DisplayProgressMessage2(this);'>Verify</a>
+            }
+
+            else
+            {
+                //Modified by Shazana 21/12/2022
+                @*<button class="btn btn-success" id="verifyBtn" name="verifyBtn" disabled>Verify</button>*@
+                <div id="divverify" hidden="hidden">
+                    <a data-modal1='' href='@Url.Action("RegionVerify", "ApprovalSalary", new { year = ViewBag.Year, month = ViewBag.Month })' class='btn btn-success verifyBtn' role='button' onclick='return DisplayProgressMessage2(this);'>Verify</a>
+                </div>
+            }
+        }
+    }
+</div>
+@*end by kamalia 24/11/21**@
+
+<div id="sapLoginModal" class="modal fade sapLoginModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            @if (Model.Any())
+            {
+                var GLGLGuid = "";
+                var GLVendorGuid = "";
+                var GLCustomerGuid = "";
+
+                if (Model.Any(x => x.fld_DocType == "A2"))
+                {
+                    foreach (var GLToGL in Model.DistinctBy(s => s.fld_SAPPostRefID).Where(x => x.fld_DocType == "A2"))
+                    {
+                        GLGLGuid = GLToGL.fld_SAPPostRefID.ToString();
+                    }
+                }
+
+                if (Model.Any(x => x.fld_DocType == "KR"))
+                {
+                    foreach (var GLToVendor in Model.DistinctBy(s => s.fld_SAPPostRefID).Where(x => x.fld_DocType == "KR"))
+                    {
+                        GLVendorGuid = GLToVendor.fld_SAPPostRefID.ToString();
+                    }
+                }
+
+                if (Model.Any(x => x.fld_DocType == "DR"))
+                {
+                    foreach (var GLToCustomer in Model.DistinctBy(s => s.fld_SAPPostRefID).Where(x => x.fld_DocType == "DR"))
+                    {
+                        GLCustomerGuid = GLToCustomer.fld_SAPPostRefID.ToString();
+                    }
+                }
+
+                @Html.Action("_SAPCredentialLogin", "BizTransac", new { postGLToGL = GLGLGuid, postGLToVendor = GLVendorGuid, postGLToCustomer = GLCustomerGuid })
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        var actualData = $(".dataCountClass").val();
+        console.log("actualCount" + " " + actualData);
+        var refNoCount = 0;
+
+        if ($(".refNoSA").val() !== null && $(".refNoSA").val() !== '' && typeof $(".refNoSA").val() !== "undefined") {
+            $(".generateGLRefNo").prop("disabled", true);
+            refNoCount++;
+            console.log("currentCountSA" + " " + refNoCount);
+        }
+
+        if ($(".refNoKR").val() !== null && $(".refNoKR").val() !== '' && typeof $(".refNoKR").val() !== "undefined") {
+            $(".generateVendorRefNo").prop("disabled", true);
+            refNoCount++;
+            console.log("currentCountKR" + " " + refNoCount);
+        }
+
+        if ($(".refNoDR").val() !== null && $(".refNoDR").val() !== '' && typeof $(".refNoDR").val() !== "undefined") {
+            $(".generateCustomerRefNo").prop("disabled", true);
+            refNoCount++;
+            console.log("currentCountDR" + " " + refNoCount);
+        }
+
+        //if (actualData == refNoCount) {
+        //    $(".postSAPBtn").prop("disabled", false);
+        //}
+
+        //else
+        //{
+        //    $(".postSAPBtn").prop("disabled", true);
+        //}
+
+        var sapDocNoCount = 0;
+
+        if ($("#GLtoGL_fld_NoDocSAP").val() !== null && $("#GLtoGL_fld_NoDocSAP").val() !== '' && typeof $("#GLtoGL_fld_NoDocSAP").val() !== "undefined") {
+            sapDocNoCount++;
+            console.log("currentCountSAP" + " " + sapDocNoCount);
+        }
+
+        if ($("#GLToVendor_fld_NoDocSAP").val() !== null && $("#GLToVendor_fld_NoDocSAP").val() !== '' && typeof $("#GLToVendor_fld_NoDocSAP").val() !== "undefined") {
+            sapDocNoCount++;
+            console.log("currentCountSAP" + " " + sapDocNoCount);
+        }
+
+        if ($("#GLToCustomer_fld_NoDocSAP").val() !== null && $("#GLToCustomer_fld_NoDocSAP").val() !== '' && typeof $("#GLToCustomer_fld_NoDocSAP").val() !== "undefined") {
+            sapDocNoCount++;
+            console.log("currentCountSAP" + " " + sapDocNoCount);
+        }
+
+        if (actualData != sapDocNoCount && actualData == refNoCount) {
+            $(".postSAPBtn").prop("disabled", false);
+        }
+
+        else {
+            $(".postSAPBtn").prop("disabled", true);
+        }
+
+        var ClosingStatus = $("#ClosingStatus").val();
+        if (ClosingStatus === 'True') {
+            $(".postSAPBtn").prop("disabled", false);
+        }
+        else {
+            $(".postSAPBtn").prop("disabled", true);
+        }
+
+        //farahin - 30/12/2021
+        var ProceedKR = $("#statusKR").val();
+        var ProceedA2 = $("#statusA2").val();
+
+        if (ProceedKR == 'True' && ProceedA2 == 'True') {
+            $(".postSAPBtn").prop("disabled", true);
+        }
+
+        else {
+            $(".postSAPBtn").prop("disabled", false);
+        }
+
+      $(".generateGLRefNo").on("click",
+        function () {
+            console.log($(this).val());
+            //farahin tambah - 25/02/2022
+            var kodLadang = $(".ldgCode").val();
+            var ClosingStatus = $("#ClosingStatus").val();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("generateRefNo", "BizTransac")',
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify({ docType: $(".docTypeSA").val(), SAPPostRefNoID: $(".idSA").val()}),
+                success: function (result) {
+                    console.log(result);
+                    //farahin modified 25/02/2022
+                    $(".hdrTxtSA").val("3" + kodLadang + result);
+                    $(".refNoSA").val(result);
+                    refNoCount++;
+                    //modified by kamalia 2/12/21
+                    if (actualData == refNoCount) {
+                        $(".postSAPBtn").prop("disabled", false);
+                        $(".verifyBtn").prop("disabled", false);
+                    }
+                    if (ClosingStatus === 'True') {
+                        $(".postSAPBtn").prop("disabled", false);
+                        $(".verifyBtn").prop("disabled", false);
+                    }
+                    else {
+                        $(".postSAPBtn").prop("disabled", true);
+                        $(".verifyBtn").prop("disabled", false);
+                    }
+                    //end
+                }
+            });
+        });
+
+       $(".generateVendorRefNo").on("click",
+        function () {
+            console.log($(this).val());
+            //farahin tambah - 25/02/2022
+            var kodLadang2 = $(".ldgCode2").val();
+            var ClosingStatus = $("#ClosingStatus").val();
+            $(".buttonVerify").prop("disabled", false);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("generateRefNo", "BizTransac")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify({ docType: $(".docTypeKR").val(), SAPPostRefNoID: $(".idKR").val() }),
+                    success: function (result) {
+                        console.log(result);
+
+                    /* Modified by Shazana 21/12/2022*/
+                        //farahin modified 25/02/2022
+                        //$(".hdrTxtSA").val("3" + kodLadang + result);
+                        var hasil = result;
+                        var hasilakhir = "3" + kodLadang2 + hasil;
+                        $(".hdrTxtKR").val(hasilakhir);
+                        //end modified
+
+                        $(".refNoKR").val(result);
+                        refNoCount++;
+                        //modified by kamalia 2/12/21
+                        if (actualData == refNoCount) {
+                            $(".postSAPBtn").prop("disabled", false);
+                            $(".verifyBtn").prop("disabled", false);
+                        }
+                        if (ClosingStatus =='True') {
+                            $(".postSAPBtn").prop("disabled", false);
+                            $(".verifyBtn").prop("disabled", false);
+                        }
+                        else {
+                            $(".postSAPBtn").prop("disabled", true);
+                            $(".verifyBtn").prop("disabled", false);
+                        }
+                        debugger
+                        @*@{ ViewBag.berjayaverify = "1"; }
+                        document.querySelector('#buttonverify').value = 'Show';*@
+                        //$('#buttonverify').prop('disabled', false);
+
+                       /* Added by Shazana 21/12/2022*/
+                        $("#divverify").show();
+                    //end
+                    }
+                });
+            });
+
+        $(".generateCustomerRefNo").on("click",
+            function () {
+                console.log($(this).val());
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("generateRefNo", "BizTransac")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify({ docType: $(".docTypeDR").val(), SAPPostRefNoID: $(".idDR").val() }),
+                    success: function (result) {
+                        console.log(result);
+                        $(".hdrTxtDR").val(result);
+                        $(".refNoDR").val(result);
+                        refNoCount++;
+                         //modified by kamalia 2/12/21
+                        if (actualData == refNoCount) {
+                            $(".postSAPBtn").prop("disabled", false);
+                            $(".verifyBtn").prop("disabled", false);
+                        }
+                        //end
+                    }
+                });
+            });
+
+        $(".postSAPBtn").click(function (event) {
+          //event.preventDefault();
+            /*Commented by Shazana 13/2/2023*/
+            /*$("#sapLoginModal").modal("show");*/
+
+            /*Added by Shazana 13/2/2023*/
+            var statusUrusNiaga = '@ViewBag.audittrail';
+
+            //Added by Shazana 6/3/2023
+            var statusPermohonanLadang = '@ViewBag.statusPermohonan';
+            var statusgeneratecode = '@ViewBag.statusPermohonan';
+            debugger
+            /*Modified by Shazana 6/3/2023*/
+            if (statusUrusNiaga == "True" && statusPermohonanLadang =="Lulus") {
+                $("#sapLoginModal").modal("show");
+            }
+
+            /*Added by Shazana 6/3/2023*/
+            else if (statusPermohonanLadang != "Lulus")
+            { $.simplyToast(statusPermohonanLadang, "danger"); }
+
+            else { $.simplyToast("Sila tutup urusniaga terlebih dahulu", "danger");}
+        });
+
+       $(".submitBtn").on("click",
+            function (event) {
+                event.preventDefault();
+                @* $("#closeTransactionDetails").load('@Url.Action("_PostingSAP", "BizTransac")'); //commented by kamalia 2/12/21
+                $("#sapLoginModal").modal("hide");*@
+
+                if ($("#SapID").val() !== "" || $("#SapPassword").val() !== "") {
+                    //event.preventDefault();
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("SapPostData", "BizTransac")',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: false,
+                        data: JSON.stringify({ userName: $("#SapID").val(), password: $("#SapPassword").val(), postGLToGL: $("#GLtoGLGuid").val(), postGLToVendor: $("#GLtoGVendorGuid").val(), postGLToCustomer: $("#GLtoGCustomerGuid").val() }),
+                        success: function (result) {
+                            console.log(result);
+                            var messageItem = result.ReturnJsonList;
+
+                            jQuery.each(messageItem, function (index, item) {
+                                var message = item.TransactionType + " - " + item.Message;
+                                $.simplyToast(message, item.Status);
+                            });
+                            //$("#sapLoginModal").modal("hide");
+                            //$("#sapLoginModal").css("display", "none");
+                            $('#sapLoginModal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            //$("#sapLoginModal").attr("data-dismiss", "modal");
+
+                            $("#closeTransactionDetails").load('@Url.Action("_PostingSAP", "BizTransac")', { MonthList: result.ParamValue1, YearList: result.ParamValue2 });
+
+                            $("#SapID").val("");
+                            $("#SapPassword").val("");
+                        }
+                    });
+                }
+
+                else {
+                    $.simplyToast("Sila isi ruangan wajib", "danger");
+                }
+            });
+
+    });
+
+</script>
+
+
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .kod {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .keterangan {
+        width: 150px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .tetapan1 {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tetapan2 {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 80px !important;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        $("#printpage").show();
+        $("#downloadpdf").show();
+
+        $("#printpage").click(function () {
+            $("#printpage").hide();
+            $("#downloadpdf").hide();
+            var DivElement = document.getElementById("scrollArea").innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+        })
+
+  $("#downloadpdf").click(function () {
+
+      $("#printpage").hide();
+      $("#downloadpdf").hide();
+      var MonthList = '@ViewBag.Month';
+      var YearList = '@ViewBag.Year';
+      var param = '/?MonthList=' + MonthList + "&YearList=" + YearList;
+         debugger
+      PDFObject.embed("@Url.Action("exportPDFGLtoGL", "BizTransac")" + param, "#tab1primary", { height: "400px" });
+         return false;
+    });
+
+
+    $("#downloadpdfGLtoVendor").click(function () {
+            $("#downloadpdfGLtoVendor").hide();
+      var MonthList = '@ViewBag.Month';
+      var YearList = '@ViewBag.Year';
+      var param = '/?MonthList=' + MonthList + "&YearList=" + YearList;
+         debugger
+      PDFObject.embed("@Url.Action("exportPDFGLtoVendor", "BizTransac")" + param, "#tab2primary", { height: "400px" });
+         return false;
+    });
+
+
+    })
+
+</script>
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>

@@ -1,0 +1,531 @@
+﻿@model IEnumerable<MVC_SYSTEM.Models.sp_KerjaInfoDetails_Result>
+@using MVC_SYSTEM.Class
+@{
+    ViewBag.Title = "WorkReport";
+    //Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+    GetIdentity GetIdentity = new GetIdentity();
+    GetEstateDetail GetWorkerDetail = new GetEstateDetail();
+    GetConfig GetConfig = new GetConfig();
+    int bill = 0;
+    string nama = "";
+
+    int Loop = 1;
+    decimal? JumlahHasilK = 0;
+    decimal? JumlahJamOTK = 0;
+    decimal? JumlahBonusK = 0;
+    decimal? JumlahSemuaK = 0;
+    decimal? JumlahOTK = 0;
+    decimal? JumlahKwsnSkr = 0;
+    decimal? JumlahKslrhan = 0;
+    decimal? totalKong = 0;
+    decimal? totalHektar = 0;
+    decimal? totalTan = 0;
+    decimal? totalBeg = 0;
+    decimal? totalOverallAmount = 0;
+
+    
+    //KadarOT kadar = new KadarOT();
+    GetTriager Triager = new GetTriager();
+    //tbl_CostCentre Costcenter = new tbl_CostCentre();
+    ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+
+    int year = ChangeTimeZone.gettimezone().Year;
+    int month = ChangeTimeZone.gettimezone().Month;
+    int day = ChangeTimeZone.gettimezone().Day;
+    int hour = ChangeTimeZone.gettimezone().Hour;
+    int minute = ChangeTimeZone.gettimezone().Minute;
+    int second = ChangeTimeZone.gettimezone().Second;
+    string uniquefilename = "KerjaHarian_" + year.ToString() + month.ToString() + day.ToString() + hour.ToString() + minute.ToString() + second.ToString();
+
+
+}
+
+@*<div id="UpdateProgress1" style="display:none;">
+        <div class="progressTest">
+            <label>
+                @GlobalResEstate.msgWait
+            </label>
+        </div>
+    </div>*@
+
+@*@if (ViewBag.getflag == 1)
+    {
+        <p style="color:red">@GlobalResEstate.msgChooseWork</p>
+    }
+    else
+    {*@
+@if (Model != null && Model.Count() != 0)
+{
+
+    <div id="scrollArea2" class="modal-body">
+        <logo />
+
+        <table class="table table-hover table-bordered" style="font-size: 11px;" border="0" width="100%" id="test">
+            <thead>
+                <tr>
+                    <th colspan="14" style="text-align:center;vertical-align:middle;">
+                        @ViewBag.NamaSyarikat
+                        <br />
+                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        <br />
+                        @GlobalResEstate.lblWorkReport
+                        <br />
+                        @mfi.GetMonthName(Convert.ToInt32(ViewBag.MonthSelection)) - @ViewBag.YearSelection
+                        @* fatin added - 07/03/2023*@
+                        <br />
+                        Wilayah : @ViewBag.Wilayah &nbsp; Ladang: @ViewBag.NamaLadang
+                        @*end*@
+                    </th>
+                </tr>
+            </thead>
+        </table>
+
+
+        @foreach (var item in Model)
+        {
+
+            if(item.fld_OverallAmount == null)
+            {
+                item.fld_OverallAmount = 0;
+            }
+
+            totalOverallAmount = totalOverallAmount + item.fld_OverallAmount;
+
+            if (item.fld_Unit == "KONG")
+            {
+                totalKong = totalKong + item.fld_Amount;
+            }
+            else if (item.fld_Unit == "HEKTAR")
+            {
+                totalHektar = totalHektar + item.fld_Amount;
+            }
+            else if (item.fld_Unit == "TAN")
+            {
+                totalTan = totalTan + item.fld_Amount;
+            }
+            else if (item.fld_Unit == "BEG")
+            {
+                totalBeg = totalBeg + item.fld_Amount;
+            }
+
+        }
+
+
+        <table class="table table-hover table-bordered" style="font-size: 11px;" border="0" width="100%" id="test2">
+            <thead>
+                <tr>
+                    <th style="font-weight: bold; text-align: right; vertical-align: middle !important; border: none;">Tarikh Akhir Jana Gaji</th>
+                    <th width="1%" style="text-align: left; vertical-align: middle !important; border: none; ">@string.Format("{0:dd/MM/yyyy hh:mm tt}", ViewBag.TarikhJanaGaji)</th> @*fatin modified format - 01/08/2023*@
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none; "></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none; "></th>
+                    <th width="1%" style="text-align: right; font-weight: bold; vertical-align: middle !important; border: none; ">Jumlah Keseluruhan</th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none; "></th>
+                    <th width="1%" style="font-weight: bold; vertical-align: middle !important; border: none; ">RM @totalOverallAmount</th>
+                </tr>
+
+                <tr>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: right; font-weight: bold; vertical-align: middle !important; border: none;"> Jumlah Mengikut Unit</th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"> Kong</th>
+                    <th width="1%" style=" font-weight: bold; vertical-align: middle !important; border: none;">RM @totalKong</th>
+                </tr>
+                <tr>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"> </th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"> Hektar</th>
+                    <th width="1%" style="font-weight: bold; vertical-align: middle !important; border: none;">RM @totalHektar</th>
+                </tr>
+                <tr>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"> Tan</th>
+                    <th width="1%" style="font-weight: bold; vertical-align: middle !important; border: none;">RM @totalTan</th>
+                </tr>
+                <tr>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;"></th>
+                    <th width="1%" style="text-align: center; font-weight: bold; vertical-align: middle !important; border: none;">Beg</th>
+                    <th width="1%" style="font-weight: bold; vertical-align: middle !important; border: none;">RM @totalBeg</th>
+                </tr>
+            </thead>
+        </table>
+
+
+        @*<div class="well2">*@
+        @*<div id="scrollArea2" class="modal-body">*@
+        @foreach (var GetWorker in ViewBag.GetWorkerList)
+        {
+            JumlahHasilK = 0;
+            JumlahJamOTK = 0;
+            JumlahBonusK = 0;
+            JumlahSemuaK = 0;
+            JumlahOTK = 0;
+            JumlahKwsnSkr = 0;
+            JumlahKslrhan = 0;
+            Loop = 1;
+            <table class="table table-hover table-bordered" style="font-size: 11px;" border="0">
+                <thead>
+                    <tr>
+                        <th colspan="17">
+                            @GlobalResEstate.hdrNoPkj : @GetWorker
+                            <br />
+                            @GlobalResEstate.hdrName : @Model.Where(x => x.fld_Nopkj == GetWorker).Select(s => s.fld_Nama).Distinct().FirstOrDefault()
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="text-center-0" width="2%">
+                            <b>@GlobalResEstate.lblDate</b>
+                        </th>
+                        <th class="text-center" width="3%">
+                            <b>@GlobalResEstate.lblRaining</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.hdrAttendance</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.lblLevel</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.hdrActvtCode</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.hdrUnit</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.hdrTotalOutcome</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.hdrPrice/@GlobalResEstate.hdrUnit</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.hdrOutcome (RM)</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>Insentif Kawasan Sukar (RM)</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>Jumlah (RM)</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.lblOvertimeHour</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.lblTotalOt (RM)</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.lblDailyBonus (RM)</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.lblTotal (RM)</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.lblUserID</b>
+                        </th>
+                        <th class="text-center" width="5%">
+                            <b>@GlobalResEstate.lblUserName</b>
+                        </th>
+                    </tr>
+                </thead>
+                @{
+                    var WorkDetails = Model.Where(x => x.fld_Nopkj.Trim() == GetWorker).OrderBy(o => o.fld_Tarikh).ToList();
+                    DateTime? KeepOldDateTime = WorkDetails.Select(s => s.fld_Tarikh).Take(1).FirstOrDefault();
+                }
+                @foreach (var WorkDetail in WorkDetails)
+                {
+                    var BonusHarian2 = WorkDetail.fld_JumlahBonus == null ? 0 : WorkDetail.fld_JumlahBonus;
+                    var OT2 = WorkDetail.fld_JumlahOT == null ? 0 : WorkDetail.fld_JumlahOT;
+                    var Jmlah2 = WorkDetail.fld_Amount == null ? 0 : WorkDetail.fld_Amount;
+                    var JamOT2 = WorkDetail.fld_JamOT == null ? 0 : WorkDetail.fld_JamOT;
+
+                    var Total2 = BonusHarian2 + OT2 + Jmlah2;
+                    var JumlahKwsnSkr1 = WorkDetail.fld_HrgaKwsnSkar == null ? 0 : WorkDetail.fld_HrgaKwsnSkar;
+                    var JumlahKslrhan1 = WorkDetail.fld_OverallAmount == null ? 0 : WorkDetail.fld_OverallAmount;
+
+                    JumlahHasilK = JumlahHasilK + Jmlah2;
+                    JumlahJamOTK = JumlahJamOTK + JamOT2;
+                    JumlahBonusK = JumlahBonusK + BonusHarian2;
+                    JumlahSemuaK = JumlahSemuaK + Total2;
+                    JumlahOTK = JumlahOTK + OT2;
+                    JumlahKwsnSkr = JumlahKwsnSkr + JumlahKwsnSkr1;
+                    JumlahKslrhan = JumlahKslrhan + JumlahKslrhan1;
+
+                    var rowspncount = WorkDetails.Where(x => x.fld_Tarikh == WorkDetail.fld_Tarikh).Count();
+                    <tr>
+                        @if (Loop == 1)
+                        {
+                            <td rowspan="@rowspncount" align="center" valign="middle" width="2%">
+                                @string.Format("{0:dd/MM/yyyy}", WorkDetail.fld_Tarikh)
+                            </td>
+                            <td rowspan="@rowspncount" align="center" valign="middle" width="3%">
+                                @{var Hujan = WorkDetail.fld_Hujan == 0 ? "Tidak" : "Ya";}
+                                @Hujan
+                            </td>
+                            <td rowspan="@rowspncount" align="center" valign="middle" width="5%">
+                                @GetConfig.GetWebConfigDesc(WorkDetail.fld_Kdhdct, "cuti", ViewBag.NegaraID, ViewBag.SyarikatID)
+                            </td>
+                        }
+                        @if (KeepOldDateTime != WorkDetail.fld_Tarikh)
+                        {
+                            <td rowspan="@rowspncount" align="center" valign="middle" width="2%">
+                                @string.Format("{0:dd/MM/yyyy}", WorkDetail.fld_Tarikh)
+                            </td>
+                            <td rowspan="@rowspncount" align="center" valign="middle" width="3%">
+                                @{var Hujan = WorkDetail.fld_Hujan == 0 ? "Tidak" : "Ya";}
+                                @Hujan
+                            </td>
+                            <td rowspan="@rowspncount" align="center" valign="middle" width="5%">
+                                @GetConfig.GetWebConfigDesc(WorkDetail.fld_Kdhdct, "cuti", ViewBag.NegaraID, ViewBag.SyarikatID)
+                            </td>
+                        }
+                        <td align="center" width="5%">
+                            @{var KodPkt = WorkDetail.fld_KodPkt == null ? "-" : WorkDetail.fld_KodPkt;}
+                            @KodPkt
+                        </td>
+                        <td align="center" width="5%">
+                            @{var KodAktvt = WorkDetail.fld_KodAktvt == null ? "-" : WorkDetail.fld_KodAktvt;}
+                            @KodAktvt
+                        </td>
+                        <td align="center" width="5%">
+                            @{var Unit = WorkDetail.fld_Unit == null ? "-" : WorkDetail.fld_Unit;}
+                            @Unit
+                        </td>
+                        <td align="right" width="5%">
+                            @{var JmlahHasil = WorkDetail.fld_JumlahHasil == null ? "-" : WorkDetail.fld_JumlahHasil.ToString();}
+                            @JmlahHasil
+                        </td>
+                        <td align="right" width="5%">
+                            @{var KadarUnit = WorkDetail.fld_KadarByr == null ? "-" : WorkDetail.fld_KadarByr.ToString();}
+                            @KadarUnit
+                        </td>
+                        <td align="right" width="5%">
+                            @{var Jmlah = WorkDetail.fld_Amount == null ? "-" : WorkDetail.fld_Amount.ToString();}
+                            @Jmlah
+                        </td>
+                        <td align="right" width="5%">
+                            @{var HrgaKwsnSkr = WorkDetail.fld_HrgaKwsnSkar == null ? "-" : WorkDetail.fld_HrgaKwsnSkar.ToString();}
+                            @HrgaKwsnSkr
+                        </td>
+                        <td align="right" width="5%">
+                            @{var JmlhSlrh = WorkDetail.fld_OverallAmount == 0 ? "-" : WorkDetail.fld_OverallAmount.ToString();}
+                            @JmlhSlrh
+                        </td>
+                        <td align="right" width="5%">
+                            @{var JamOT = WorkDetail.fld_JamOT == null ? "-" : WorkDetail.fld_JamOT.ToString();}
+                            @JamOT
+                        </td>
+                        <td align="right" width="5%">
+                            @{var OT = WorkDetail.fld_JumlahOT == null ? "-" : WorkDetail.fld_JumlahOT.ToString();}
+                            @OT
+                        </td>
+                        <td align="right" width="5%">
+                            @{var BonusHarian = WorkDetail.fld_JumlahBonus == null ? "-" : WorkDetail.fld_JumlahBonus.ToString();}
+                            @BonusHarian
+                        </td>
+                        <td align="right" width="5%">
+                            @{var Total = Total2 == 0 ? "-" : Total2.ToString();}
+                            @Total
+                        </td>
+                        <td align="center" width="5%">
+                            @GetIdentity.Username2(WorkDetail.fld_CreatedBy)
+                        </td>
+                        <td align="center" width="5%">
+                            @GetIdentity.MyNameFullName(WorkDetail.fld_CreatedBy)
+                        </td>
+                    </tr>
+                    KeepOldDateTime = WorkDetail.fld_Tarikh;
+                    Loop++;
+                }
+                <tfoot>
+                    <tr>
+                        <th colspan="8" bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                            <strong>Jumlah</strong>
+                        </th>
+                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                            <strong>@JumlahHasilK</strong>
+                        </th>
+                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                            <strong>@JumlahKwsnSkr</strong>
+                        </th>
+                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                            <strong>@JumlahKslrhan</strong>
+                        </th>
+                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                            <strong>@JumlahJamOTK</strong>
+                        </th>
+                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important" border="1">
+                            <strong>@JumlahOTK</strong>
+                        </th>
+                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                            <strong>@JumlahBonusK</strong>
+                        </th>
+                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                            <strong>@JumlahSemuaK</strong>
+                        </th>
+                        <th colspan="2" bgcolor="#085480" style="color:white; text-align: center; vertical-align:middle !important;" border="1">
+                            <strong></strong>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+            <hr class="style6">
+        }
+
+        @*</div>*@
+        @* </div>*@
+
+        <newpage />
+    </div>
+
+    if (ViewBag.Print == null)
+    {
+        <div style="text-align:right; margin-top:10px">
+            <a class="btn btn-default btn-sm" href="#" id="printpage">
+                <span class="glyphicon glyphicon-print"> </span> @GlobalResEstate.btnPrint
+            </a>
+            <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+                <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadPdf
+            </a>
+            @* farahin ubah function onclick - 23/02/2021 *@
+            <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@uniquefilename')">
+                <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+            </a>
+        </div>
+    }
+}
+
+
+@if (Model == null || Model.Count() == 0)
+{
+    <div id="scrollArea2" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+
+    </div>
+}
+
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+</style>
+
+@* farahin tambah untuk download excel - 23/02/2021*@
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#printpage").click(function () {
+            var DivElement = document.getElementById("scrollArea2").innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+        });
+
+        $("#downloadpdf").click(function () {
+
+              //farahin - cater utk button pdf - 23/02/2021
+            var myHtml = document.getElementById('scrollArea2').innerHTML;
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ConvertPDF2", "Report")',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ myHtml: myHtml, filename: "@uniquefilename", reportname: "WorkReport" }),
+                success: function (result) {
+                    if (result.success) {
+                        var win = window.open(result.link, '_blank');
+                        win.focus();
+                    } else {
+                        $.simplyToast(result.msg, result.status);
+                    }
+                },
+                error: function (error) {
+                    $.simplyToast('Sorry to many data', 'danger');
+                }
+            });
+            return false;
+        });
+
+
+            @*var RadioGroup = $('input[name=RadioGroup]:checked').val();
+            var MonthList = $("#MonthList").val();
+            var YearList = $("#YearList").val();
+            var WorkerList = $("#WorkerList").val();
+            //var StatusList = $("#StatusList").val();
+            //var WorkCategoryList = $("#WorkCategoryList").val();
+
+            var StatusList = '';
+            var WorkCategoryList = '';
+
+            var param = '/?MonthList=' + MonthList + '&YearList=' + YearList + '&WorkerList=' + WorkerList;
+            var controller = 'Report';
+            var action = 'PrintWorkPdf';
+
+            var ajxfn = {};
+            ajxfn.url = "@Url.Action("PDFIndetifier", "PdfCreator")";
+            ajxfn.type = "POST";
+            ajxfn.data = JSON.stringify({ controller: controller, action: action, param: param });
+            ajxfn.datatype = "json";
+            ajxfn.contentType = "application/json";
+            ajxfn.success = function (result) {
+                //var win = window.open(result.link, '_blank');
+                //win.focus();
+                PDFObject.embed(result.link, "#searchResultWorkRptInfo", { height: "450px" });
+            };
+
+            ajxfn.error = function () {
+                $.simplyToast('@GlobalResEstate.msgError', 'danger');
+                $("#UpdateProgress1").css("display", "none");
+            };
+            $.ajax(ajxfn);
+
+            return false;
+        });
+
+        $("#ExcelReport").click(function () {
+            //function fnExcelReport()
+            var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j = 0;
+            tab = document.getElementById('test'); // id of table
+
+            for (j = 0; j < tab.rows.length; j++) {
+                tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+            }
+
+            tab_text = tab_text + "</table>";
+            tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+            tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+            tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            {
+                txtArea1.document.open("txt/html", "replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa = txtArea1.document.execCommand("SaveAs", true, "Say Thanks to Sumit.xls");
+            }
+            else                 //other browser not tested on IE 11
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+            return (sa);
+        });*@
+    });
+</script>

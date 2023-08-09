@@ -1,0 +1,355 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="OPMSESTFELKUANTANModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+    <FunctionImport Name="sp_DashAllKerakyatan" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_DashAllKerakyatan_Result)">
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_DashPermitExpired" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_DashPermitExpired_Result)">
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_DashStatusAkaun" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_DashStatusAkaun_Result)">
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="Wilayah" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_DatatableKerakyatan" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_DatatableKerakyatan_Result)">
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="Kerakyatan" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="sp_DatatablePermitExpired" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_DatatablePermitExpired_Result)">
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="Wilayah" Mode="In" Type="Int32" />
+      <Parameter Name="Type" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_KerjaInfoDetails" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_KerjaInfoDetails_Result)">
+      <Parameter Name="KategoriPilih" Mode="In" Type="Int32" />
+      <Parameter Name="PilihanCari" Mode="In" Type="String" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_Payslip" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_Payslip_Result)">
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="Nopkj" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptBulPenPekLad">
+      <Parameter Name="DataSource" Mode="In" Type="String" />
+      <Parameter Name="DatabaseName" Mode="In" Type="String" />
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="LevelAccess" Mode="In" Type="String" />
+      <Parameter Name="Kdrytan" Mode="In" Type="String" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="UserID" Mode="In" Type="Int32" />
+      <Parameter Name="SelectionCategory" Mode="In" Type="Int16" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptGajiMinima">
+      <Parameter Name="DataSource" Mode="In" Type="String" />
+      <Parameter Name="DatabaseName" Mode="In" Type="String" />
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="LevelAccess" Mode="In" Type="String" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="UserID" Mode="In" Type="Int32" />
+      <Parameter Name="SelectionCategory" Mode="In" Type="Int16" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptMakPekTem">
+      <Parameter Name="DataSource" Mode="In" Type="String" />
+      <Parameter Name="DatabaseName" Mode="In" Type="String" />
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="AktifStatus" Mode="In" Type="Int32" />
+      <Parameter Name="LevelAccess" Mode="In" Type="String" />
+      <Parameter Name="UserID" Mode="In" Type="Int32" />
+      <Parameter Name="SelectionCategory" Mode="In" Type="Int16" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptMasterDataPkj">
+      <Parameter Name="DataSource" Mode="In" Type="String" />
+      <Parameter Name="DatabaseName" Mode="In" Type="String" />
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="LevelAccess" Mode="In" Type="String" />
+      <Parameter Name="Kdrytan" Mode="In" Type="String" />
+      <Parameter Name="StatusAktif" Mode="In" Type="String" />
+      <Parameter Name="KategoriPkj" Mode="In" Type="String" />
+      <Parameter Name="UserID" Mode="In" Type="Int32" />
+      <Parameter Name="SelectionCategory" Mode="In" Type="Int16" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptPaymentMode">
+      <Parameter Name="DataSource" Mode="In" Type="String" />
+      <Parameter Name="DatabaseName" Mode="In" Type="String" />
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="UserID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptProduktiviti" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_RptProduktiviti_Result)">
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="NoPkj" Mode="In" Type="String" />
+      <Parameter Name="Unit" Mode="In" Type="String" />
+      <Parameter Name="Peringkat" Mode="In" Type="String" />
+      <Parameter Name="Status" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptPurataGajiBulanan" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_RptPurataGajiBulanan_Result)">
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptRumKedKepPekLad">
+      <Parameter Name="DataSource" Mode="In" Type="String" />
+      <Parameter Name="DatabaseName" Mode="In" Type="String" />
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="AktifStatus" Mode="In" Type="Int32" />
+      <Parameter Name="LevelAccess" Mode="In" Type="String" />
+      <Parameter Name="UserID" Mode="In" Type="Int32" />
+      <Parameter Name="SelectionCategory" Mode="In" Type="Int16" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptSkb" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_RptSkb_Result)">
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_RptTransPek">
+      <Parameter Name="DataSource" Mode="In" Type="String" />
+      <Parameter Name="DatabaseName" Mode="In" Type="String" />
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="LevelAccess" Mode="In" Type="String" />
+      <Parameter Name="Month" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="UserID" Mode="In" Type="Int32" />
+      <Parameter Name="SelectionCategory" Mode="In" Type="Int16" />
+    </FunctionImport>
+    <FunctionImport Name="sp_YieldBracketTable" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_YieldBracketTable_Result)">
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="JnsPkt" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_YieldBracketTableSum">
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="JnsPkt" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="spTest">
+      <Parameter Name="NegaraID" Mode="In" Type="Int32" />
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="WilayahID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_DashTransactionListing" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_DashTransactionListing_Result)">
+      <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+      <Parameter Name="LadangID" Mode="In" Type="Int32" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+    </FunctionImport>
+  </EntityContainer>
+  <ComplexType Name="sp_DashAllKerakyatan_Result">
+    <Property Type="String" Name="fld_KodKerakyatan" Nullable="true" MaxLength="5" />
+    <Property Type="String" Name="fld_Kerakyatan" Nullable="true" MaxLength="100" />
+    <Property Type="Int32" Name="fld_Jumlah" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_DashPermitExpired_Result">
+    <Property Type="Int32" Name="fld_SyarikatID" Nullable="true" />
+    <Property Type="Int32" Name="fld_WilayahID" Nullable="true" />
+    <Property Type="String" Name="fld_WlyhName" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="fld_LdgName" Nullable="true" MaxLength="100" />
+    <Property Type="Int32" Name="total3month" Nullable="true" />
+    <Property Type="Int32" Name="total2month" Nullable="true" />
+    <Property Type="Int32" Name="total1month" Nullable="true" />
+    <Property Type="Int32" Name="totalmonth" Nullable="true" />
+    <Property Type="Int32" Name="totalexpired" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_DashStatusAkaun_Result">
+    <Property Type="Int32" Name="fld_SyarikatID" Nullable="true" />
+    <Property Type="Int32" Name="fld_WilayahID" Nullable="true" />
+    <Property Type="Int32" Name="fld_LadangID" Nullable="true" />
+    <Property Type="String" Name="fld_LdgName" Nullable="true" MaxLength="100" />
+    <Property Type="Int32" Name="fld_Month" Nullable="true" />
+    <Property Type="Int32" Name="fld_Year" Nullable="true" />
+    <Property Type="Int32" Name="TutupUrusNiaga" Nullable="true" />
+    <Property Type="Int32" Name="Verify" Nullable="true" />
+    <Property Type="Int32" Name="KelulusanPengurus" Nullable="true" />
+    <Property Type="Int32" Name="KelulusanPegKewangan" Nullable="true" />
+    <Property Type="Int32" Name="KelulusanPegWilayahFelda" Nullable="true" />
+    <Property Type="Int32" Name="GLToGL" Nullable="true" />
+    <Property Type="Int32" Name="GLToVendor" Nullable="true" />
+    <Property Type="Int32" Name="progress" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_DatatableKerakyatan_Result">
+    <Property Type="String" Name="fld_Nopkj" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="fld_Nokp" Nullable="true" MaxLength="14" />
+    <Property Type="String" Name="fld_Nama" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="fld_WlyhName" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="fld_Krkytn" Nullable="true" MaxLength="20" />
+    <Property Type="String" Name="fld_LdgName" Nullable="true" MaxLength="255" />
+    <Property Type="DateTime" Name="fld_DateApply" Nullable="true" Precision="23" />
+  </ComplexType>
+  <ComplexType Name="sp_DatatablePermitExpired_Result">
+    <Property Type="String" Name="fld_Nopkj" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="fld_Nokp" Nullable="true" MaxLength="14" />
+    <Property Type="String" Name="fld_Nama" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="fld_Krkytn" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="fld_LdgName" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="fld_T1prmt" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="fld_T2prmt" Nullable="true" MaxLength="100" />
+  </ComplexType>
+  <ComplexType Name="sp_KerjaInfoDetails_Result">
+    <Property Type="Int32" Name="fld_ID" Nullable="false" />
+    <Property Type="String" Name="fld_Nopkj" Nullable="true" MaxLength="20" />
+    <Property Type="String" Name="fld_Nama" Nullable="true" MaxLength="40" />
+    <Property Type="String" Name="fld_Kum" Nullable="true" MaxLength="50" />
+    <Property Type="DateTime" Name="fld_Tarikh" Nullable="true" />
+    <Property Type="Int32" Name="fld_Hujan" Nullable="true" />
+    <Property Type="String" Name="fld_Kdhdct" Nullable="true" MaxLength="3" />
+    <Property Type="String" Name="fld_JnisAktvt" Nullable="true" MaxLength="2" />
+    <Property Type="String" Name="fld_KodAktvt" Nullable="true" MaxLength="4" />
+    <Property Type="String" Name="fld_Unit" Nullable="true" MaxLength="10" />
+    <Property Type="Byte" Name="fld_JnsPkt" Nullable="true" />
+    <Property Type="String" Name="fld_KodPkt" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="fld_KodGL" Nullable="true" MaxLength="5" />
+    <Property Type="Decimal" Name="fld_KadarByr" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Decimal" Name="fld_JumlahHasil" Nullable="true" Precision="6" Scale="2" />
+    <Property Type="Decimal" Name="fld_Amount" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Decimal" Name="fld_JamOT" Nullable="true" Precision="4" Scale="2" />
+    <Property Type="Decimal" Name="fld_KadarOT" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Decimal" Name="fld_JumlahOT" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Byte" Name="fld_Bonus" Nullable="true" />
+    <Property Type="Decimal" Name="fld_KadarBonus" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Decimal" Name="fld_JumlahBonus" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Int32" Name="fld_CreatedBy" Nullable="true" />
+    <Property Type="DateTime" Name="fld_CreatedDT" Nullable="true" Precision="23" />
+    <Property Type="Decimal" Name="fld_HrgaKwsnSkar" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Decimal" Name="fld_OverallAmount" Nullable="true" Precision="18" Scale="2" />
+  </ComplexType>
+  <ComplexType Name="sp_Payslip_Result">
+    <Property Type="Int32" Name="fldID" Nullable="false" />
+    <Property Type="String" Name="fldNopkj" Nullable="true" MaxLength="20" />
+    <Property Type="String" Name="fldKodPkt" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="fldKod" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="fldKeterangan" Nullable="true" MaxLength="200" />
+    <Property Type="Decimal" Name="fldKuantiti" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="String" Name="fldUnit" Nullable="true" MaxLength="10" />
+    <Property Type="Decimal" Name="fldKadar" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Int32" Name="fldGandaan" Nullable="true" />
+    <Property Type="Decimal" Name="fldJumlah" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Int32" Name="fldBulan" Nullable="true" />
+    <Property Type="Int32" Name="fldTahun" Nullable="true" />
+    <Property Type="Int32" Name="fldNegaraID" Nullable="true" />
+    <Property Type="Int32" Name="fldSyarikatID" Nullable="true" />
+    <Property Type="Int32" Name="fldWilayahID" Nullable="true" />
+    <Property Type="Int32" Name="fldLadangID" Nullable="true" />
+    <Property Type="Int32" Name="fldFlag" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_RptProduktiviti_Result">
+    <Property Type="Int32" Name="fldID" Nullable="false" />
+    <Property Type="String" Name="fld_Nopkj" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="fld_Nama" Nullable="true" MaxLength="40" />
+    <Property Type="Decimal" Name="fld_TargetHarian" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="String" Name="fld_UnitTargetHarian" Nullable="true" MaxLength="10" />
+    <Property Type="Int32" Name="fld_HariBekerjaSebenar" Nullable="true" />
+    <Property Type="Decimal" Name="fld_Hasil" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="String" Name="fld_Unit" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="fld_KodPkt" Nullable="true" MaxLength="10" />
+    <Property Type="Decimal" Name="fld_AmaunBayar" Nullable="true" Precision="18" Scale="2" />
+  </ComplexType>
+  <ComplexType Name="sp_RptPurataGajiBulanan_Result">
+    <Property Type="Int32" Name="fld_ID" Nullable="false" />
+    <Property Type="String" Name="fld_Nopkj" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="fld_Nama" Nullable="true" MaxLength="40" />
+    <Property Type="Int32" Name="fld_Year" Nullable="true" />
+    <Property Type="Int32" Name="fld_Month" Nullable="true" />
+    <Property Type="Decimal" Name="fld_GajiBersih" Nullable="true" Precision="8" Scale="2" />
+    <Property Type="Int32" Name="fld_HdrCapai" Nullable="true" />
+    <Property Type="Decimal" Name="fld_PurataGaji" Nullable="true" Precision="8" Scale="2" />
+    <Property Type="Int32" Name="fld_CutiTahunan" Nullable="true" />
+    <Property Type="Int32" Name="fld_GroupID" Nullable="true" />
+    <Property Type="Int32" Name="fld_TotalAbsent" Nullable="true" />
+    <Property Type="Int32" Name="fld_HariTawaranKerja" Nullable="true" />
+    <Property Type="Decimal" Name="fld_PurataGaji12bln" Nullable="true" Precision="8" Scale="2" />
+    <Property Type="Int32" Name="fld_CutiDiambil" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_RptSkb_Result">
+    <Property Type="Int32" Name="fld_ID" Nullable="false" />
+    <Property Type="Int32" Name="fld_Bulan" Nullable="true" />
+    <Property Type="Int32" Name="fld_Tahun" Nullable="true" />
+    <Property Type="Int32" Name="fld_NoSkb" Nullable="true" />
+    <Property Type="Decimal" Name="fld_Amount" Nullable="true" Precision="18" Scale="2" />
+    <Property Type="Int32" Name="fld_ApplyBy" Nullable="true" />
+    <Property Type="DateTime" Name="fld_ApplyDate" Nullable="true" />
+    <Property Type="Int32" Name="fld_SemakWil_By" Nullable="true" />
+    <Property Type="DateTime" Name="fld_SemakWil_DT" Nullable="true" Precision="23" />
+    <Property Type="Int32" Name="fld_SokongWilGM_By" Nullable="true" />
+    <Property Type="DateTime" Name="fld_SokongWilGM_DT" Nullable="true" Precision="23" />
+    <Property Type="Int32" Name="fld_TerimaHQ_By" Nullable="true" />
+    <Property Type="DateTime" Name="fld_TerimaHQ_DT" Nullable="true" Precision="23" />
+    <Property Type="String" Name="fld_LdgCode" Nullable="true" MaxLength="5" />
+    <Property Type="String" Name="fld_LdgName" Nullable="true" MaxLength="50" />
+  </ComplexType>
+  <ComplexType Name="sp_YieldBracketTable_Result">
+    <Property Type="Int32" Name="fldID" Nullable="false" />
+    <Property Type="String" Name="fldKod" Nullable="true" MaxLength="10" />
+    <Property Type="Decimal" Name="fldHasilTan" Nullable="true" Precision="10" Scale="2" />
+    <Property Type="Decimal" Name="fldLuasHektar" Nullable="true" Precision="8" Scale="2" />
+    <Property Type="Decimal" Name="fldBulan" Nullable="true" Precision="2" Scale="0" />
+    <Property Type="Decimal" Name="fldTahun" Nullable="true" Precision="4" Scale="0" />
+    <Property Type="Int32" Name="fldNegaraID" Nullable="true" />
+    <Property Type="Int32" Name="fldSyarikatID" Nullable="true" />
+    <Property Type="Int32" Name="fldWilayahID" Nullable="true" />
+    <Property Type="Int32" Name="fldLadangID" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_DashTransactionListing_Result">
+    <Property Type="String" Name="fld_KdCaj" Nullable="true" MaxLength="1" />
+    <Property Type="Int32" Name="fld_AmtFELDA" Nullable="true" />
+    <Property Type="Int32" Name="fld_AmtFPM" Nullable="true" />
+    <Property Type="Int32" Name="fld_Year" Nullable="true" />
+    <Property Type="String" Name="fld_Month" Nullable="true" MaxLength="15" />
+    <Property Type="Int32" Name="fld_NegaraID" Nullable="true" />
+    <Property Type="Int32" Name="fld_SyarikatID" Nullable="true" />
+    <Property Type="Int32" Name="fld_Month2" Nullable="true" />
+  </ComplexType>
+</Schema>

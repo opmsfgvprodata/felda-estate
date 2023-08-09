@@ -1,0 +1,15 @@
+Data 1 : 2, Data 2 : TI11623034, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 12:26:47 PG
+Data 1 : 2, Data 2 : TI11623034, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 12:27:54 PG
+Data 1 : 2, Data 2 : TI11623034, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 12:44:01 PG
+Data 1 : 2, Data 2 : TI11623034, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 12:53:38 PG
+Data 1 : 2, Data 2 : TI11623034, Data 3 : 30/07/2023 12:00:00 PG, DateTime : 1/08/2023 12:56:49 PG
+Data 1 : 2, Data 2 : TI11623034, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 12:56:55 PG
+Data 1 : 2, Data 2 : TI11623034, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 1:05:46 PG
+Data 1 : 2, Data 2 : TI11623034, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 1:35:11 PG
+Data 1 : 2, Data 2 : FI00718003, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 1:44:10 PG
+Data 1 : 2, Data 2 : FI00720016, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 1:44:23 PG
+Data 1 : 2, Data 2 : FI00720002, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 1:44:33 PG
+Data 1 : 2, Data 2 : FI00720002, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 1:44:41 PG
+Data 1 : 2, Data 2 : TI19623021, Data 3 : 30/07/2023 12:00:00 PG, DateTime : 1/08/2023 9:48:43 PTG
+Data 1 : 2, Data 2 : TI19623021, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 9:48:48 PTG
+Data 1 : 2, Data 2 : TM19623008, Data 3 : 31/07/2023 12:00:00 PG, DateTime : 1/08/2023 9:54:05 PTG

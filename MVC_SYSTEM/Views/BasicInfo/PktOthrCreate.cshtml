@@ -1,0 +1,120 @@
+﻿@model MVC_SYSTEM.Models.tbl_PktUtamaOthrViewModelCreate
+
+@{
+    ViewBag.Title = "PktOthrCreate";
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+}
+
+<section class="content-wrapper main-content clear-fix">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">Daftar Peringkat</h3>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="col-sm-12" id="selectionsection">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Maklumat Asas Tanaman/Ternakan</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Cost Centre:</label>
+                                <div class="col-sm-3">
+                                    @Html.DropDownListFor(model => model.fld_CostCentreCode, new SelectList(ViewBag.CostCentre, "Value", "Text"), new { @class =  "form-control" })
+                                    @Html.ValidationMessageFor(model => model.fld_CostCentreCode, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Kod Peringkat:</label>
+                                <div class="col-sm-3">
+                                    @Html.TextBoxFor(model => model.fld_PktCode, htmlAttributes: new { @class = "form-control col-sm-3", @readonly = "true" })
+                                    @Html.Hidden("KodPktH", "")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Kategori:</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBox("KategoriAktiviti", "", new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Nama Peringkat:</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(model => model.fld_PktCodeDesc, htmlAttributes: new { @class = "form-control col-sm-8" })
+                                    @Html.ValidationMessageFor(model => model.fld_PktCodeDesc, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Luas/Bilangan/Berat:</label>
+                                <div class="col-sm-3">
+                                    @Html.TextBoxFor(model => model.fld_Luas, htmlAttributes: new { @class = "form-control col-sm-3" })
+                                    @Html.ValidationMessageFor(model => model.fld_Luas, "", new { @class = "text-danger" })
+                                </div>
+                                <label class="control-label col-sm-2">Unit Luas:</label>
+                                <div class="col-sm-3">
+                                    @Html.DropDownListFor(model => model.fld_UnitLuas, new SelectList(ViewBag.UnitLuas, "Value", "Text"), new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.fld_UnitLuas, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Nama Penyelia:</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(model => model.fld_NamaPenyelia, htmlAttributes: new { @class = "form-control col-sm-3" })
+                                    @Html.ValidationMessageFor(model => model.fld_NamaPenyelia, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <input class="btn btn-success" type="submit" value=@GlobalResEstate.btnAddGroup />
+            <button class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack</button>
+        </div>
+    }
+</section>
+
+<script>
+    $("#fld_CostCentreCode").change(function () {
+        var CostCentre = $("#fld_CostCentreCode").val();
+            if (CostCentre != 0) {
+                $("#UpdateProgress1").css("display", "");
+                var ajxfn = {};
+                ajxfn.url = "@Url.Action("GetKodPeringkat", "BasicInfo")";
+                ajxfn.type = "POST";
+                ajxfn.data = JSON.stringify({ CostCentre: CostCentre });
+                ajxfn.datatype = "json";
+                ajxfn.contentType = "application/json";
+                ajxfn.success = function (result) {
+                    $("#fld_PktCode").val(result.newpkt);
+                    $("#KodPktH").val(result.newpkt);
+                    $("#KategoriAktiviti").val(result.ktgriAxtvt);
+
+                    $("#UpdateProgress1").css("display", "none");
+                };
+                ajxfn.error = function () {
+                    $.simplyToast('@GlobalResEstate.msgError', 'danger');
+                    $("#UpdateProgress1").css("display", "none");
+                };
+                $.ajax(ajxfn);
+            }
+            else {
+                $("#KodPkt").val('');
+                $("#KodPktH").val('');
+            }
+    });
+
+    $("form").removeData("validator");
+    $("form").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse("form");
+</script>
+
+
+

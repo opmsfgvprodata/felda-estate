@@ -1,0 +1,86 @@
+﻿@model MVC_SYSTEM.Models.tbl_PktUtamaOthrViewModelEdit
+@{ 
+    string KategoriAktiviti = ViewBag.KategoriAktiviti;
+    long id = ViewBag.id;
+}
+<section class="content-wrapper main-content clear-fix">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">Kemaskini Peringkat</h3>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="col-sm-12" id="selectionsection">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Maklumat Asas Tanaman/Ternakan</div>
+                        <div class="panel-body">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-3">Cost Centre:</label>
+                                    <div class="col-sm-3">
+                                        @Html.TextBoxFor(model => model.fld_CostCentreCode, htmlAttributes: new { @class = "form-control col-sm-3", @disabled = "true" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-3">Kod Peringkat:</label>
+                                    <div class="col-sm-3">
+                                        @Html.TextBoxFor(model => model.fld_PktCode, htmlAttributes: new { @class = "form-control col-sm-3", @disabled = "true" })
+                                        @Html.Hidden("KodPktH", "")
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-3">Kategori:</label>
+                                    <div class="col-sm-8">
+                                        @Html.TextBox("KategoriAktiviti", "", new { @class = "form-control", @disabled = "readonly", @Value = @ViewBag.KategoriAktiviti })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-3">Nama Peringkat:</label>
+                                    <div class="col-sm-8">
+                                        @Html.TextBoxFor(model => model.fld_PktCodeDesc, htmlAttributes: new { @class = "form-control col-sm-8" })
+                                        @Html.ValidationMessageFor(model => model.fld_PktCodeDesc, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-3">Luas:</label>
+                                    <div class="col-sm-3">
+                                        @Html.TextBoxFor(model => model.fld_Luas, htmlAttributes: new { @class = "form-control col-sm-3" })
+                                        @Html.ValidationMessageFor(model => model.fld_Luas, "", new { @class = "text-danger" })
+                                    </div>
+                                    <label class="control-label col-sm-2">Unit Luas:</label>
+                                    <div class="col-sm-3">
+                                        @Html.DropDownListFor(model => model.fld_UnitLuas, new SelectList(ViewBag.UnitLuas, "Value", "Text"), new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.fld_UnitLuas, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-3">Nama Penyelia:</label>
+                                    <div class="col-sm-8">
+                                        @Html.TextBoxFor(model => model.fld_NamaPenyelia, htmlAttributes: new { @class = "form-control col-sm-3" })
+                                        @Html.ValidationMessageFor(model => model.fld_NamaPenyelia, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                @Html.HiddenFor(model => model.fld_PktID)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <input class="btn btn-success" type="submit" value=@GlobalResEstate.btnSave />
+            <button class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack</button>
+        </div>
+    }
+</section>
+
+<script>
+    $("form").removeData("validator");
+    $("form").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse("form");
+</script>

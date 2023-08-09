@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "CheckRoll Data Transaction";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "SearchResult",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "divLoading"
+    };
+}
+
+<script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<div id="divLoading" style="display:none;">
+    <div class="progressTest">
+        <label>
+            @GlobalResEstate.msgWait
+        </label>
+    </div>
+</div>
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well bottom" style="padding-bottom:16px;">
+        @using (Ajax.BeginForm("_CheckRollDataTransaction", "CheckRollMain", null, options, new { @id = "TransacionData" }))
+        {
+            <div class="row">
+                <div class="col-sm-5">
+                    <label>@GlobalResEstate.lblSearch:</label>
+                    @Html.TextBox("FreeSearch", null, htmlAttributes: new { @class = "form-control", placeholder = "Please Enter Worker ID", @id = "txtfilter" })
+                </div>
+                <div class="col-sm-5">
+                    <label>Jenis Data:</label>
+                    <select id="TypeData" name="TypeData" class="form-control">
+                        <option value="Working Data">Data Kerja</option>
+                    </select>
+                </div>
+                <div class="col-sm-2 btn-group">
+                    <button type="submit" id="btnCari" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> @GlobalResEstate.btnSearch</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="well" style="margin-top: 7px;">
+        <div class="modal-body">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Transaction Data</div>
+                <div class="panel-body">
+                    <div id="SearchResult">
+                        @Html.Action("_CheckRollDataTransaction", new { FreeSearch = "", TypeData = "Working Data" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href=@Url.Action("Index", "CheckRollMain") class="btn btn-warning" role="button" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnBack</a>
+        </div>
+    </div>
+</section>
+<!-- modal placeholder-->
+
+<div id='myModal1' class='modal fade in'>
+    <div class="modal-dialog modal-lg" style="width: 85%">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/Asset/Scripts/AjaxModal.js")
+}
+
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 60px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .kodkmpln {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .jeniskerja {
+        width: 230px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .bilanganahli {
+        width: 80px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 70px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .keterangankumpulan {
+        width: 50px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .borderless {
+        border: none !important;
+        background-color: transparent !important;
+    }
+
+    .height {
+        height: 50px !important;
+    }
+</style>
+
+<script>
+
+    function resetSearch() {
+        document.getElementById("txtfilter").value = "";
+        document.getElementById('btnCari').click();
+    }
+
+</script>
+
+
+

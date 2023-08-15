@@ -201,7 +201,10 @@
                             if (result.noData === false) {
                                 $(".dailyValue").val(result.maxIncentive);
                                 $(".dailyValueInfo").empty();
-                                $(".dailyValueInfo").css("display", "");
+                                // yana comment 040823
+                                /*$(".dailyValueInfo").css("display", "");*/
+                                // yana add 040823 - untuk hide remark
+                                $(".dailyValueInfo").hide(); 
                                 $(".dailyValueInfo").append('&nbsp;' + '&nbsp;' + "*" + result.msg1 + result.ratePerDay + " " + result.msg2);
                             }
                         }

@@ -3594,4 +3594,7 @@
   <data name="msgfaildelete" xml:space="preserve">
     <value>Dokumen tidak berjaya dipadam.</value>
   </data>
+  <data name="lbhSyarikatName" xml:space="preserve">
+    <value>Syarikat</value>
+  </data>
 </root>

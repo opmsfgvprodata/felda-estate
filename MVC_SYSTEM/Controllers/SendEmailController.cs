@@ -458,6 +458,8 @@ namespace MVC_SYSTEM.Controllers
             string msg1 = "";
             string statusmsg = "";
             bool status = false;
+            string departmentto = "";
+            string departmentcc = "";
             //var filename = db.tblASCApprovalFileDetails.Where(x => x.fldID == batchid).Select(s => s.fldFileName).FirstOrDefault();
             if (filename != null)
             {
@@ -495,9 +497,23 @@ namespace MVC_SYSTEM.Controllers
                     msg += "</body>";
                     msg += "</html>";
 
-                    var emaillist = db.tblEmailLists.Where(x => x.fldNegaraID == getreceiverdetail.fld_NegaraID && x.fldSyarikatID == getreceiverdetail.fld_SyarikatID && x.fldDeleted == false).ToList();
+                    if (getreceiverdetail.fld_CostCentre == "1000")
+                    {
+                        departmentto = "REGION_WORKER_APPROVAL_FELDA";
+                        departmentcc = "HQ_WORKER_APPROVAL_FELDA";
+                    }
 
-                    var emailtolist = emaillist.Where(x => x.fldCategory == "TO" && x.fldDepartment == "REGION_WORKER_APPROVAL" && x.fldWilayahID == getreceiverdetail.fld_WilayahID).Select(s => new { s.fldEmail, s.fldName }).ToList();
+                    if (getreceiverdetail.fld_CostCentre == "8800")
+                    {
+                        departmentto = "REGION_WORKER_APPROVAL_FPM";
+                        departmentcc = "HQ_WORKER_APPROVAL_FPM";
+                    }
+
+                    //var emaillist = db.tblEmailLists.Where(x => x.fldNegaraID == getreceiverdetail.fld_NegaraID && x.fldSyarikatID == getreceiverdetail.fld_SyarikatID && x.fldDeleted == false).ToList();
+                    //var emailtolist = emaillist.Where(x => x.fldCategory == "TO" && x.fldDepartment == "REGION_WORKER_APPROVAL" && x.fldWilayahID == getreceiverdetail.fld_WilayahID).Select(s => new { s.fldEmail, s.fldName }).ToList();
+
+                    //added by faeza 10.08.2023
+                    var emailtolist = db.tblEmailLists.Where(x => x.fldNegaraID == getreceiverdetail.fld_NegaraID && x.fldSyarikatID == getreceiverdetail.fld_SyarikatID && x.fldWilayahID == getreceiverdetail.fld_WilayahID && x.fldCategory == "TO" && x.fldDepartment == departmentto && x.fldDeleted == false).Select(s => new { s.fldEmail, s.fldName }).ToList();
 
                     if (emailtolist.Count() > 0)
                     {
@@ -507,7 +523,11 @@ namespace MVC_SYSTEM.Controllers
                         }
                         to = tolist.ToArray();
 
-                        var emailcclist = emaillist.Where(x => x.fldCategory == "CC" && x.fldDepartment == "HQ_WORKER_APPROVAL").Select(s => new { s.fldEmail, s.fldName }).ToList();
+                        //var emailcclist = emaillist.Where(x => x.fldCategory == "CC" && x.fldDepartment == "HQ_WORKER_APPROVAL").Select(s => new { s.fldEmail, s.fldName }).ToList();
+
+                        //added by faeza faeza 10.08.2023
+                        var emailcclist = db.tblEmailLists.Where(x => x.fldNegaraID == getreceiverdetail.fld_NegaraID && x.fldSyarikatID == getreceiverdetail.fld_SyarikatID && x.fldCategory == "CC" && x.fldDepartment == departmentcc && x.fldDeleted == false).Select(s => new { s.fldEmail, s.fldName }).ToList();
+
                         if (emailcclist.Count() > 0)
                         {
                             foreach (var ccemail in emailcclist)
@@ -517,7 +537,11 @@ namespace MVC_SYSTEM.Controllers
                         }
                         cc = cclist.ToArray();
 
-                        var emailbcclist = emaillist.Where(x => x.fldCategory == "BCC" && x.fldDepartment == "DEVELOPER").Select(s => new { s.fldEmail, s.fldName }).ToList();
+                        //var emailbcclist = emaillist.Where(x => x.fldCategory == "BCC" && x.fldDepartment == "DEVELOPER").Select(s => new { s.fldEmail, s.fldName }).ToList();
+
+                        //added by faeza faeza 10.08.2023
+                        var emailbcclist = db.tblEmailLists.Where(x => x.fldNegaraID == getreceiverdetail.fld_NegaraID && x.fldSyarikatID == getreceiverdetail.fld_SyarikatID && x.fldCategory == "BCC" && x.fldDepartment == "DEVELOPER" && x.fldDeleted == false).Select(s => new { s.fldEmail, s.fldName }).ToList();
+
                         if (emailbcclist.Count() > 0)
                         {
                             foreach (var bccemail in emailbcclist)
@@ -531,14 +555,14 @@ namespace MVC_SYSTEM.Controllers
                         {
                             if (SendEmailNotification.SendEmailLatest(subject, msg, to, cc, bcc))
                             {
-                                SendEmailNotification.InsertIntotblEmailNotiStatus(getreceiverdetail.fld_NegaraID, getreceiverdetail.fld_SyarikatID, getreceiverdetail.fld_WilayahID, getreceiverdetail.fld_LadangID, filename, "Email From Ladang To HQ - New User ID Approval", "Ladang", 1);
+                                SendEmailNotification.InsertIntotblEmailNotiStatus(getreceiverdetail.fld_NegaraID, getreceiverdetail.fld_SyarikatID, getreceiverdetail.fld_WilayahID, getreceiverdetail.fld_LadangID, filename, "Email From Ladang To HQ - New Worker Approval", "Ladang", 1);
                                 msg1 = "Email telah dihantar kepada HQ";
                                 statusmsg = "success";
                                 status = true;
                             }
                             else
                             {
-                                SendEmailNotification.InsertIntotblEmailNotiStatus(getreceiverdetail.fld_NegaraID, getreceiverdetail.fld_SyarikatID, getreceiverdetail.fld_WilayahID, getreceiverdetail.fld_LadangID, filename, "Email From Ladang To HQ - New User ID Approval", "Ladang", 0);
+                                SendEmailNotification.InsertIntotblEmailNotiStatus(getreceiverdetail.fld_NegaraID, getreceiverdetail.fld_SyarikatID, getreceiverdetail.fld_WilayahID, getreceiverdetail.fld_LadangID, filename, "Email From Ladang To HQ - New Worker Approval", "Ladang", 0);
                                 msg1 = "Email gagal dihantar kepada HQ";
                                 statusmsg = "warning";
                                 status = false;

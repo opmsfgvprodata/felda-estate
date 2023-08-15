@@ -232,6 +232,8 @@
                                 $(".rangeValue").val("0");
                                 $(".dailyValue").val(result.incentiveData.fld_MaxValue);
                                 $(".dailyValueInfo").empty();
+                                // yana add 040823 - untuk hide remark
+                                $(".dailyValueInfo").hide(); 
                                 $(".dailyValueInfo").append('&nbsp;' + '&nbsp;' + "*" + '@GlobalResEstate.msgIncentiveMaximumValue' + result.incentiveData.fld_DailyFixedValue + " " + '@GlobalResEstate.lblDay1');
 
                             } else {

@@ -117,5 +117,23 @@ namespace MVC_SYSTEM.Class
 
             return genbatchno;
         }
+
+        //Added by Shazana 1/8/2023
+        public string getJawatanName(int? userid, int? NegaraID, int? SyarikatID)
+        {
+
+            var usernameInfo = db.tblUsers.Where(x => x.fldUserID == userid).FirstOrDefault();
+            string jawatancode = db.tblUserIDApps.Where(x => x.fldNegaraID == NegaraID && x.fldSyarikatID == SyarikatID && x.fldUserid == usernameInfo.fldUserName).Select(s => s.fldJawatan).FirstOrDefault();
+
+            string jawatanname = "";
+            if (jawatancode == null)
+            {
+                jawatanname = db.tblRoles.Where(x => x.fldRoleID == usernameInfo.fldRoleID && x.fldDeleted == false).Select(x => x.fldDescriptionRole).FirstOrDefault();
+            }
+            else
+            { jawatanname = db.tblOptionConfigsWebs.Where(x => x.fldOptConfValue == jawatancode && x.fldOptConfFlag1 == "position").Select(s => s.fldOptConfDesc).FirstOrDefault(); }
+
+            return jawatanname.ToUpper();
+        }
     }
 }

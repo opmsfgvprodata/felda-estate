@@ -1042,6 +1042,15 @@ namespace MVC_SYSTEM.App_LocalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Syarikat.
+        /// </summary>
+        public static string lbhSyarikatName {
+            get {
+                return ResourceManager.GetString("lbhSyarikatName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ponteng.
         /// </summary>
         public static string lblAbsent {

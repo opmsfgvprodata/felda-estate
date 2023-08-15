@@ -23,5 +23,9 @@ namespace MVC_SYSTEM.AuthModels
         public string fld_LdgEmail { get; set; }
 
         public bool? fld_Deleted { get; set; }
+        //Added by Shazana 1/8/2023
+        [StringLength(50)]
+        public string fld_CostCentre { get; set; }
+
     }
 }

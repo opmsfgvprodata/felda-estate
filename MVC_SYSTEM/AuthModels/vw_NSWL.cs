@@ -64,5 +64,10 @@ namespace MVC_SYSTEM.AuthModels
 
         [StringLength(2)]
         public string fld_KodNegeri { get; set; }
+
+        //Added by Shazana 1/8/2023
+        [StringLength(50)]
+        public string fld_CostCentre { get; set; }
+
     }
 }

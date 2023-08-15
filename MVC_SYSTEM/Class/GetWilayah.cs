@@ -93,5 +93,24 @@ namespace MVC_SYSTEM.Class
 
             return result;
         }
+
+        //Added by Shazana 1/8/2023
+        public int?[] GetWilayahIDForApplicationSupport3(int? NegaraID, int? SyarikatID, int? WilayahID, int? month, int? year, string SyarikatIDList)
+        {
+            IEnumerable<int?> enumerable = dbCorp.vw_PermohonanKewangan.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_Month == month && x.fld_Year == year).Select(s => s.fld_WilayahID).Distinct().ToArray();
+            int?[] wlyhid = enumerable.ToArray();
+
+            return wlyhid;
+        }
+        //Added by Shazana 1/8/2023
+        public int?[] GetWilayahIDForApplicationSupport3(int? NegaraID, int? SyarikatID, int? month, int? year, string SyarikatIDList)
+        {
+            //IEnumerable<int?> enumerable = db2.tbl_SokPermhnWang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Month == month && x.fld_Year == year).Select(s => s.fld_WilayahID).Distinct().ToArray();
+            IEnumerable<int?> enumerable = dbCorp.vw_PermohonanKewangan.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Month == month && x.fld_Year == year && x.fld_CostCentre == SyarikatIDList).Select(s => s.fld_WilayahID).Distinct().ToArray();
+            int?[] wlyhid = enumerable.ToArray();
+
+            return wlyhid;
+        }
+
     }
 }

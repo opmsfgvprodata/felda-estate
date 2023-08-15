@@ -411,7 +411,7 @@ namespace MVC_SYSTEM.Controllers
 
                                 if (item.fldKodPkt != null)
                                 {
-                                    chunk = new Chunk(item.fldKeterangan + " - " + item.fldKodPkt, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                    chunk = new Chunk(item.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                                 }
                                 else
                                 {
@@ -510,7 +510,7 @@ namespace MVC_SYSTEM.Controllers
                                     var hardWorkCode = hardWorkData.Select(s => s.fld_KodKwsnSkar).FirstOrDefault();
                                     var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
                                     var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
-                                    var desc = item.fldKeterangan + " - " + item.fldKodPkt + " (Kesukaran " + hardWorkDesc + ")";
+                                    var desc = item.fldKeterangan + " (Kesukaran " + hardWorkDesc + ")";
 
                                     chunk = new Chunk(desc, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                                     cell = new PdfPCell(new Phrase(chunk));
@@ -714,6 +714,8 @@ namespace MVC_SYSTEM.Controllers
 
                         var hdrhrcb = hdr.Where(x => x.fld_Kdhdct == "C04").Count();
 
+                        var hdrhrch = hdr.Where(x => x.fld_Kdhdct == "C10").Count();
+
                         //get hdr OT
                         var hdrot = dbr.vw_KerjaHdrOT.Where(x => x.fld_Nopkj == pkj && x.fld_Tarikh.Value.Month == MonthList && x.fld_Tarikh.Value.Year == YearList && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
                         var hdrothrbs = hdrot.Where(x => x.fld_Kdhdct == "H01").Sum(s => s.fld_JamOT);
@@ -724,6 +726,8 @@ namespace MVC_SYSTEM.Controllers
 
                         var hdrothrcu = hdrot.Where(x => x.fld_Kdhdct == "H03").Sum(s => s.fld_JamOT);
                         hdrothrcu = hdrothrcu == null ? 0m : hdrothrcu;
+
+                        var hdrhrhujan = hdr.Where(x => x.fld_Hujan == 1).Count();
 
                         //get Jumlah Hari Kerja
                         int? hrkrja = 0;
@@ -740,6 +744,54 @@ namespace MVC_SYSTEM.Controllers
 
                         var lsmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == ldate.Month && x.fld_Year == ldate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
                         lsmnthavgslry = lsmnthavgslry == null ? 0m : lsmnthavgslry;
+
+                        chunk = new Chunk("Jumlah Tawaran Hari Bekerja", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(hrkrja.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Jumlah Cuti Tahunan", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(hdrhrct.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Jumlah OT - Hari Biasa (Jam)", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(hdrothrbs.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
 
                         chunk = new Chunk("Jumlah Hadir Hari Biasa", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
@@ -773,7 +825,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk("Jumlah OT - Hari Biasa (Jam)", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk("Jumlah OT - Hari Cuti Minggu (Jam)", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -781,7 +833,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk(hdrothrbs.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk(hdrothrcm.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -813,7 +865,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk("0", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk(hdrhrch.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -821,7 +873,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk("Jumlah OT - Hari Cuti Minggu (Jam)", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk("Jumlah OT - Hari Cuti Umum (Jam)", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -829,7 +881,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk(hdrothrcm.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk(hdrothrcu.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -869,7 +921,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk("Jumlah OT - Hari Cuti Umum (Jam)", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk("Purata Gaji Bulan Ini", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -877,87 +929,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk(hdrothrcu.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("Jumlah Ponteng", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk(hdrhrpg.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("Jumlah Cuti Hari Minggu", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk(hdrhrcm.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("Jumlah Hari Bekerja", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk(hrkrja.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("Jumlah Cuti Tahunan", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk(hdrhrct.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("Jumlah Cuti Bersalin", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk(hdrhrcb.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk(crmnthavgslry.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -981,52 +953,98 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
+                        chunk = new Chunk("Jumlah Cuti Hari Minggu", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(hdrhrcm.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Purata Gaji Bulan Lepas", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(lsmnthavgslry.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Jumlah Tidak Hadir", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(hdrhrpg.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Jumlah Cuti Bersalin", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(hdrhrcb.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
                         chunk = new Chunk("Jumlah Hari Terabai", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
+                        cell.Border = 0;
                         table.AddCell(cell);
 
-                        chunk = new Chunk("0", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk(hdrhrhujan.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("Purata Gaji Bulan ini", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk(crmnthavgslry.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = Rectangle.BOTTOM_BORDER;
-                        cell.BorderColor = BaseColor.BLACK;
+                        cell.Border = 0;
                         table.AddCell(cell);
 
                         chunk = new Chunk("Jumlah Cuti Tanpa Gaji", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
@@ -1051,20 +1069,6 @@ namespace MVC_SYSTEM.Controllers
                         table.AddCell(cell);
 
                         chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = 0;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk("Purata Gaji Bulan Lepas", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                        cell = new PdfPCell(new Phrase(chunk));
-                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Border = 0;
-                        table.AddCell(cell);
-
-                        chunk = new Chunk(lsmnthavgslry.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;

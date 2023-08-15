@@ -129,7 +129,7 @@
                             <tr>
                                 @if (item.fldKodPkt != null)
                                 {
-                                    <td width="4%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fldKeterangan - @item.fldKodPkt</td>
+                                    <td width="4%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fldKeterangan</td>
                                 }
                                 else
                                 {
@@ -146,7 +146,7 @@
                                 var hardWorkCode = hardWorkData.Select(s => s.fld_KodKwsnSkar).FirstOrDefault();
                                 var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
                                 var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
-                                var desc = item.fldKeterangan + " - " + item.fldKodPkt + " (Kesukaran " + hardWorkDesc + ")";
+                                var desc = item.fldKeterangan + " (Kesukaran " + hardWorkDesc + ")";
                                 <tr>
                                     <td width="4%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@desc</td>
                                     <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-@*@GetTriager.GetDashForNull(quantity.ToString())*@</td>

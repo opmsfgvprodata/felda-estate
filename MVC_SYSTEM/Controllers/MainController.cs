@@ -94,7 +94,7 @@ namespace MVC_SYSTEM.Controllers
                         //var pswdpattern = "((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})";
                         var pswdpattern = new Regex(@"((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})");
 
-                        // mas tambah crypto.Encrypt pd 15/9/2020
+                        // mas tambah crypto.Encrypt pd 15/9/20
                         if (pswdpattern.IsMatch(crypto.Encrypt((newpswd))))
                         {
                             getdata.fldUserPassword = crypto.Encrypt(newpswd);

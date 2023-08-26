@@ -510,7 +510,7 @@ namespace MVC_SYSTEM.Controllers
                                     var hardWorkCode = hardWorkData.Select(s => s.fld_KodKwsnSkar).FirstOrDefault();
                                     var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
                                     var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
-                                    var desc = item.fldKeterangan + " (Kesukaran " + hardWorkDesc + ")";
+                                    var desc = item.fldKeterangan + " (" + hardWorkDesc + ")";
 
                                     chunk = new Chunk(desc, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                                     cell = new PdfPCell(new Phrase(chunk));

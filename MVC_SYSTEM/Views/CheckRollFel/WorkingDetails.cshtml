@@ -1674,6 +1674,7 @@
 
     $("#PilihanAktvt").change(function () {
         ClearInput();
+        document.getElementById("SaveWrk").disabled = false;
         var SelectDate = $('#datetimepicker1').data("DateTimePicker").date();
         var SelectionData = $("#SelectionData").val();
         var SelectionCategory = $('input[name="SelectionCategory"]:checked').val();

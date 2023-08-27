@@ -2566,6 +2566,7 @@ namespace MVC_SYSTEM.Controllers
             bool closeform = true;
             bool YieldBracketFullMonth = true;
             string GLCode = "";
+            bool openRate = false;
 
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
@@ -2641,15 +2642,29 @@ namespace MVC_SYSTEM.Controllers
 
                     if (tbl_JenisAktiviti.fld_DisabledFlag != 3)
                     {
-                        kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                        if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
+                            kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                        else
+                        {
+                            kadarharga = tbl_JenisAktiviti.fld_Harga;
+                            openRate = true;
+                        }
                     }
                     else
                     {
-                        //Modified line by kamalia 30/4/2021
-                        kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
-                        //Modified line by kamalia 23/8/2021
-                        var getgajiminima = db.tbl_GajiMinimaLdg.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
-                        kadarharga = getgajiminima != null ? getgajiminima.fld_NilaiGajiMinima : kadarharga1;
+                        if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
+                        {
+                            //Modified line by kamalia 30/4/2021
+                            kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                            //Modified line by kamalia 23/8/2021
+                            var getgajiminima = db.tbl_GajiMinimaLdg.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
+                            kadarharga = getgajiminima != null ? getgajiminima.fld_NilaiGajiMinima : kadarharga1;
+                        }
+                        else
+                        {
+                            kadarharga = tbl_JenisAktiviti.fld_Harga;
+                            openRate = true;
+                        }
                     }
 
                     kadarharga2 = kadarharga;
@@ -2673,7 +2688,7 @@ namespace MVC_SYSTEM.Controllers
                                         kadarharga = kadarharga2;
                                     }
                                 }
-                                CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = "" });
+                                CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = "", OpenRate = openRate });
                             }
                         }
                         else
@@ -2692,7 +2707,7 @@ namespace MVC_SYSTEM.Controllers
                                     kadarharga = kadarharga2;
                                 }
                             }
-                            CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = "" });
+                            CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = "", OpenRate = openRate });
                         }
                         msg = GlobalResEstate.msgWorkInfo;
                         statusmsg = "success";
@@ -2745,15 +2760,29 @@ namespace MVC_SYSTEM.Controllers
 
                 if (tbl_JenisAktiviti.fld_DisabledFlag != 3)
                 {
-                    kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                    if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
+                        kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                    else
+                    {
+                        kadarharga = tbl_JenisAktiviti.fld_Harga;
+                        openRate = true;
+                    }
                 }
                 else
                 {
-                    //Modified line by kamalia 30/4/2021
-                    kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
-                    //Modified line by kamalia 23/8/2021
-                    var getgajiminima = db.tbl_GajiMinimaLdg.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
-                    kadarharga = getgajiminima != null ? getgajiminima.fld_NilaiGajiMinima : kadarharga1;
+                    if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
+                    {
+                        //Modified line by kamalia 30/4/2021
+                        kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                        //Modified line by kamalia 23/8/2021
+                        var getgajiminima = db.tbl_GajiMinimaLdg.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
+                        kadarharga = getgajiminima != null ? getgajiminima.fld_NilaiGajiMinima : kadarharga1;
+                    }
+                    else
+                    {
+                        kadarharga = tbl_JenisAktiviti.fld_Harga;
+                        openRate = true;
+                    }
                 }
 
                 kadarharga2 = kadarharga;
@@ -2789,7 +2818,7 @@ namespace MVC_SYSTEM.Controllers
                                     kadarharga = kadarharga2;
                                 }
                             }
-                            CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = paysheetID });
+                            CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = paysheetID, OpenRate = openRate });
                         }
                     }
                     else
@@ -2819,7 +2848,7 @@ namespace MVC_SYSTEM.Controllers
                                 kadarharga = kadarharga2;
                             }
                         }
-                        CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = paysheetID });
+                        CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = paysheetID, OpenRate = openRate });
                     }
                     msg = GlobalResEstate.msgWorkInfo;
                     statusmsg = "success";

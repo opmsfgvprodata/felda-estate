@@ -36,5 +36,6 @@ namespace MVC_SYSTEM.CustomModels
         public string EstateCostCenter { get; set; }
 
         public string PaysheetID { get; set; }
+        public bool OpenRate { get; set; }
     }
 }

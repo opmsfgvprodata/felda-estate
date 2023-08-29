@@ -10,6 +10,7 @@
     decimal? maxhasil = Model.Select(s => s.MaximumHsl).Distinct().FirstOrDefault();
     decimal? TotalAmount = 0;
     var estateCostCenter = Model.Select(s => s.EstateCostCenter).FirstOrDefault();
+    var openRate = Model.Select(s => s.OpenRate).FirstOrDefault();
 }
 @if (estateCostCenter == "1000")
 {
@@ -65,8 +66,16 @@
                         {
                             case 1:
 
-                                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
-                                    <p id="kadartext_@itemno">@kadar</p> <input type="hidden" id="kadar_@itemno" name="kadar_@itemno" value="@kadar" />
+                                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1" width="10%">
+                                    @if (openRate)
+                                    {
+                                        <input type="number" id="kadar_@itemno" name="kadar_@itemno" class="form-control" onchange="CheckMax(this)" value="@kadar" />
+                                    }
+                                    else
+                                    {
+                                        <p id="kadartext_@itemno">@kadar</p>
+                                        <input type="hidden" id="kadar_@itemno" name="kadar_@itemno" value="@kadar" />
+                                    }
                                     @if (itemno == 1)
                                     {
                                         <input type="hidden" id="maxhasil" name="maxhasil" value="@maxhasil" />
@@ -89,6 +98,7 @@
                                         <select id="kdhmnuai_@itemno" name="kdhmnuai_@itemno" class="form-control" onchange="kdhmnuaichange(this, 'kadar_@itemno', 'kadartext_@itemno');">
                                             <option value="A">Manual</option>
                                             <option value="B">Mekanikal</option>
+                                            <option value="C">MAIC</option>
                                         </select>
                                     </td>
                                 }
@@ -226,8 +236,16 @@ else
                         {
                             case 1:
 
-                                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">
-                                    <p id="kadartext_@itemno">@kadar</p> <input type="hidden" id="kadar_@itemno" name="kadar_@itemno" value="@kadar" />
+                                <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1" width="10%">
+                                    @if (openRate)
+                                    {
+                                        <input type="number" id="kadar_@itemno" name="kadar_@itemno" class="form-control" onchange="CheckMax(this)" value="@kadar" />
+                                    }
+                                    else
+                                    {
+                                        <p id="kadartext_@itemno">@kadar</p>
+                                        <input type="hidden" id="kadar_@itemno" name="kadar_@itemno" value="@kadar" />
+                                    }
                                     @if (itemno == 1)
                                     {
                                         <input type="hidden" id="maxhasil" name="maxhasil" value="@maxhasil" />
@@ -250,6 +268,7 @@ else
                                         <select id="kdhmnuai_@itemno" name="kdhmnuai_@itemno" class="form-control" onchange="kdhmnuaichange(this, 'kadar_@itemno', 'kadartext_@itemno');">
                                             <option value="A">Manual</option>
                                             <option value="B">Mekanikal</option>
+                                            <option value="C">MAIC</option>
                                         </select>
                                     </td>
                                 }
@@ -331,3 +350,28 @@ else
     <input type="hidden" id="datano" name="datano" value="@datano" />
     <input type="hidden" id="loopdatahdr" name="loopdatahdr" value="@loopdatahdr" />
 }
+
+<script>
+    function CheckMax(param) {
+        var paramval = param.value;
+
+        if (paramval > 200) {
+            document.getElementById("SaveWrk").disabled = true;
+            document.getElementById(param.id).value = 0;
+            $.simplyToast("Kadar yang dibenarkan tidak melebihi RM200!", "warning");
+        }
+        else {
+            var itemno = @itemno;
+            for (let i = 1; i < itemno; i++) {
+                //console.log("kadar_" + i);
+                if (document.getElementById("kadar_" + i).value > 200 || document.getElementById("kadar_" + i).value == 0) {
+                    document.getElementById("SaveWrk").disabled = true;
+                    break;
+                }
+                else {
+                    document.getElementById("SaveWrk").disabled = false;
+                }
+            }
+        }
+    }
+</script>

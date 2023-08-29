@@ -12,8 +12,8 @@ namespace MVC_SYSTEM.Class
         {
             MVC_SYSTEM_MasterModels db = new MVC_SYSTEM_MasterModels();
             var getconnection = db.tblConnections.Where(x => x.wilayahID == wlyhID && x.syarikatID==syrktID && x.negaraID==ngrID && x.deleted==false).FirstOrDefault();
-            //host = getconnection.DataSource;
-            host = getconnection.DataSourceInternal;
+            host = getconnection.DataSource;
+            //host = getconnection.DataSourceInternal;
             catalog = getconnection.InitialCatalog;
             user = getconnection.userID;
             pass = getconnection.Password;

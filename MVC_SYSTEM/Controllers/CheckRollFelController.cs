@@ -561,44 +561,6 @@ namespace MVC_SYSTEM.Controllers
             return Json(new { proceedstatus = disablesavebtn, statusmsg, msg, ZeroLeaveBal, statusmsg2, msg2, AlertPopup, tablelisting2 = bodyview2 });
         }
 
-        //public ActionResult _NeglectedDay()
-        //{
-        //    int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
-        //    int? getuserid = getidentity.ID(User.Identity.Name);
-        //    string host, catalog, user, pass = "";
-        //    GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
-        //    Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
-        //    MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
-
-        //    List<SelectListItem> JenisChargeHT = new List<SelectListItem>();
-        //    List<SelectListItem> JnisPktHT = new List<SelectListItem>();
-        //    List<SelectListItem> PilihanPktHT = new List<SelectListItem>();
-        //    List<SelectListItem> PilihanAktvtHT = new List<SelectListItem>();
-        //    List<SelectListItem> PilihanMasaHT = new List<SelectListItem>();
-
-        //    var getJenisActvtDetails = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3 && x.fld_Deleted == false).FirstOrDefault();
-
-        //    JnisPktHT = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnspkt" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc }), "Value", "Text").ToList();
-        //    PilihanPktHT = new SelectList(dbr.tbl_PktUtama.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(s => new SelectListItem { Value = s.fld_PktUtama, Text = s.fld_PktUtama + " - " + s.fld_NamaPktUtama }), "Value", "Text").ToList();
-        //    PilihanAktvtHT = new SelectList(db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_Deleted == false).OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt }), "Value", "Text").ToList();
-        //    PilihanAktvtHT.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
-
-        //    JenisChargeHT.Add(new SelectListItem { Text = "Kong", Value = "kong", Selected = true });
-        //    JenisChargeHT.Add(new SelectListItem { Text = "Kadaran", Value = "kadaran", Selected = false });
-
-        //    PilihanMasaHT.Add(new SelectListItem { Text = "Sepenuh Hari", Value = "penuh", Selected = true });
-        //    PilihanMasaHT.Add(new SelectListItem { Text = "Separuh Hari", Value = "separuh", Selected = false });
-
-        //    ViewBag.JnisPktHT = JnisPktHT;
-        //    ViewBag.PilihanPktHT = PilihanPktHT;
-        //    ViewBag.PilihanAktvtHT = PilihanAktvtHT;
-        //    ViewBag.JenisChargeHT = JenisChargeHT;
-        //    ViewBag.PilihanMasaHT = PilihanMasaHT;
-        //    dbr.Dispose();
-
-        //    return View();
-        //}
-
         public ActionResult _NeglectedDay()
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;

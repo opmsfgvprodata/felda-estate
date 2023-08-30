@@ -230,7 +230,7 @@
         $("#UpdateProgress1").css("display", "");
         return true;
     }
-      function Paysheet(LdgID, wlyhid, id) {
+        function Paysheet(LdgID, wlyhid, id) {
         var NegaraID = '@ViewBag.NegaraID';
         var SyarikatID = '@ViewBag.SyarikatID';
         var Month = '@ViewBag.Month';
@@ -269,8 +269,9 @@
                         { input: { type: "text", label: "Cheque (RM)", name: "Cheque", id: "Cheque", value: jmlhcheque.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
                         { input: { type: "text", label: "CDMAS (RM)", name: "CDMAS", id: "CDMAS", value: jmlhcdmas.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
                         { input: { type: "text", label: "EWallet (RM)", name: "EWallet", id: "EWallet", value: jmlhewallet.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
-                        { input: { type: "text", label: "M2U (RM)", name: "M2U", id: "M2U", value: jmlhm2u.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
-                        { input: { type: "text", label: "M2E (RM)", name: "M2E", id: "M2E", value: jmlhm2e.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
+                        /*Modified by Shazana 19/8/2023*/
+                        { input: { type: "text", label: "M2E-E (RM)", name: "M2U", id: "M2U", value: jmlhm2u.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
+                        { input: { type: "text", label: "M2E-HQ (RM)", name: "M2E", id: "M2E", value: jmlhm2e.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
 
 						],
                     cancel: function (data, array, event) { },

@@ -1415,7 +1415,7 @@ namespace MVC_SYSTEM.Controllers
             if (SelectPkt.Count() > 0)
             {
                 var PilihanPkt = SelectPkt.FirstOrDefault().fld_KodPkt;
-                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID && x.fld_EndDT >= DateTime.Now).FirstOrDefault();
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID && x.fld_EndDT >= CurrentDate).FirstOrDefault();
 
                 if (pktTransfer != null)
                 {
@@ -2175,7 +2175,7 @@ namespace MVC_SYSTEM.Controllers
 
             if (TrnsfrLvl == 1)
             {
-                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID && x.fld_EndDT >= DateTime.Now).FirstOrDefault();
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID).FirstOrDefault();
                 var pktHargaKesukaran = PktHargaKesukaran(dbr, JnisAktvt, PilihanPkt, LadangID);
                 if (pktTransfer != null)
                 {
@@ -2270,7 +2270,7 @@ namespace MVC_SYSTEM.Controllers
 
             if (TrnsfrLvl == 1)
             {
-                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID && x.fld_EndDT >= DateTime.Now).FirstOrDefault();
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID).FirstOrDefault();
                 var pktHargaKesukaran = PktHargaKesukaran(dbr, JnisAktvt, PilihanPkt, LadangID);
                 if (pktTransfer != null)
                 {

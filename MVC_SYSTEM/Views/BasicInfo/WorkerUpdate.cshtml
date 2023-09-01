@@ -247,11 +247,14 @@
                         Mohon Semula
                     </button>
                 }*@
-                <button class="btn btn-primary" id="btnUpload" name="btnUpload" onclick="return DisplayProgressMessage(this);">
+
+                @*Modified by Shazana 29/8/2023*@
+                @*<button class="btn btn-primary" id="btnUpload" name="btnUpload" onclick="return DisplayProgressMessage(this);">
                     @GlobalResEstate.btnSave
-                </button>
+                </button>*@
                 @*<input id="btnUpload" class="btn btn-primary" value=@GlobalResEstate.btnSave />*@
-                <input id="btnSubmit" style="display:none" class="btn btn-primary" type="submit" value=@GlobalResEstate.btnSave />
+                <input id="btnSubmit" class="btn btn-primary" type="submit" value=@GlobalResEstate.btnSave />
+
                 <button class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack</button>
             </div>
 }

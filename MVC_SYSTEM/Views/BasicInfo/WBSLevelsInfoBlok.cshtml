@@ -1,0 +1,86 @@
+﻿@using MVC_SYSTEM.Class;
+@{
+    ViewBag.Title = "LevelsInfoBlok";
+    //Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    GetStatus GetStatus = new GetStatus();
+
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+}
+
+<div class="text-center">@grid.TotalRowCount @Html.Label(GlobalResEstate.lblTotalRecord)</div>
+<div>
+    @{
+        @grid.GetHtml(htmlAttributes: new { id = "grid" }, // id for ajaxUpdateContainerId parameter
+                                fillEmptyRows: false,
+                                tableStyle: "table table-bordered table-striped table-list table-hover",
+                                headerStyle: "header_table",
+                                alternatingRowStyle: "Grid-alt",
+                                selectedRowStyle: "Grid-selected",
+                                rowStyle: "Grid-rowstyle",
+                                footerStyle: "table-pager",
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                    grid.Column(GlobalResEstate.hdrNo, canSort: false, format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, style: "count"),
+                                    grid.Column("fld_Blok", "Kod Peringkat", style: "kod"),
+                                    grid.Column("fld_NamaBlok", "Nama Peringkat", style: "desc"),
+                                    grid.Column("fld_LsBlok", "Luas", style: "luas"),
+                                    grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "tindakan",
+                                        format: @<text>
+                                                @Html.Raw("<a data-modal='' href='" + @Url.Action("WBSLevelsBlokUpdate", "BasicInfo") + "/?id=" + item.fld_Blok + "' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a>")
+                                                @if (item.fld_Deleted == true)
+                                                {
+                                                    @Html.Raw("<a data-modal='' href='" + @Url.Action("WBSLevelsBlokDelete", "BasicInfo") + "/?id=" + item.fld_Blok + "&status=false' class='btn btn-danger' title='Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-unlock fa-lg'></i></a>")
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw("<a data-modal='' href='" + @Url.Action("WBSLevelsBlokDelete", "BasicInfo") + "/?id=" + item.fld_Blok + "&status=true' class='btn btn-danger' title='Nyah Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-trash fa-lg'></i></a>")
+                                                }
+                                        </text>)
+        ))
+    }
+</div>
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .kod {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .desc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .luas {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 80px;
+        text-align: center;
+    }
+</style>

@@ -2220,5 +2220,7 @@
   <data name="lblAddedContribution" xml:space="preserve">
     <value>Added Contribution Table</value>
   </data>
->>>>>>> .r94
+  <data name="lblCodeWBS" xml:space="preserve">
+    <value>WBS Code</value>
+  </data>
 </root>

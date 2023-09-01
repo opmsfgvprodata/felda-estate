@@ -2185,5 +2185,7 @@
   <data name="lblAddedContribution" xml:space="preserve">
     <value>Jadual Caruman Tambahan</value>
   </data>
->>>>>>> .r94
+  <data name="lblCodeWBS" xml:space="preserve">
+    <value>Kod WBS</value>
+  </data>
 </root>

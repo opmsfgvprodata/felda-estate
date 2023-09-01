@@ -80,5 +80,9 @@ namespace MVC_SYSTEM.MasterModels
         public decimal? fld_jumLuasLotLdgPeneroka { get; set; }
         public int? fld_bilKwsnUtama { get; set; }
         public int? fld_bilKwsnRezab { get; set; }
+
+        //fatin added - 01/09/2023
+        [StringLength(15)]
+        public string fld_WBS { get; set; }
     }
 }

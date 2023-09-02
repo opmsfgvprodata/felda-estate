@@ -3384,6 +3384,17 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.IDPenyelia = getuserid;
             ViewBag.Print = print;
 
+            //Added by Shazana 29/8/2023
+            var jawatanPenyelia = db.tblUserIDApps.Where(x => x.fldUserid == User.Identity.Name).Select(x => x.fldJawatan).FirstOrDefault();
+            string namajawatan = "";
+            if (jawatanPenyelia != null)
+            {
+                namajawatan = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "position" && x.fldOptConfValue == jawatanPenyelia).Select(x => x.fldOptConfDesc).FirstOrDefault();
+            }
+            else
+            { namajawatan = ""; }
+            namajawatan = namajawatan == null ? "" : namajawatan;
+            ViewBag.namajawatan = namajawatan;
 
             if (MonthList == null && YearList == null)
             {

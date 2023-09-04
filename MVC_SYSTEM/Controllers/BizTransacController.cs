@@ -4734,5 +4734,309 @@ namespace MVC_SYSTEM.Controllers
 
             return Json(ladanglist);
         }
+        //Added by Shazana 1/8/2023
+
+        public JsonResult ReverseSAPDetailsRemove(int Mode)
+        //public JsonResult ReverseSAPDetailsRemove(Guid refid, string CekrolRefNo,int NegaraId, int SyarikatId, int WilayahId, int LadangId, int Month, int Year, int Mode )
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            string msg, statusmsg = "";
+
+            try
+            {
+                //if (Mode == 1 || Mode == 2)
+                //{
+                //    var returnMsgData = dbr.tbl_SAPPostReturn.Where(x => x.fld_SAPPostRefID == refid);
+                //    dbr.tbl_SAPPostReturn.RemoveRange(returnMsgData);
+                //    dbr.SaveChanges();
+
+
+                //    var removeDataDetails = dbr.tbl_SAPPostDataDetails.Where(x => x.fld_SAPPostRefID == refid);
+                //    dbr.tbl_SAPPostDataDetails.RemoveRange(removeDataDetails);
+                //    dbr.SaveChanges();
+
+                //    var removePostRef = dbr.tbl_SAPPostRef.Where(x => x.fld_ID == refid);
+                //    dbr.tbl_SAPPostRef.RemoveRange(removePostRef);
+                //    dbr.SaveChanges();
+                //    msg = "berjaya";
+                //}
+
+                msg = "berjaya";
+
+
+                string appname = Request.ApplicationPath;
+                string domain = Request.Url.GetLeftPart(UriPartial.Authority);
+                var lang = Request.RequestContext.RouteData.Values["lang"];
+
+                if (appname != "/")
+                {
+                    domain = domain + appname;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                msg = GlobalResEstate.msgError;
+                statusmsg = "warning";
+                return Json(new { success = false, msg = GlobalResEstate.msgError, status = "danger", checkingdata = "1" });
+            }
+            return Json(new {statusmsg });
+            // return Json(new { success = true, msg = GlobalResEstate.msgUpdate, status = "success", checkingdata = "0", method = "2", btn = "btnSrch" });
+        }
+
+        //Added by Shazana 1/9/2023
+        public ActionResult ReverseSAP(string filter)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            DateTime Minus1month = timezone.gettimezone().AddMonths(-1);
+
+            int year = Minus1month.Year;
+            int month = Minus1month.Month;
+            int drpyear = 0;
+            int drprangeyear = 0;
+
+            drpyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
+            drprangeyear = timezone.gettimezone().Year;
+
+            var yearlist = new List<SelectListItem>();
+            for (var i = drpyear; i <= drprangeyear; i++)
+            {
+                if (i == year)
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                }
+            }
+
+            ViewBag.MonthList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc", month);
+
+            ViewBag.YearList = yearlist;
+            ViewBag.ClosingTransaction = "class = active";
+
+            return View();
+        }
+
+        public ActionResult _ReverseSAP(int? MonthList, int? YearList)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            //added by kamalia 24/11/21
+            MVC_SYSTEM_MasterModels MasterModel = new MVC_SYSTEM_MasterModels();
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            //Added by Shazana 23/6/2023
+            int? roleuser = getidentity.getRoleID(getuserid);
+            ViewBag.RoleUser = roleuser;
+
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            var message = "";
+
+            var postingData = new List<vw_SAPPostData>();
+
+            if (!String.IsNullOrEmpty(MonthList.ToString()) && !String.IsNullOrEmpty(YearList.ToString()))
+            {
+                postingData = dbr.vw_SAPPostData
+                    .Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID).ToList(); //modified by kamalia 21/3/2022 reverted back
+
+                var ClosingTransaction = dbr.tbl_TutupUrusNiaga.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Month == MonthList && x.fld_Year == YearList).FirstOrDefault();
+               
+
+                //farahin tambah - 30/12/2021
+                var statusProceedA2 = dbr.tbl_SAPPostRef.Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID && x.fld_DocType == "A2").FirstOrDefault();
+
+
+                var statusProceedKR = dbr.tbl_SAPPostRef.Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID && x.fld_DocType == "KR").FirstOrDefault();
+
+                if (statusProceedKR != null)
+                {
+                    ViewBag.statusProceedKR = statusProceedKR.fld_StatusProceed;
+                }
+                else
+                {
+                    ViewBag.statusProceedKR = null;
+                }
+                if (statusProceedA2 != null)
+                {
+                    ViewBag.RefNoA2 = statusProceedA2.fld_RefNo;
+                }
+                else
+                {
+                    ViewBag.RefNoA2 = null;
+                }
+
+
+                if (statusProceedKR != null)
+                {
+                    ViewBag.RefNoKR = statusProceedKR.fld_RefNo;
+                }
+                else
+                {
+                    ViewBag.RefNoKR = null;
+                }
+
+                if (!postingData.Any())
+                {
+                    message = GlobalResEstate.msgErrorSearch;
+                }
+            }
+
+            else
+            {
+                message = GlobalResEstate.msgChooseMonthYear;
+            }
+
+            ViewBag.Message = message;
+
+            ViewBag.Existing = db.tbl_SokPermhnWang.Where(x => x.fld_Year == YearList && x.fld_Month == MonthList && x.fld_LadangID == LadangID).Any();
+            ViewBag.GetSokongWil = MasterModel.tbl_SokPermhnWang.Where(x => x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList && x.fld_SokongWilGM_Status == 1).Any();
+            ViewBag.GetTerimaHQ = MasterModel.tbl_SokPermhnWang.Where(x => x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList && x.fld_TerimaHQ_Status == 1).Any();
+
+            ViewBag.GetTolakHQ = MasterModel.tbl_SokPermhnWang.Where(x => x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList && x.fld_TolakHQ_Status == 1).Any();
+            ViewBag.GetTolakWilGM = MasterModel.tbl_SokPermhnWang.Where(x => x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList && x.fld_TolakWilGM_Status == 1).Any();
+            ViewBag.GetTolakWil = MasterModel.tbl_SokPermhnWang.Where(x => x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList && x.fld_TolakWil_Status == 1).Any();
+            ViewBag.GetJumPermohonan = MasterModel.tbl_SokPermhnWang.Where(x => x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList).Select(s => s.fld_JumlahPermohonan).FirstOrDefault();
+            ViewBag.ReferenceNo = dbr.tbl_SAPPostRef.Where(x => x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList).Select(s => s.fld_RefNo).FirstOrDefault();
+
+            var verifystatus = dbr.tbl_SAPPostRef.Where(x => x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList && x.fld_DocType == "KR").Select(s => s.fld_RefNo).FirstOrDefault();
+            if (verifystatus == null || verifystatus == "")
+            { ViewBag.berjayaverify = "0"; }
+            else
+            { ViewBag.berjayaverify = "1"; }
+
+            var Ladang = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_LdgCode).FirstOrDefault();
+            ViewBag.Ladang = Ladang;
+
+            ViewBag.Year = YearList;
+            ViewBag.Month = MonthList;
+
+            var monthclose = false;
+            if (YearList != null)
+            {
+                int Year = Convert.ToInt32(YearList);
+                int Month = Convert.ToInt32(MonthList);
+                var date = new DateTime(Year, Month, 1);
+                var audittrail = db.tbl_AuditTrail.Where(x => x.fld_LadangID == LadangID && x.fld_Thn == YearList).FirstOrDefault();
+                switch (MonthList)
+                {
+                    case 1:
+                        if (audittrail.fld_Bln1 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 2:
+                        if (audittrail.fld_Bln2 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 3:
+                        if (audittrail.fld_Bln3 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 4:
+                        if (audittrail.fld_Bln4 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 5:
+                        if (audittrail.fld_Bln5 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 6:
+                        if (audittrail.fld_Bln6 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 7:
+                        if (audittrail.fld_Bln7 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 8:
+                        if (audittrail.fld_Bln8 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 9:
+                        if (audittrail.fld_Bln9 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 10:
+                        if (audittrail.fld_Bln10 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 11:
+                        if (audittrail.fld_Bln11 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                    case 12:
+                        if (audittrail.fld_Bln12 == 1)
+                        {
+                            monthclose = true;
+                        }
+                        break;
+                }
+                ViewBag.audittrail = monthclose;
+            }
+            else
+            {
+                ViewBag.audittrail = false;
+            }
+
+            var statusPermohonan = db.tbl_SokPermhnWang.Where(x => x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Year == YearList && x.fld_Month == MonthList).FirstOrDefault();
+            if (statusPermohonan == null)
+            { ViewBag.statusPermohonan = "Permohonan tidak wujud "; }
+            else if (statusPermohonan.fld_SemakWil_Status == 1 && statusPermohonan.fld_SokongWilGM_Status == 1 && statusPermohonan.fld_TerimaHQ_Status == 1)
+            { ViewBag.statusPermohonan = "Lulus"; }
+            else if (statusPermohonan.fld_SemakWil_Status == 0 || statusPermohonan.fld_SokongWilGM_Status == 0 || statusPermohonan.fld_TerimaHQ_Status == 0)
+            { ViewBag.statusPermohonan = "Permohonan masih dalam proses "; }
+            else
+            { ViewBag.statusPermohonan = "Permohonan masih dalam proses "; }
+
+
+            return View(postingData);
+
+
+        }
     }
 }

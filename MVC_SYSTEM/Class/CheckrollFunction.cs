@@ -407,7 +407,7 @@ namespace MVC_SYSTEM.Class
             }
             else
             {
-                var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == transferPktCode && x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
+                var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == transferPktCode && x.fld_LadangID == LadangID).FirstOrDefault();
                 PktData = dbr.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal && x.fld_Deleted == false).FirstOrDefault();
                 sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
             }

@@ -62,9 +62,13 @@ namespace MVC_SYSTEM.Models
         public decimal? fld_LuasKawTnman { get; set; }
 
         [Column(TypeName = "numeric")]
+        //Added by Shazana 1/9/2023
+        [DisplayFormat(DataFormatString = "{0:0.0000}", ApplyFormatInEditMode = true)]
         public decimal? fld_LuasBerhasil { get; set; }
 
         [Column(TypeName = "numeric")]
+        //Added by Shazana 1/9/2023
+        [DisplayFormat(DataFormatString = "{0:0.0000}", ApplyFormatInEditMode = true)]
         public decimal? fld_LuasBlmBerhasil { get; set; }
 
         public int? fld_BilPokok { get; set; }
@@ -98,5 +102,6 @@ namespace MVC_SYSTEM.Models
 
         [StringLength(10)]
         public string fld_SAPType { get; set; }
+
     }
 }

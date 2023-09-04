@@ -154,6 +154,80 @@ namespace MVC_SYSTEM.Models
                .Property(e => e.fld_KadarByr)
                .HasPrecision(18, 3);
 
+            //fatin added - 21/07/2023
+            modelBuilder.Entity<tbl_PktUtama>()
+                .Property(e => e.fld_LsPktUtama)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_PktUtama>()
+                .Property(e => e.fld_LuasKawTnman)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_PktUtama>()
+                .Property(e => e.fld_LuasBerhasil)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_PktUtama>()
+                .Property(e => e.fld_LuasBlmBerhasil)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_PktUtama>()
+                .Property(e => e.fld_LuasKawTiadaTanaman)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_SubPkt>()
+               .Property(e => e.fld_LsPkt)
+               .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_SubPkt>()
+                .Property(e => e.fld_LuasKawTnmanPkt)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_SubPkt>()
+                .Property(e => e.fld_LuasBerhasilPkt)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_SubPkt>()
+                .Property(e => e.fld_LuasBlmBerhasilPkt)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_SubPkt>()
+                .Property(e => e.fld_LuasKawTiadaTanamanPkt)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_Blok>()
+                .Property(e => e.fld_LsBlok)
+                .HasPrecision(8, 5);
+
+            modelBuilder.Entity<tbl_Blok>()
+                .Property(e => e.fld_LuasKawTnmanBlok)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_Blok>()
+                .Property(e => e.fld_LuasBerhasilBlok)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_Blok>()
+                .Property(e => e.fld_LuasBlmBerhasilBlok)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_Blok>()
+                .Property(e => e.fld_LuasKawTiadaTanamanBlok)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_HasilSawitPkt>()
+                .Property(e => e.fld_LuasHektar)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_HasilSawitSubPkt>()
+                .Property(e => e.fld_LuasHektar)
+                .HasPrecision(8, 4);
+
+            modelBuilder.Entity<tbl_HasilSawitBlok>()
+                .Property(e => e.fld_LuasHektar)
+                .HasPrecision(8, 4);
+            //end
+
             //modelBuilder.Entity<tbl_Blok>()
             //    .Property(e => e.fld_LsBlok)
             //    .HasPrecision(8, 3);

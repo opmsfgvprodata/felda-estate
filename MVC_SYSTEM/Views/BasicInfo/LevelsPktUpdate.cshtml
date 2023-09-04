@@ -301,7 +301,7 @@
             console.log("Luas");
             var luas = $("#fld_LsPktUtama").val();
             console.log(luas);
-            $("#fld_LsPktUtama").val(parseFloat(luas).toFixed(3));
+            $("#fld_LsPktUtama").val(parseFloat(luas).toFixed(4)); //fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
             $("#fld_LuasKawTnman").val("");
             $("#fld_LuasKawTiadaTanaman").val("");
             $("#fld_LuasBerhasil").val("");
@@ -312,7 +312,7 @@
 
         $("#fld_LuasKawTnman").change(function () {
             var luas = $("#fld_LuasKawTnman").val();
-            $("#fld_LuasKawTnman").val(parseFloat(luas).toFixed(3));
+            $("#fld_LuasKawTnman").val(parseFloat(luas).toFixed(4)); //fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
             var Dirian = {};
             var disableoption = "";
             Dirian.url = "@Url.Action("GetDirianPokok", "BasicInfo")";
@@ -334,7 +334,7 @@
                     }
                     else {
                         var LuasTakTnm = parseFloat($("#fld_LsPktUtama").val()) - parseFloat($("#fld_LuasKawTnman").val());
-                        $("#fld_LuasKawTiadaTanaman").val(parseFloat(LuasTakTnm).toFixed(3));
+                        $("#fld_LuasKawTiadaTanaman").val(parseFloat(LuasTakTnm).toFixed(4)); //fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
                     }
                 }
                 else {
@@ -348,24 +348,24 @@
 
         $("#fld_LuasBerhasil").change(function () {
             var luas = $("#fld_LuasBerhasil").val();
-            $("#fld_LuasBerhasil").val(parseFloat(luas).toFixed(3));
+            $("#fld_LuasBerhasil").val(parseFloat(luas).toFixed(4)); //fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
             if ($("#fld_LuasBerhasil").val() == "") {
                 $("#fld_LuasBerhasil").val("0");
                 $("#fld_LuasBlmBerhasil").val($("#fld_LuasKawTnman").val());
             }
             else {
                 var LuasBlmHasil = parseFloat($("#fld_LuasKawTnman").val()) - parseFloat($("#fld_LuasBerhasil").val());
-                $("#fld_LuasBlmBerhasil").val(parseFloat(LuasBlmHasil).toFixed(3));
+                $("#fld_LuasBlmBerhasil").val(parseFloat(LuasBlmHasil).toFixed(4)); //fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
             }
         });
 
         $("#fld_LuasBlmBerhasil").change(function () {
             var luas = $("#fld_LuasBlmBerhasil").val();
-            $("#fld_LuasBlmBerhasil").val(parseFloat(luas).toFixed(3));
+            $("#fld_LuasBlmBerhasil").val(parseFloat(luas).toFixed(4));//fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
             var jumlahTanam = parseFloat($("#fld_LuasBerhasil").val()) + parseFloat($("#fld_LuasBlmBerhasil").val());
             var kawTanam = parseFloat($("#fld_LuasKawTnman").val()) + parseFloat(1);
             var LuasBerhasil = parseFloat($("#fld_LuasKawTnman").val()) - parseFloat($("#fld_LuasBlmBerhasil").val());
-            $("#fld_LuasBerhasil").val(parseFloat(LuasBerhasil).toFixed(3));
+            $("#fld_LuasBerhasil").val(parseFloat(LuasBerhasil).toFixed(4)); //fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
             if (jumlahTanam >= kawTanam) {
                 $.simplyToast("Jumlah telah melebihi luas kawasan tanaman", "danger")
                 $("#fld_LuasBlmBerhasil").empty();
@@ -374,13 +374,13 @@
 
         $("#fld_LuasKawTiadaTanaman").change(function () {
             var luas = $("#fld_LuasKawTiadaTanaman").val();
-            $("#fld_LuasKawTiadaTanaman").val(parseFloat(luas).toFixed(3));
+            $("#fld_LuasKawTiadaTanaman").val(parseFloat(luas).toFixed(4)); //fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
             if ($("#fld_LuasKawTiadaTanaman").val() == "") {
                 $("#fld_LuasKawTiadaTanaman").val("0");
             }
             if ($("#fld_LsPktUtama").val() != "") {
                 var LuasTanam = parseFloat($("#fld_LsPktUtama").val()) - parseFloat($("#fld_LuasKawTiadaTanaman").val());
-                $("#fld_LuasKawTnman").val(parseFloat(LuasTanam).toFixed(3));
+                $("#fld_LuasKawTnman").val(parseFloat(LuasTanam).toFixed(4)); //fatin modified .toFixed(3) to .tofixed(4) - 20/07/2023
             }
         });
 

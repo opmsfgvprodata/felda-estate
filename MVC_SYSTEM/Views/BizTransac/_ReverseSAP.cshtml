@@ -1,0 +1,641 @@
+﻿@model IEnumerable<MVC_SYSTEM.Models.vw_SAPPostData>
+
+@using System.Linq.Dynamic
+@using Microsoft.Ajax.Utilities
+@using MVC_SYSTEM.Class
+
+@{
+    GetConfig GetConfig = new GetConfig();
+    GetTriager GetTriager = new GetTriager(); //added by kamalia 24/12/21
+    GlobalFunction GlobalFunction = new GlobalFunction();
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "unitMaintenanceDetails",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+    bool? closing = ViewBag.ClosingStatus;
+    string ClosingStatus = "False";
+    if (closing != null)
+    {
+        if (closing == true)
+        {
+            ClosingStatus = "True";
+        }
+        else
+        {
+            ClosingStatus = "False";
+        }
+    }
+    else
+    {
+        ClosingStatus = "False";
+    }
+
+    //farahin - 30/12/2021
+    bool? statusProceedA2 = ViewBag.statusProceedA2;
+    string statusA2 = "False";
+    if (statusProceedA2 != null)
+    {
+        if (statusProceedA2 == true)
+        {
+            statusA2 = "True";
+        }
+        else
+        {
+            statusA2 = "False";
+        }
+    }
+    else
+    {
+        statusA2 = "False";
+    }
+
+    bool? statusProceedKR = ViewBag.statusProceedKR;
+    string statusKR = "False";
+    if (statusProceedKR != null)
+    {
+        if (statusProceedKR == true)
+        {
+            statusKR = "True";
+        }
+        else
+        {
+            statusKR = "False";
+        }
+    }
+    else
+    {
+        statusKR = "False";
+    }
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Reverse File Posting Information</div>
+    <div class="panel-body">
+        @if (Model.Any())
+        {
+            var dataCount = 0;
+            int flag = 1;
+            var EstateDetail = Model.Take(1).FirstOrDefault();
+
+            foreach (var postItem in Model.DistinctBy(s => s.fld_Year).DistinctBy(s => s.fld_Month))
+            {
+                <div class="modal-body">
+                    <div class="panel with-nav-tabs panel-info">
+                        <div class="panel-heading">
+                            <ul class="nav nav-tabs">
+                                <li class="active" id="li1" onclick="getheading(this.id)"><a href="#tab1primary" data-toggle="tab">GL To GL</a></li>
+                                <li class="" id="li2" onclick="getheading(this.id)"><a href="#tab2primary" data-toggle="tab">GL To Vendor</a></li>
+                                <li class="" id="li4" onclick="getheading(this.id)"><a href="#tab4primary" data-toggle="tab">GL To GL & GL To Vendor</a></li>
+                            </ul>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" id="tab1primary">
+                                    <div class="form-horizontal">
+                                        @if (Model.Any(x => x.fld_DocType == "A2"))
+                                        {
+                                            dataCount++;
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ref Id</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Checkrol Ref No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Header Text</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Doc Type</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Year</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Month</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">SAP Doc No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                               
+                                                        @{
+                                                            var a2Info = @Model.Where(x => x.fld_DocType == "A2").FirstOrDefault();
+                                                                                                            <tr>
+                                                                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_PostRefID</td>
+                                                                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_RefNo</td>
+                                                                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_HeaderText</td>
+                                                                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_DocType</td>
+                                                                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_Year</td>
+                                                                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_Month</td>
+                                                                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_NoDocSAP</td>
+                                                                                                                @if (a2Info.fld_StatusProceed == true)
+                                                                                                                {
+
+                                                                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> <button type = "button" class="btn btn-primary btn-lg" style="font-size:10px; border-right-color:black" id="btnsemakid" onclick="UpdateStatus(1);">Reverse</button></td>
+                                                                                                                }
+                                                                                                                else
+                                                                                                                {
+                                                                                                                    <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Has not post</th>
+                                                                                                                }
+                                                                                                            </tr>
+                                                            }
+                                                </tbody>
+                                            </table>
+                                        }
+
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center">
+                                                @Html.Label("No Record")
+                                            </div>
+                                            <hr />}
+
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane fade" id="tab2primary">
+                                    <div class="form-horizontal">
+
+                                        @if (Model.Any(x => x.fld_DocType == "KR"))
+                                        {
+                                            dataCount++;
+                                          
+                                                var DocNo = Model.DistinctBy(s => s.fld_DocNoSAP).Where(x => x.fld_DocType == "KR").Select(s => s.fld_DocNoSAP).FirstOrDefault();
+                                                int bill = 0;
+
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Ref Id</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Checkrol Ref No</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Header Text</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Doc Type</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Year</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Month</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">SAP Doc No</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{ 
+                                                            var KRInfo = @Model.Where(x => x.fld_DocType == "KR").FirstOrDefault();
+                                                            var GLToVendorDetails = "";
+                                                        <tr>
+                                                         <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_PostRefID</td>
+                                                         <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_RefNo</td>
+                                                         <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_HeaderText</td>
+                                                         <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_DocType</td>
+                                                         <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_Year</td>
+                                                         <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_Month</td>
+                                                         <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                                                             @foreach (var GLToVendor in Model.Where(x => x.fld_DocType == "KR").OrderBy(x=>x.fld_DocNoSAP))
+                                                              {
+                                                              <table class="table table-hover">
+                                                               <tr>
+                                                               <td>@GLToVendor.fld_DocNoSAP</td>
+                                                               </tr>
+
+                                                               </table>
+                                                              }
+                                                          </td>
+                                                          @if (@KRInfo.fld_StatusProceed == true)
+                                                          {
+                                                        <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> <button type="button" class="btn btn-primary btn-lg" style="font-size:10px; border-right-color:black" id="btnsemakid" onclick="UpdateStatus(1);">Reverse</button></td>                                                           }
+                                                           else
+                                                           {
+                                                         <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">Has not post</td>
+                                                           }
+
+                                                           </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                          
+                                            }
+                                     
+
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center">
+                                                @Html.Label("No Record")
+                                            </div>
+                                            <hr />}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab4primary">
+                                    <div class="form-horizontal">
+                                        @if (Model.Any(x => x.fld_DocType == "A2"))
+                                        {
+                                            dataCount++;
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ref Id</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Checkrol Ref No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Header Text</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Doc Type</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Year</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Month</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">SAP Doc No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    @{
+                                                        var a2Info = @Model.Where(x => x.fld_DocType == "A2").FirstOrDefault();
+                                                        var KRInfo = @Model.Where(x => x.fld_DocType == "KR").FirstOrDefault();
+                                                        var GLToVendorDetails = "";
+                                                                                                        <tr>
+                                                                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_PostRefID</td>
+                                                                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_RefNo</td>
+                                                                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_HeaderText</td>
+                                                                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_DocType</td>
+                                                                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_Year</td>
+                                                                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_Month</td>
+                                                                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_NoDocSAP</td>
+                                                                                                            @if (a2Info.fld_StatusProceed == true && KRInfo.fld_StatusProceed == true)
+                                                                                                            {
+                                                                                                        <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> <button type="button" class="btn btn-primary btn-lg" style="font-size:10px; border-right-color:black" id="btnsemakid" onclick="UpdateStatus(1);">Reverse</button></td>                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;border-bottom:none" border="1">Has not Post</td>
+                                                                                                            }
+                                                                                                        </tr>
+                                                        <tr>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_PostRefID</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_RefNo</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_HeaderText</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_DocType</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_Year</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_Month</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                                                                @foreach (var GLToVendor in Model.Where(x => x.fld_DocType == "KR").OrderBy(x=>x.fld_DocNoSAP))
+
+                                                                {
+                                                                    <table class="table table-hover" cellpadding="0" cellspacing="0" width="90%">
+                                                                        <tr>
+                                                                            <td>@GLToVendor.fld_DocNoSAP</td>
+                                                                        </tr>
+
+                                                                    </table>
+                                                                }
+                                                            </td>
+                                                        
+                                                        <td align="left" style="vertical-align: middle !important; border: 1px solid black;border-top:none; border-top-color:none" border="1"></td>
+                                                            
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center">
+                                                @Html.Label("No Record")
+                                            </div>
+                                            <hr />}
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            @Html.Hidden("dataCount", null, htmlAttributes: new { @class = "dataCountClass", @Value = @dataCount })
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        else
+        {
+            <hr />
+            <div class="text-center">
+                @Html.Label((string)@ViewBag.Message)
+            </div>
+
+            <hr />
+        }
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        var actualData = $(".dataCountClass").val();
+        console.log("actualCount" + " " + actualData);
+        var refNoCount = 0;
+
+        if ($(".refNoSA").val() !== null && $(".refNoSA").val() !== '' && typeof $(".refNoSA").val() !== "undefined") {
+            $(".generateGLRefNo").prop("disabled", true);
+            refNoCount++;
+            console.log("currentCountSA" + " " + refNoCount);
+        }
+
+        if ($(".refNoKR").val() !== null && $(".refNoKR").val() !== '' && typeof $(".refNoKR").val() !== "undefined") {
+            $(".generateVendorRefNo").prop("disabled", true);
+            refNoCount++;
+            console.log("currentCountKR" + " " + refNoCount);
+        }
+
+        if ($(".refNoDR").val() !== null && $(".refNoDR").val() !== '' && typeof $(".refNoDR").val() !== "undefined") {
+            $(".generateCustomerRefNo").prop("disabled", true);
+            refNoCount++;
+            console.log("currentCountDR" + " " + refNoCount);
+        }
+        var sapDocNoCount = 0;
+
+        if ($("#GLtoGL_fld_NoDocSAP").val() !== null && $("#GLtoGL_fld_NoDocSAP").val() !== '' && typeof $("#GLtoGL_fld_NoDocSAP").val() !== "undefined") {
+            sapDocNoCount++;
+            console.log("currentCountSAP" + " " + sapDocNoCount);
+        }
+
+        if ($("#GLToVendor_fld_NoDocSAP").val() !== null && $("#GLToVendor_fld_NoDocSAP").val() !== '' && typeof $("#GLToVendor_fld_NoDocSAP").val() !== "undefined") {
+            sapDocNoCount++;
+            console.log("currentCountSAP" + " " + sapDocNoCount);
+        }
+
+        if ($("#GLToCustomer_fld_NoDocSAP").val() !== null && $("#GLToCustomer_fld_NoDocSAP").val() !== '' && typeof $("#GLToCustomer_fld_NoDocSAP").val() !== "undefined") {
+            sapDocNoCount++;
+            console.log("currentCountSAP" + " " + sapDocNoCount);
+        }
+
+        if (actualData != sapDocNoCount && actualData == refNoCount) {
+            $(".postSAPBtn").prop("disabled", false);
+        }
+
+        else {
+            $(".postSAPBtn").prop("disabled", true);
+        }
+
+        var ClosingStatus = $("#ClosingStatus").val();
+        if (ClosingStatus === 'True') {
+            $(".postSAPBtn").prop("disabled", false);
+        }
+        else {
+            $(".postSAPBtn").prop("disabled", true);
+        }
+
+        //farahin - 30/12/2021
+        var ProceedKR = $("#statusKR").val();
+        var ProceedA2 = $("#statusA2").val();
+
+        if (ProceedKR == 'True' && ProceedA2 == 'True') {
+            $(".postSAPBtn").prop("disabled", true);
+        }
+
+        else {
+            $(".postSAPBtn").prop("disabled", false);
+        }
+
+      $(".generateGLRefNo").on("click",
+        function () {
+            console.log($(this).val());
+            //farahin tambah - 25/02/2022
+            var kodLadang = $(".ldgCode").val();
+            var ClosingStatus = $("#ClosingStatus").val();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("generateRefNo", "BizTransac")',
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify({ docType: $(".docTypeSA").val(), SAPPostRefNoID: $(".idSA").val()}),
+                success: function (result) {
+                    console.log(result);
+                    $(".hdrTxtSA").val("3" + kodLadang + result);
+                    $(".refNoSA").val(result);
+                    refNoCount++;
+                    if (actualData == refNoCount) {
+                        $(".postSAPBtn").prop("disabled", false);
+                        $(".verifyBtn").prop("disabled", false);
+                    }
+                    if (ClosingStatus === 'True') {
+                        $(".postSAPBtn").prop("disabled", false);
+                        $(".verifyBtn").prop("disabled", false);
+                    }
+                    else {
+                        $(".postSAPBtn").prop("disabled", true);
+                        $(".verifyBtn").prop("disabled", false);
+                    }
+                    //end
+                }
+            });
+        });
+
+       $(".generateVendorRefNo").on("click",
+        function () {
+            console.log($(this).val());
+            //farahin tambah - 25/02/2022
+            var kodLadang2 = $(".ldgCode2").val();
+            var ClosingStatus = $("#ClosingStatus").val();
+            $(".buttonVerify").prop("disabled", false);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("generateRefNo", "BizTransac")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify({ docType: $(".docTypeKR").val(), SAPPostRefNoID: $(".idKR").val() }),
+                    success: function (result) {
+                        console.log(result);
+                        var hasil = result;
+                        var hasilakhir = "3" + kodLadang2 + hasil;
+                        $(".hdrTxtKR").val(hasilakhir);
+
+                        $(".refNoKR").val(result);
+                        refNoCount++;
+                        if (actualData == refNoCount) {
+                            $(".postSAPBtn").prop("disabled", false);
+                            $(".verifyBtn").prop("disabled", false);
+                        }
+                        if (ClosingStatus =='True') {
+                            $(".postSAPBtn").prop("disabled", false);
+                            $(".verifyBtn").prop("disabled", false);
+                        }
+                        else {
+                            $(".postSAPBtn").prop("disabled", true);
+                            $(".verifyBtn").prop("disabled", false);
+                        }
+                        debugger
+                        $("#divverify").show();
+                    //end
+                    }
+                });
+            });
+
+        $(".generateCustomerRefNo").on("click",
+            function () {
+                console.log($(this).val());
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("generateRefNo", "BizTransac")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify({ docType: $(".docTypeDR").val(), SAPPostRefNoID: $(".idDR").val() }),
+                    success: function (result) {
+                        console.log(result);
+                        $(".hdrTxtDR").val(result);
+                        $(".refNoDR").val(result);
+                        refNoCount++;
+                        if (actualData == refNoCount) {
+                            $(".postSAPBtn").prop("disabled", false);
+                            $(".verifyBtn").prop("disabled", false);
+                        }
+                        //end
+                    }
+                });
+            });
+
+        $(".postSAPBtn").click(function (event) {
+            var statusUrusNiaga = '@ViewBag.audittrail';
+
+           var statusPermohonanLadang = '@ViewBag.statusPermohonan';
+            var statusgeneratecode = '@ViewBag.statusPermohonan';
+            if (statusUrusNiaga == "True" && statusPermohonanLadang =="Lulus") {
+                $("#sapLoginModal").modal("show");
+            }
+
+           else if (statusPermohonanLadang != "Lulus")
+            { $.simplyToast(statusPermohonanLadang, "danger"); }
+
+            else { $.simplyToast("Sila tutup urusniaga terlebih dahulu", "danger");}
+        });
+
+       $(".submitBtn").on("click",
+            function (event) {
+                event.preventDefault();
+                if ($("#SapID").val() !== "" || $("#SapPassword").val() !== "") {
+                    //event.preventDefault();
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("SapPostData", "BizTransac")',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: false,
+                        data: JSON.stringify({ userName: $("#SapID").val(), password: $("#SapPassword").val(), postGLToGL: $("#GLtoGLGuid").val(), postGLToVendor: $("#GLtoGVendorGuid").val(), postGLToCustomer: $("#GLtoGCustomerGuid").val() }),
+                        success: function (result) {
+                            console.log(result);
+                            var messageItem = result.ReturnJsonList;
+
+                            jQuery.each(messageItem, function (index, item) {
+                                var message = item.TransactionType + " - " + item.Message;
+                                $.simplyToast(message, item.Status);
+                            });
+                            $('#sapLoginModal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $("#closeTransactionDetails").load('@Url.Action("_PostingSAP", "BizTransac")', { MonthList: result.ParamValue1, YearList: result.ParamValue2 });
+                            $("#SapID").val("");
+                            $("#SapPassword").val("");
+                        }
+                    });
+                }
+
+                else {
+                    $.simplyToast("Sila isi ruangan wajib", "danger");
+                }
+            });
+
+    });
+
+</script>
+
+
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .kod {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .keterangan {
+        width: 150px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .tetapan1 {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tetapan2 {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 80px !important;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        $("#printpage").show();
+        $("#downloadpdf").show();
+
+        $("#printpage").click(function () {
+            $("#printpage").hide();
+            $("#downloadpdf").hide();
+            var DivElement = document.getElementById("scrollArea").innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+        })
+
+  $("#downloadpdf").click(function () {
+
+      $("#printpage").hide();
+      $("#downloadpdf").hide();
+      var MonthList = '@ViewBag.Month';
+      var YearList = '@ViewBag.Year';
+      var param = '/?MonthList=' + MonthList + "&YearList=" + YearList;
+         debugger
+      PDFObject.embed("@Url.Action("exportPDFGLtoGL", "BizTransac")" + param, "#tab1primary", { height: "400px" });
+         return false;
+    });
+
+
+    $("#downloadpdfGLtoVendor").click(function () {
+            $("#downloadpdfGLtoVendor").hide();
+      var MonthList = '@ViewBag.Month';
+      var YearList = '@ViewBag.Year';
+      var param = '/?MonthList=' + MonthList + "&YearList=" + YearList;
+         debugger
+      PDFObject.embed("@Url.Action("exportPDFGLtoVendor", "BizTransac")" + param, "#tab2primary", { height: "400px" });
+         return false;
+    });
+
+
+    })
+
+</script>
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>

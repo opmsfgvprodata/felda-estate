@@ -2049,6 +2049,11 @@ namespace MVC_SYSTEM.Controllers
                                                     BAPIACGL09_details.ORDERID = "";
                                                 }
 
+                                                if (BAPIACGL09_details.GL_ACCOUNT.StartsWith("002"))
+                                                {
+                                                    BAPIACGL09_details.ALLOC_NMBR = "OPMSPosting";
+                                                }
+
                                                 //Currency Amount
                                                 BAPIACCR09_details.ITEMNO_ACC = GLtoGLItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                 BAPIACCR09_details.CURRENCY = GLtoGLItem.fld_Currency;

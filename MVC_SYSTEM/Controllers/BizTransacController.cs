@@ -781,667 +781,12 @@ namespace MVC_SYSTEM.Controllers
             return PartialView("_SAPCredentialLogin", sapCredential);
         }
 
-        //public JsonResult SapPostData(string userName, string password, Guid? postGLToGL, Guid? postGLToVendor, Guid? postGLToCustomer)
-        //{
-        //    int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
-        //    int? getuserid = GetIdentity.ID(User.Identity.Name);
-        //    string host, catalog, user, pass = "";
-        //    GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
-        //    Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
-        //    MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
-
-        //    try
-        //    {
-        //        CustMod_ReturnJsonToView returnJsonToView = new CustMod_ReturnJsonToView();
-        //        List<CustMod_ReturnJson> returnJsonList = new List<CustMod_ReturnJson>();
-
-
-        //        var ireq = new SAPPosting_FLP.ZfmDocpostOpmsRequest();
-        //        var iresponse = new SAPPosting_FLP.ZfmDocpostOpmsResponse();
-        //        var ICred = new SAPPosting_FLP.ZWS_OPMS_DOCPOSTClient();
-
-        //        ICred.ClientCredentials.UserName.UserName = userName;
-        //        ICred.ClientCredentials.UserName.Password = password;
-
-
-        //        var docPost = new SAPPosting_FLP.ZfmDocpostOpms();
-
-
-
-        //        SAPPosting_FLP.Bapiacap09[] bapiacap09 = null;
-        //        SAPPosting_FLP.Bapiacap09 bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
-
-
-        //        //SAPPosting_FLP.Bapiacar09[] bapiacar09 = null;
-        //        //SAPPosting_FLP.Bapiacar09 bapiacar09_details = new SAPPosting_FLP.Bapiacar09();
-
-        //        SAPPosting_FLP.Bapiacgl09[] bapiacgl09 = null;
-        //        SAPPosting_FLP.Bapiacgl09 bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
-
-        //        SAPPosting_FLP.Bapiaccr09[] bapiaccr09 = null;
-        //        SAPPosting_FLP.Bapiaccr09 bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
-
-
-
-        //        SAPPosting_FLP.Bapiacpa09 bapiacpa09 = new SAPPosting_FLP.Bapiacpa09();
-        //        SAPPosting_FLP.Bapiache09 bapiache09 = new SAPPosting_FLP.Bapiache09();
-        //        SAPPosting_FLP.Bapiret2[] BAPIRET2 = new SAPPosting_FLP.Bapiret2[1];
-
-        //        List<tbl_SAPPostReturn> sapPostReturnList = new List<tbl_SAPPostReturn>();
-
-        //        var month = 0;
-        //        var year = 0;
-        //        int i = 0;
-
-
-
-        //        try
-        //        {
-        //            ICred.Open();
-
-        //            Guid sapPostRefID = new Guid();
-
-        //            //GL To GL Process
-        //            try
-        //            {
-        //                var sapDocNo = "";
-        //                var sortCount = 0;
-
-        //                if (!String.IsNullOrEmpty(postGLToGL.ToString()))
-        //                {
-
-        //                    var GLToGLPostingData = dbr.vw_SAPPostData.Where(x => x.fld_SAPPostRefID == postGLToGL)
-        //                          .OrderBy(o => o.fld_ItemNo).Distinct();
-
-        //                    if (GLToGLPostingData.DistinctBy(x => x.fld_SAPPostRefID).Select(s => s.fld_StatusProceed).SingleOrDefault() == false)
-        //                    {
-        //                        if (GLToGLPostingData.DistinctBy(x => x.fld_SAPPostRefID).Select(s => s.fld_NoDocSAP).SingleOrDefault() == null)
-        //                        {
-        //                            //GL to GL Header Data
-        //                            foreach (var headerData in GLToGLPostingData.DistinctBy(x => x.fld_SAPPostRefID))
-        //                            {
-        //                                //var posting_date = headerData.fld_PostingDate;
-
-        //                                bapiache09.Username = userName;
-        //                                bapiache09.CompCode = headerData.fld_CompCode;
-        //                                bapiache09.DocType = headerData.fld_DocType;
-        //                                bapiache09.HeaderTxt = headerData.fld_HeaderText;
-        //                                bapiache09.DocDate = headerData.fld_DocDate.ToString("yyyy-MM-dd");
-        //                                bapiache09.PstngDate = headerData.fld_PostingDate.ToString("yyyy-MM-dd");
-        //                                bapiache09.RefDocNo = headerData.fld_RefNo;
-
-
-        //                                year = (int)headerData.fld_Year;
-        //                                month = (int)headerData.fld_Month;
-        //                            }
-
-        //                            //GL to GL - ACCOUNTGL
-
-        //                            bapiacgl09 = new SAPPosting_FLP.Bapiacgl09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-        //                            bapiaccr09 = new SAPPosting_FLP.Bapiaccr09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-
-        //                            foreach (var GLtoGLItem in GLToGLPostingData.DistinctBy(x => x.fld_ItemNo))
-        //                            {
-        //                                bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
-        //                                bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
-        //                                bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
-
-        //                                if (!String.IsNullOrEmpty(GLtoGLItem.fld_GL))
-        //                                {
-        //                                    //GL Account
-        //                                    bapiacgl09_details.ItemnoAcc = GLtoGLItem.fld_ItemNo.ToString().PadLeft(10, '0');
-        //                                    bapiacgl09_details.GlAccount = GLtoGLItem.fld_GL.ToString().Trim().PadLeft(10, '0');
-        //                                    bapiacgl09_details.ItemText = GLtoGLItem.fld_Desc;
-
-
-        //                                    if (GLtoGLItem.fld_SAPType == "CC")
-        //                                    {
-        //                                        bapiacgl09_details.Costcenter = GLtoGLItem.fld_IO;
-        //                                    }
-        //                                    else
-        //                                    {
-        //                                        if (GLtoGLItem.fld_IO != null)
-        //                                            bapiacgl09_details.Orderid = GLtoGLItem.fld_IO;
-        //                                        else
-        //                                            bapiacgl09_details.Orderid = null;
-        //                                    }
-
-        //                                    bapiacgl09[i] = bapiacgl09_details;
-
-        //                                    //farahin tambah - new IO/CC assigned utk cater wilayah sahabat - 19/4/2023
-        //                                    //if (GLtoGLItem.fld_WilayahID == 11)
-        //                                    //{
-        //                                    //    if (GLtoGLItem.fld_SAPType == null || GLtoGLItem.fld_SAPType == "IO")
-        //                                    //    {
-        //                                    //        bapiacgl09_details.Orderid = GLtoGLItem.fld_IO;
-        //                                    //    }
-        //                                    //    else if (GLtoGLItem.fld_SAPType == "CC")
-        //                                    //    {
-        //                                    //        bapiacgl09_details.Costcenter = GLtoGLItem.fld_IO;
-        //                                    //    }
-        //                                    //}
-        //                                    //else if (GLtoGLItem.fld_WilayahID == 12)
-        //                                    //{
-        //                                    //    bapiacgl09_details.Costcenter = GLtoGLItem.fld_IO;
-        //                                    //}
-        //                                    //else
-        //                                    //{
-        //                                    //    if (GLtoGLItem.fld_IO != null)
-        //                                    //    {
-        //                                    //        bapiacgl09_details.Orderid = GLtoGLItem.fld_IO;
-        //                                    //    }
-        //                                    //    else
-        //                                    //    {
-        //                                    //        bapiacgl09_details.Orderid = null;
-        //                                    //    }
-        //                                    //}
-
-        //                                    //Currency Amount
-        //                                    bapiaccr09_details.ItemnoAcc = GLtoGLItem.fld_ItemNo.ToString().PadLeft(10, '0');
-        //                                    bapiaccr09_details.Currency = GLtoGLItem.fld_Currency;
-        //                                    //modified by kamalia 24/11/21
-        //                                    bapiaccr09_details.AmtDoccur = (decimal)GLtoGLItem.fld_Amount;
-
-
-        //                                    bapiaccr09[i] = bapiaccr09_details;
-        //                                }
-
-        //                                i = i + 1;
-        //                            }
-
-        //                            BAPIRET2 Return = new BAPIRET2
-        //                            {
-        //                                TYPE = null,
-        //                                ID = null,
-        //                                MESSAGE = null,
-        //                                NUMBER = null,
-        //                                LOG_NO = null,
-        //                                LOG_MSG_NO = null,
-        //                                MESSAGE_V1 = null,
-        //                                MESSAGE_V2 = null,
-        //                                MESSAGE_V3 = null,
-        //                                MESSAGE_V4 = null,
-        //                                PARAMETER = null,
-        //                                ROW = 0,
-        //                                FIELD = null,
-        //                                SYSTEM = null
-        //                            };
-
-
-        //                            docPost = new SAPPosting_FLP.ZfmDocpostOpms
-        //                            {
-        //                                Accountgl = bapiacgl09,
-        //                                Documentheader = bapiache09,
-        //                                Currencyamount = bapiaccr09,
-        //                                Return = BAPIRET2
-
-        //                            };
-
-
-        //                            iresponse = ICred.ZfmDocpostOpms(docPost);
-        //                            BAPIRET2 = iresponse.Return;
-
-        //                            foreach (var returnMsg in iresponse.Return)
-        //                            {
-        //                                var returnMsgData = dbr.tbl_SAPPostReturn.Where(x => x.fld_SAPPostRefID == postGLToGL);
-
-        //                                dbr.tbl_SAPPostReturn.RemoveRange(returnMsgData);
-        //                                dbr.SaveChanges();
-
-        //                                sortCount++;
-
-        //                                if (returnMsg.Type == "S")
-        //                                {
-        //                                    sapDocNo = returnMsg.MessageV2;
-        //                                }
-
-        //                                tbl_SAPPostReturn sapPostReturn = new tbl_SAPPostReturn();
-
-        //                                sapPostReturn.fld_SortNo = sortCount;
-        //                                sapPostReturn.fld_Type = returnMsg.Type;
-        //                                sapPostReturn.fld_ReturnID = returnMsg.Id;
-        //                                sapPostReturn.fld_Number = returnMsg.Number;
-        //                                sapPostReturn.fld_LogNo = returnMsg.LogNo;
-        //                                sapPostReturn.fld_Msg = returnMsg.Message;
-        //                                sapPostReturn.fld_Msg1 = returnMsg.MessageV1;
-        //                                sapPostReturn.fld_Msg2 = returnMsg.MessageV2;
-        //                                sapPostReturn.fld_Msg3 = returnMsg.MessageV3;
-        //                                sapPostReturn.fld_Msg4 = getuserid + "-" + User.Identity.Name + "(" + DateTime.Today + ")";
-        //                                sapPostReturn.fld_Param = returnMsg.Parameter;
-        //                                sapPostReturn.fld_Row = returnMsg.Row.ToString();
-        //                                sapPostReturn.fld_Field = returnMsg.Field;
-        //                                sapPostReturn.fld_System = returnMsg.System;
-        //                                sapPostReturn.fld_SAPPostRefID = postGLToGL;
-
-        //                                sapPostReturnList.Add(sapPostReturn);
-
-        //                                //dbr.tbl_SAPPostReturn.Add(sapPostReturn);
-        //                                //dbr.SaveChanges();
-
-        //                            }
-
-        //                            if (sapPostReturnList.Any())
-        //                            {
-        //                                dbr.tbl_SAPPostReturn.AddRange(sapPostReturnList);
-        //                                dbr.SaveChanges();
-        //                            }
-
-        //                            if (sapPostReturnList.Select(s => s.fld_Type).Contains("E"))
-        //                            {
-        //                                CustMod_ReturnJson returnJson = new CustMod_ReturnJson();
-
-        //                                returnJson.Message = "Posting error for GL to GL, kindly check posting report for more information.";
-        //                                returnJson.Status = "danger";
-        //                                returnJson.Success = "false";
-        //                                returnJson.TransactionType = "GL to GL";
-
-        //                                returnJsonList.Add(returnJson);
-        //                            }
-
-        //                            else if (sapPostReturnList.Select(s => s.fld_Type).Contains("S"))
-        //                            {
-        //                                CustMod_ReturnJson returnJson = new CustMod_ReturnJson();
-
-        //                                returnJson.Message = "Succesfully post GL to GL document.";
-        //                                returnJson.Status = "success";
-        //                                returnJson.Success = "false";
-        //                                returnJson.TransactionType = "GL to GL";
-
-        //                                returnJsonList.Add(returnJson);
-
-        //                                var getGLPostingData =
-        //                                    dbr.tbl_SAPPostRef.SingleOrDefault(x => x.fld_ID == postGLToGL);
-
-        //                                dbr.Entry<tbl_SAPPostRef>(getGLPostingData).State = EntityState.Modified;
-
-        //                                getGLPostingData.fld_NoDocSAP = sapDocNo;
-        //                                getGLPostingData.fld_StatusProceed = true;
-
-
-        //                                dbr.SaveChanges();
-        //                            }
-
-        //                        }
-        //                    }
-        //                }
-        //            }
-
-        //            catch (Exception ex)
-        //            {
-        //                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
-
-        //                CustMod_ReturnJson returnJson = new CustMod_ReturnJson();
-
-        //                returnJson.Message = ex.Message;
-        //                returnJson.Status = "danger";
-        //                returnJson.Success = "false";
-        //                returnJson.TransactionType = "GL to GL";
-
-        //                returnJsonList.Add(returnJson);
-
-        //            }
-        //            /*-----------------------------------------------------------------------------------------------------------------------------------------------*/
-
-        //            //Gl to Vendor Process
-
-        //            //farahin ubah whole function - 10/2/2022
-
-        //            try
-        //            {
-        //                var sapDocNo = "";
-        //                var sortCount = 0;
-
-
-        //                if (!String.IsNullOrEmpty(postGLToVendor.ToString()))
-        //                {
-        //                    int flagCount = dbr.vw_SAPPostData.Where(x => x.fld_SAPPostRefID == postGLToVendor).DistinctBy(d => d.fld_flag).Count();
-
-        //                    flagCount = flagCount + 1;
-
-        //                    for (int flag = 1; flag < flagCount; flag++)
-        //                    {
-        //                        var GLToVendorPostingData = dbr.vw_SAPPostData.Where(x => x.fld_SAPPostRefID == postGLToVendor && x.fld_flag == flag)
-        //                           .OrderBy(o => o.fld_ItemNo).Distinct();
-
-        //                        if (GLToVendorPostingData.DistinctBy(x => x.fld_SAPPostRefID).Select(s => s.fld_StatusProceed).SingleOrDefault() == false)
-        //                        {
-        //                            if (GLToVendorPostingData.DistinctBy(x => x.fld_SAPPostRefID).Select(s => s.fld_DocNoSAP).SingleOrDefault() == null)
-        //                            {
-        //                                foreach (var headerData in GLToVendorPostingData.DistinctBy(x => x.fld_SAPPostRefID))
-        //                                {
-        //                                    string referenceNo = headerData.fld_RefNo + "-" + flag;
-
-        //                                    bapiache09.Username = userName;
-        //                                    bapiache09.CompCode = headerData.fld_CompCode;
-        //                                    bapiache09.DocType = headerData.fld_DocType;
-        //                                    bapiache09.HeaderTxt = headerData.fld_HeaderText;
-        //                                    bapiache09.DocDate = headerData.fld_DocDate.ToString("yyyy-MM-dd");
-        //                                    bapiache09.PstngDate = headerData.fld_PostingDate.ToString("yyyy-MM-dd");
-        //                                    bapiache09.RefDocNo = referenceNo.ToString();
-
-
-
-        //                                    //bapiacpa09.Name = headerData.fld_CustCPD;
-        //                                    //bapiacpa09.PostlCode = headerData.fld_Poskod;
-        //                                    //bapiacpa09.City = headerData.fld_DistrictArea;
-        //                                    //bapiacpa09.Country = "MY";
-
-        //                                    year = (int)headerData.fld_Year;
-        //                                    month = (int)headerData.fld_Month;
-        //                                }
-
-
-        //                                //GL to Vendor Line Item Details
-        //                                bapiacgl09 = new SAPPosting_FLP.Bapiacgl09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-        //                                bapiacap09 = new SAPPosting_FLP.Bapiacap09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-        //                                bapiaccr09 = new SAPPosting_FLP.Bapiaccr09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-
-
-        //                                i = 0;
-        //                                foreach (var GLtoVendorItem in GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo))
-        //                                {
-        //                                    //GLAccount
-        //                                    bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
-        //                                    if (GLtoVendorItem.fld_GL != null)
-        //                                    {
-        //                                        bapiacgl09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
-        //                                        bapiacgl09_details.ItemText = GLtoVendorItem.fld_Desc;
-        //                                        bapiacgl09_details.GlAccount = GLtoVendorItem.fld_GL.ToString().PadLeft(10, '0');
-
-
-
-        //                                        if (GLtoVendorItem.fld_SAPType == "CC")
-        //                                        {
-        //                                            bapiacgl09_details.Costcenter = GLtoVendorItem.fld_IO;
-        //                                        }
-        //                                        else
-        //                                        {
-        //                                            if (GLtoVendorItem.fld_IO != null)
-        //                                                bapiacgl09_details.Orderid = GLtoVendorItem.fld_IO;
-        //                                            else
-        //                                                bapiacgl09_details.Orderid = null;
-        //                                        }
-
-        //                                        //farahin tambah - new IO/CC assigned utk cater wilayah sahabat - 19/4/2023
-        //                                        //if (GLtoVendorItem.fld_WilayahID == 11)
-        //                                        //{
-        //                                        //    if (GLtoVendorItem.fld_SAPType == null || GLtoVendorItem.fld_SAPType == "IO")
-        //                                        //    {
-        //                                        //        bapiacgl09_details.Orderid = GLtoVendorItem.fld_IO;
-        //                                        //    }
-        //                                        //    else if (GLtoVendorItem.fld_SAPType == "CC")
-        //                                        //    {
-        //                                        //        bapiacgl09_details.Costcenter = GLtoVendorItem.fld_IO;
-        //                                        //    }
-        //                                        //}
-        //                                        //else if (GLtoVendorItem.fld_WilayahID == 12)
-        //                                        //{
-        //                                        //    bapiacgl09_details.Costcenter = GLtoVendorItem.fld_IO;
-        //                                        //}
-        //                                        //else
-        //                                        //{
-        //                                        //    if (GLtoVendorItem.fld_IO != null)
-        //                                        //    {
-        //                                        //        bapiacgl09_details.Orderid = GLtoVendorItem.fld_IO;
-        //                                        //    }
-        //                                        //    else
-        //                                        //    {
-        //                                        //        bapiacgl09_details.Orderid = null;
-        //                                        //    }
-        //                                        //}
-        //                                        bapiacgl09[i] = bapiacgl09_details;
-        //                                    }
-
-
-        //                                    if (GLtoVendorItem.fld_VendorCode != null)
-        //                                    {
-        //                                        //Acc Payable
-        //                                        bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
-        //                                        bapiacap09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
-        //                                        bapiacap09_details.VendorNo = GLtoVendorItem.fld_VendorCode.ToString().PadLeft(10, '0');
-        //                                        bapiacap09_details.ItemText = GLtoVendorItem.fld_Desc.ToString();
-        //                                        bapiacap09_details.BlineDate = GLtoVendorItem.fld_DocDate.ToString("yyyy-MM-dd");
-
-        //                                        bapiacap09[i] = bapiacap09_details;
-
-        //                                    }
-
-        //                                    //Currency Amt
-        //                                    bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
-        //                                    bapiaccr09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
-        //                                    bapiaccr09_details.Currency = GLtoVendorItem.fld_Currency;
-        //                                    //modified by kamalia 24/11/21
-        //                                    bapiaccr09_details.AmtDoccur = (decimal)GLtoVendorItem.fld_Amount;
-
-        //                                    bapiaccr09[i] = bapiaccr09_details;
-
-
-        //                                    i = i + 1;
-        //                                }
-
-        //                                BAPIRET2 Return = new BAPIRET2
-        //                                {
-        //                                    TYPE = null,
-        //                                    ID = null,
-        //                                    MESSAGE = null,
-        //                                    NUMBER = null,
-        //                                    LOG_NO = null,
-        //                                    LOG_MSG_NO = null,
-        //                                    MESSAGE_V1 = null,
-        //                                    MESSAGE_V2 = null,
-        //                                    MESSAGE_V3 = null,
-        //                                    MESSAGE_V4 = null,
-        //                                    PARAMETER = null,
-        //                                    ROW = 0,
-        //                                    FIELD = null,
-        //                                    SYSTEM = null
-        //                                };
-
-
-        //                                docPost = new SAPPosting_FLP.ZfmDocpostOpms
-        //                                {
-        //                                    Accountgl = bapiacgl09,
-        //                                    Documentheader = bapiache09,
-        //                                    Currencyamount = bapiaccr09,
-        //                                    Accountpayable = bapiacap09,
-        //                                    Return = BAPIRET2
-
-        //                                };
-
-
-        //                                iresponse = ICred.ZfmDocpostOpms(docPost);
-        //                                BAPIRET2 = iresponse.Return;
-
-
-        //                                foreach (var returnMsg in iresponse.Return)
-        //                                {
-        //                                    if (returnMsg.MessageV2 != "")
-        //                                    {
-        //                                        var returnMsgData = dbr.tbl_SAPPostReturn.Where(x => x.fld_SAPPostRefID == postGLToVendor && x.fld_flag == flag);
-
-        //                                        dbr.tbl_SAPPostReturn.RemoveRange(returnMsgData);
-        //                                        dbr.SaveChanges();
-
-        //                                        sortCount++;
-
-        //                                        if (returnMsg.Type == "S")
-        //                                        {
-        //                                            sapDocNo = returnMsg.MessageV2;
-
-        //                                            var getGLPostingData =
-        //                                                dbr.tbl_SAPPostDataDetails.OrderBy(o => o.fld_ItemNo).FirstOrDefault(x => x.fld_SAPPostRefID == postGLToVendor && x.fld_flag == flag);
-
-        //                                            dbr.Entry<tbl_SAPPostDataDetails>(getGLPostingData).State = EntityState.Modified;
-
-        //                                            getGLPostingData.fld_DocNoSAP = sapDocNo;
-
-        //                                            dbr.SaveChanges();
-        //                                        }
-
-
-        //                                        tbl_SAPPostReturn sapPostReturn = new tbl_SAPPostReturn();
-
-        //                                        sapPostReturn.fld_SortNo = sortCount;
-        //                                        sapPostReturn.fld_Type = returnMsg.Type;
-        //                                        sapPostReturn.fld_ReturnID = returnMsg.Id;
-        //                                        sapPostReturn.fld_Number = returnMsg.Number;
-        //                                        sapPostReturn.fld_LogNo = returnMsg.LogNo;
-        //                                        sapPostReturn.fld_Msg = returnMsg.Message;
-        //                                        sapPostReturn.fld_Msg1 = returnMsg.MessageV1;
-        //                                        sapPostReturn.fld_Msg2 = returnMsg.MessageV2;
-        //                                        sapPostReturn.fld_Msg3 = returnMsg.MessageV3;
-        //                                        sapPostReturn.fld_Msg4 = returnMsg.MessageV4;
-        //                                        sapPostReturn.fld_Param = returnMsg.Parameter;
-        //                                        sapPostReturn.fld_Row = returnMsg.Row.ToString();
-        //                                        sapPostReturn.fld_Field = returnMsg.Field;
-        //                                        sapPostReturn.fld_System = returnMsg.System;
-        //                                        sapPostReturn.fld_SAPPostRefID = postGLToVendor;
-        //                                        sapPostReturn.fld_flag = flag;
-
-        //                                        sapPostReturnList.Add(sapPostReturn);
-
-        //                                        //dbr.tbl_SAPPostReturn.Add(sapPostReturn);
-        //                                        //dbr.SaveChanges();
-        //                                    }
-
-        //                                    if (sapPostReturnList.Any())
-        //                                    {
-        //                                        dbr.tbl_SAPPostReturn.AddRange(sapPostReturnList);
-        //                                        dbr.SaveChanges();
-        //                                    }
-        //                                }
-
-        //                                if (sapPostReturnList.Select(s => s.fld_Type).Contains("E"))
-        //                                {
-        //                                    CustMod_ReturnJson returnJson = new CustMod_ReturnJson();
-
-        //                                    returnJson.Message = "Posting error for GL to Vendor, kindly check posting report for more information.";
-        //                                    returnJson.Status = "danger";
-        //                                    returnJson.Success = "false";
-        //                                    returnJson.TransactionType = "GL to Vendor";
-
-        //                                    returnJsonList.Add(returnJson);
-        //                                }
-
-        //                                else if (sapPostReturnList.Select(s => s.fld_Type).Contains("S"))
-        //                                {
-        //                                    CustMod_ReturnJson returnJson = new CustMod_ReturnJson();
-
-        //                                    returnJson.Message = "Succesfully post GL to Vendor document.";
-        //                                    returnJson.Status = "success";
-        //                                    returnJson.Success = "false";
-        //                                    returnJson.TransactionType = "GL to Vendor";
-
-        //                                    returnJsonList.Add(returnJson);
-        //                                }
-
-        //                            }
-        //                        }
-
-        //                    }
-
-        //                    int docNo =
-        //                        dbr.tbl_SAPPostDataDetails.Where(x => x.fld_SAPPostRefID == postGLToVendor && x.fld_DocNoSAP != null).DistinctBy(e => e.fld_flag).Count();
-
-
-        //                    flagCount = flagCount - 1;
-
-        //                    if (docNo == flagCount)
-        //                    {
-        //                        var getGLPostingDataRef =
-        //                                      dbr.tbl_SAPPostRef.SingleOrDefault(x => x.fld_ID == postGLToVendor);
-
-        //                        dbr.Entry<tbl_SAPPostRef>(getGLPostingDataRef).State = EntityState.Modified;
-
-        //                        getGLPostingDataRef.fld_StatusProceed = true;
-
-        //                        dbr.SaveChanges();
-        //                    }
-
-        //                }
-        //            }
-
-
-        //            catch (Exception ex)
-        //            {
-        //                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
-
-        //                CustMod_ReturnJson returnJson = new CustMod_ReturnJson();
-
-        //                returnJson.Message = ex.Message;
-        //                returnJson.Status = "danger";
-        //                returnJson.Success = "false";
-        //                returnJson.TransactionType = "GL to Vendor";
-
-        //                returnJsonList.Add(returnJson);
-        //            }
-
-        //            ICred.Close();
-        //        }
-
-        //        catch (Exception ex)
-        //        {
-        //            geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
-
-        //            CustMod_ReturnJson returnJson = new CustMod_ReturnJson();
-
-        //            returnJson.Message = ex.Message;
-        //            returnJson.Status = "danger";
-        //            returnJson.Success = "false";
-        //            returnJson.TransactionType = "GL to Customer";
-
-        //            returnJsonList.Add(returnJson);
-        //        }
-
-
-        //        string appname = Request.ApplicationPath;
-        //        string domain = Request.Url.GetLeftPart(UriPartial.Authority);
-        //        var lang = Request.RequestContext.RouteData.Values["lang"];
-
-        //        if (appname != "/")
-        //        {
-        //            domain = domain + appname;
-        //        }
-
-        //        returnJsonToView.ReturnJsonList = returnJsonList;
-        //        returnJsonToView.RootUrl = domain;
-        //        returnJsonToView.Action = "_PostingSAP";
-        //        returnJsonToView.Controller = "BizTransac";
-        //        returnJsonToView.Div = "closeTransactionDetails";
-        //        returnJsonToView.ParamName1 = "MonthList";
-        //        returnJsonToView.ParamValue1 = month.ToString();
-        //        returnJsonToView.ParamName2 = "YearList";
-        //        returnJsonToView.ParamValue2 = year.ToString();
-
-        //        return Json(returnJsonToView);
-        //    }
-
-        //    catch (Exception ex)
-        //    {
-        //        geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
-        //        return Json(new
-        //        {
-        //            success = false,
-        //            msg = GlobalResEstate.msgError,
-        //            status = "danger",
-        //            checkingdata = "0"
-        //        });
-        //    }
-
-        //    finally
-        //    {
-
-        //        db.Dispose();
-        //    }
-
-
-        //}
-
+      
         public JsonResult SapPostData(string userName, string password, Guid? postGLToGL, Guid? postGLToVendor, Guid? postGLToCustomer)
         {
 
             //kalau nak test untuk client FLQ840 tukar SAPPosting_FL'x' ke SAPPosting_FLQ
-            //kalau nk deploy live, tukar SAPPosting_FL'x' ke SAPPosting_FLP
+            //kalau nk deploy live, tukar SAPPosting_FL'x' ke SAPPosting_FLQ
             //farahin update whole function..cater FPM..
 
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
@@ -1470,30 +815,30 @@ namespace MVC_SYSTEM.Controllers
                 {
                     if (compCode == "1000")
                     {
-                        var ireq = new SAPPosting_FLP.ZfmDocpostOpmsRequest();
-                        var iresponse = new SAPPosting_FLP.ZfmDocpostOpmsResponse();
-                        var ICred = new SAPPosting_FLP.ZWS_OPMS_DOCPOSTClient();
+                        var ireq = new SAPPosting_FLQ.ZfmDocpostOpmsRequest();
+                        var iresponse = new SAPPosting_FLQ.ZfmDocpostOpmsResponse();
+                        var ICred = new SAPPosting_FLQ.ZWS_OPMS_DOCPOSTClient();
 
                         ICred.ClientCredentials.UserName.UserName = userName;
                         ICred.ClientCredentials.UserName.Password = password;
 
-                        var docPost = new SAPPosting_FLP.ZfmDocpostOpms();
+                        var docPost = new SAPPosting_FLQ.ZfmDocpostOpms();
 
                         //account payable
-                        SAPPosting_FLP.Bapiacap09[] bapiacap09 = null;
-                        SAPPosting_FLP.Bapiacap09 bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
+                        SAPPosting_FLQ.Bapiacap09[] bapiacap09 = null;
+                        SAPPosting_FLQ.Bapiacap09 bapiacap09_details = new SAPPosting_FLQ.Bapiacap09();
 
                         //accountGL
-                        SAPPosting_FLP.Bapiacgl09[] bapiacgl09 = null;
-                        SAPPosting_FLP.Bapiacgl09 bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
+                        SAPPosting_FLQ.Bapiacgl09[] bapiacgl09 = null;
+                        SAPPosting_FLQ.Bapiacgl09 bapiacgl09_details = new SAPPosting_FLQ.Bapiacgl09();
 
                         //currency
-                        SAPPosting_FLP.Bapiaccr09[] bapiaccr09 = null;
-                        SAPPosting_FLP.Bapiaccr09 bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
+                        SAPPosting_FLQ.Bapiaccr09[] bapiaccr09 = null;
+                        SAPPosting_FLQ.Bapiaccr09 bapiaccr09_details = new SAPPosting_FLQ.Bapiaccr09();
 
-                        SAPPosting_FLP.Bapiacpa09 bapiacpa09 = new SAPPosting_FLP.Bapiacpa09(); //customer cpd
-                        SAPPosting_FLP.Bapiache09 bapiache09 = new SAPPosting_FLP.Bapiache09(); //documentHeader
-                        SAPPosting_FLP.Bapiret2[] BAPIRET2 = new SAPPosting_FLP.Bapiret2[1]; //return structure
+                        SAPPosting_FLQ.Bapiacpa09 bapiacpa09 = new SAPPosting_FLQ.Bapiacpa09(); //customer cpd
+                        SAPPosting_FLQ.Bapiache09 bapiache09 = new SAPPosting_FLQ.Bapiache09(); //documentHeader
+                        SAPPosting_FLQ.Bapiret2[] BAPIRET2 = new SAPPosting_FLQ.Bapiret2[1]; //return structure
 
                         ICred.Open();
 
@@ -1533,14 +878,14 @@ namespace MVC_SYSTEM.Controllers
 
                                         //GL to GL - ACCOUNTGL
 
-                                        bapiacgl09 = new SAPPosting_FLP.Bapiacgl09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                        bapiaccr09 = new SAPPosting_FLP.Bapiaccr09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                        bapiacgl09 = new SAPPosting_FLQ.Bapiacgl09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                        bapiaccr09 = new SAPPosting_FLQ.Bapiaccr09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
 
                                         foreach (var GLtoGLItem in GLToGLPostingData.DistinctBy(x => x.fld_ItemNo))
                                         {
-                                            bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
-                                            bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
-                                            bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
+                                            bapiacgl09_details = new SAPPosting_FLQ.Bapiacgl09();
+                                            bapiaccr09_details = new SAPPosting_FLQ.Bapiaccr09();
+                                            bapiacap09_details = new SAPPosting_FLQ.Bapiacap09();
 
                                             if (!String.IsNullOrEmpty(GLtoGLItem.fld_GL))
                                             {
@@ -1598,7 +943,7 @@ namespace MVC_SYSTEM.Controllers
                                         };
 
 
-                                        docPost = new SAPPosting_FLP.ZfmDocpostOpms
+                                        docPost = new SAPPosting_FLQ.ZfmDocpostOpms
                                         {
                                             Accountgl = bapiacgl09,
                                             Documentheader = bapiache09,
@@ -1745,15 +1090,15 @@ namespace MVC_SYSTEM.Controllers
                                             }
 
                                             //GL to Vendor Line Item Details
-                                            bapiacgl09 = new SAPPosting_FLP.Bapiacgl09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                            bapiacap09 = new SAPPosting_FLP.Bapiacap09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                            bapiaccr09 = new SAPPosting_FLP.Bapiaccr09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiacgl09 = new SAPPosting_FLQ.Bapiacgl09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiacap09 = new SAPPosting_FLQ.Bapiacap09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiaccr09 = new SAPPosting_FLQ.Bapiaccr09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
 
                                             i = 0;
                                             foreach (var GLtoVendorItem in GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo))
                                             {
                                                 //GLAccount
-                                                bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
+                                                bapiacgl09_details = new SAPPosting_FLQ.Bapiacgl09();
                                                 if (GLtoVendorItem.fld_GL != null)
                                                 {
                                                     bapiacgl09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
@@ -1781,7 +1126,7 @@ namespace MVC_SYSTEM.Controllers
                                                 if (GLtoVendorItem.fld_VendorCode != null)
                                                 {
                                                     //Acc Payable
-                                                    bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
+                                                    bapiacap09_details = new SAPPosting_FLQ.Bapiacap09();
                                                     bapiacap09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                     bapiacap09_details.VendorNo = GLtoVendorItem.fld_VendorCode.ToString().PadLeft(10, '0');
                                                     bapiacap09_details.ItemText = GLtoVendorItem.fld_Desc.ToString();
@@ -1791,7 +1136,7 @@ namespace MVC_SYSTEM.Controllers
                                                 }
 
                                                 //Currency Amt
-                                                bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
+                                                bapiaccr09_details = new SAPPosting_FLQ.Bapiaccr09();
                                                 bapiaccr09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                 bapiaccr09_details.Currency = GLtoVendorItem.fld_Currency;
                                                 //modified by kamalia 24/11/21
@@ -1820,7 +1165,7 @@ namespace MVC_SYSTEM.Controllers
                                                 SYSTEM = null
                                             };
 
-                                            docPost = new SAPPosting_FLP.ZfmDocpostOpms
+                                            docPost = new SAPPosting_FLQ.ZfmDocpostOpms
                                             {
                                                 Accountgl = bapiacgl09,
                                                 Documentheader = bapiache09,
@@ -1992,7 +1337,7 @@ namespace MVC_SYSTEM.Controllers
                             if (!String.IsNullOrEmpty(postGLToGL.ToString()))
                             {
 
-
+//GL TO GL
                                 var GLToGLPostingData = dbr.vw_SAPPostData.Where(x => x.fld_SAPPostRefID == postGLToGL)
                                       .OrderBy(o => o.fld_ItemNo).Distinct();
 
@@ -2048,7 +1393,7 @@ namespace MVC_SYSTEM.Controllers
                                                 {
                                                     BAPIACGL09_details.ORDERID = "";
                                                 }
-
+                                                //farahin tambah 06/09/2023
                                                 if (BAPIACGL09_details.GL_ACCOUNT.StartsWith("002"))
                                                 {
                                                     BAPIACGL09_details.ALLOC_NMBR = "OPMSPosting";
@@ -2191,7 +1536,7 @@ namespace MVC_SYSTEM.Controllers
                             returnJsonList.Add(returnJson);
                         }
 
-
+//GL TO VENDOR
 
                         try
                         {
@@ -2265,6 +1610,13 @@ namespace MVC_SYSTEM.Controllers
                                                     {
                                                         BAPIACGL09_details.ORDERID = "";
                                                     }
+
+                                                    //farahin tambah 06/09/2023
+                                                    if (BAPIACGL09_details.GL_ACCOUNT.StartsWith("002"))
+                                                    {
+                                                        BAPIACGL09_details.ALLOC_NMBR = "OPMSPosting";
+                                                    }
+
                                                     BAPIACGL09[i] = BAPIACGL09_details;
                                                 }
 

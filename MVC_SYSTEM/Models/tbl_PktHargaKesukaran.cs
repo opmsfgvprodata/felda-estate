@@ -46,5 +46,8 @@
 
         [StringLength(50)]
         public string fld_ModifiedBy { get; set; }
+
+        public bool? fld_Deleted { get; set; }
+        
     }
 }

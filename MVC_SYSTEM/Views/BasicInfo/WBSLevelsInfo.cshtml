@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = "LevelsInfo";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<div id="UpdateProgress1" style="display:none;">
+    <div class="progressTest">
+        <label>
+            @GlobalResEstate.msgWait
+        </label>
+    </div>
+</div>
+<section class="content-wrapper main-content clear-fix">
+
+    @using (Html.BeginForm("LevelsInfo", null, FormMethod.Get))
+    {
+        <div class="well bottom" style="padding-bottom: 16px">
+            <div class="row">
+                <div class="col-sm-2">
+                    @Html.Label("Jenis Peringkat")
+                    @Html.DropDownList("JnsPkt", null, htmlAttributes: new { @class = "form-control" })
+                </div>
+                <div class="col-sm-2">
+                    @Html.Label("Status")
+                    @Html.DropDownList("Status", null, htmlAttributes: new { @class = "form-control" })
+                </div>
+                <div class="col-sm-2" style="padding-top:25px;">
+                    <input class="btn btn-primary btn-block" type="submit" name="btnSrch" id="btnSrch" value="@GlobalResEstate.btnView" onclick="return DisplayProgressMessage(this);" />
+                </div>
+            </div>
+        </div>
+
+        <div class="well" style="margin-top: 7px; padding-bottom: 0px">
+            <div class="modal-body">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">ASAS PERINGKAT WBS</div>
+                    <div class="panel-body">
+                        <div id="divupdate" class="panel-body">
+                            Tiada Maklumat
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="margin-top: -18px">
+                @* comment by fatin - 11/04/2023 *@
+                @*<a class="btn btn-success" data-modal="" href="@Url.Action("_SLPDataPeringkat", "BasicInfo")" id="btnIO" onclick="return DisplayProgressMessage2(this);">
+                        Data SLP
+                    </a>*@
+                <a class="btn btn-success" data-modal="" href="@Url.Action("WBSLevelsPktCreate", "BasicInfo")" id="btnPkt" onclick="return DisplayProgressMessage2(this);">
+                    Daftar Peringkat
+                </a>
+                <a class="btn btn-success" data-modal="" href="@Url.Action("WBSLevelsSubPktCreate", "BasicInfo")" id="btnSub" onclick="return DisplayProgressMessage2(this);">
+                    Daftar Sub Peringkat
+                </a>
+                <a class="btn btn-success" data-modal="" href="@Url.Action("WBSLevelsBlokCreate", "BasicInfo")" id="btnBlok" onclick="return DisplayProgressMessage2(this);">
+                    Daftar Blok
+                </a>
+                <a class="btn btn-warning" href="@Url.Action("Index", "BasicInfo")" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnBack</a>
+            </div>
+        </div>
+    }
+</section>
+
+<!-- modal placeholder-->
+<div id='myModal' class='modal fade in'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/Asset/Scripts/Appjs.js")
+}
+
+<script>
+    $(document).ready(function () {
+        $("#btnIO").hide();
+        $("#btnPkt").hide();
+        $("#btnSub").hide();
+        $("#btnBlok").hide();
+
+        if ($("#JnsPkt").val() != 0) {
+            $("#btnSrch").click();
+        }
+
+        @*function reloadAgain() {
+            $("#divupdate").load('@Url.Action("LevelsInfoPkt", "BasicInfo")');
+        }*@
+
+        $("#btnSrch").click(function (e) {
+            e.preventDefault();
+            var jnspkt = $("#JnsPkt").val();
+            var status = $("#Status").val();
+            //jnspkt = $("#JnsPkt").val();
+            console.log(jnspkt);
+            //$("#UpdateProgress1").hide();
+            if (jnspkt == 1) {
+                $("#divupdate").load('@Url.Action("WBSLevelsInfoPkt", "BasicInfo")?status=' + status);
+                console.log("satu");
+                $("#btnIO").show();
+                $("#btnPkt").show();
+                $("#btnSub").hide();
+                $("#btnBlok").hide();
+                $("#UpdateProgress1").hide();
+            }
+            else if (jnspkt == "2") {
+                $("#divupdate").load('@Url.Action("WBSLevelsInfoSubPkt", "BasicInfo")?status=' + status);
+                console.log("dua");
+                $("#btnIO").hide();
+                $("#btnPkt").hide();
+                $("#btnSub").show();
+                $("#btnBlok").hide();
+                $("#UpdateProgress1").hide();
+            }
+            else if (jnspkt == "3") {
+                $("#divupdate").load('@Url.Action("WBSLevelsInfoBlok", "BasicInfo")?status=' + status);
+                console.log("tiga");
+                $("#btnIO").hide();
+                $("#btnPkt").hide();
+                $("#btnSub").hide();
+                $("#btnBlok").show();
+                $("#UpdateProgress1").hide();
+            }
+            else {
+                $("#UpdateProgress1").hide();
+                $.simplyToast('@GlobalResEstate.msgError', 'danger');
+            }
+        });
+
+    });
+
+</script>
+

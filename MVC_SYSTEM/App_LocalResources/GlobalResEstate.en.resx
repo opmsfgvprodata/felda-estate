@@ -3513,4 +3513,7 @@
   <data name="lblTodaySalary" xml:space="preserve">
     <value>Today Salary</value>
   </data>
+  <data name="lblCodeWBS" xml:space="preserve">
+    <value>WBS Code</value>
+  </data>
 </root>

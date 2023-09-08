@@ -3597,4 +3597,7 @@
   <data name="lbhSyarikatName" xml:space="preserve">
     <value>Syarikat</value>
   </data>
+  <data name="lblCodeWBS" xml:space="preserve">
+    <value>Kod WBS</value>
+  </data>
 </root>

@@ -4734,5 +4734,226 @@ namespace MVC_SYSTEM.Controllers
 
             return Json(ladanglist);
         }
+
+        public JsonResult ReverseSAPDetailsRemove(Guid refidA2,Guid refidKR, string CekrolRefNo, int NegaraId, int SyarikatId, int WilayahId, int LadangId, int Month, int Year, int Mode)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            string msg, statusmsg = "lita";
+
+            try
+            {
+                if (Mode == 1)
+                {
+                    var removePostRef = dbr.tbl_SAPPostRef.Where(x => x.fld_ID == refidA2);
+                    dbr.tbl_SAPPostRef.RemoveRange(removePostRef);
+                    dbr.SaveChanges();
+
+                    var removeDataDetails = dbr.tbl_SAPPostDataDetails.Where(x => x.fld_SAPPostRefID == refidA2);
+                    dbr.tbl_SAPPostDataDetails.RemoveRange(removeDataDetails);
+                    dbr.SaveChanges();
+
+                    var returnMsgData = dbr.tbl_SAPPostReturn.Where(x => x.fld_SAPPostRefID == refidA2);
+                    dbr.tbl_SAPPostReturn.RemoveRange(returnMsgData);
+                    dbr.SaveChanges();
+
+                    msg = "berjaya";
+                }
+                else if (Mode == 2)
+                {
+                    var removePostRef = dbr.tbl_SAPPostRef.Where(x => x.fld_ID == refidKR);
+                    dbr.tbl_SAPPostRef.RemoveRange(removePostRef);
+                    dbr.SaveChanges();
+
+                    var removeDataDetails = dbr.tbl_SAPPostDataDetails.Where(x => x.fld_SAPPostRefID == refidKR);
+                    dbr.tbl_SAPPostDataDetails.RemoveRange(removeDataDetails);
+                    dbr.SaveChanges();
+
+                    var returnMsgData = dbr.tbl_SAPPostReturn.Where(x => x.fld_SAPPostRefID == refidKR);
+                    dbr.tbl_SAPPostReturn.RemoveRange(returnMsgData);
+                    dbr.SaveChanges();
+
+                    msg = "berjaya";
+                }
+
+                else if (Mode == 3)
+                {
+                    var removePostRef = dbr.tbl_SAPPostRef.Where(x => x.fld_ID == refidA2);
+                    dbr.tbl_SAPPostRef.RemoveRange(removePostRef);
+                    dbr.SaveChanges();
+
+                    var removeDataDetails = dbr.tbl_SAPPostDataDetails.Where(x => x.fld_SAPPostRefID == refidA2);
+                    dbr.tbl_SAPPostDataDetails.RemoveRange(removeDataDetails);
+                    dbr.SaveChanges();
+
+                    var returnMsgData = dbr.tbl_SAPPostReturn.Where(x => x.fld_SAPPostRefID == refidA2);
+                    dbr.tbl_SAPPostReturn.RemoveRange(returnMsgData);
+                    dbr.SaveChanges();
+
+                    var removePostRefKR = dbr.tbl_SAPPostRef.Where(x => x.fld_ID == refidKR);
+                    dbr.tbl_SAPPostRef.RemoveRange(removePostRefKR);
+                    dbr.SaveChanges();
+
+                    var removeDataDetailsKR = dbr.tbl_SAPPostDataDetails.Where(x => x.fld_SAPPostRefID == refidKR);
+                    dbr.tbl_SAPPostDataDetails.RemoveRange(removeDataDetailsKR);
+                    dbr.SaveChanges();
+
+                    var returnMsgDataKR = dbr.tbl_SAPPostReturn.Where(x => x.fld_SAPPostRefID == refidKR);
+                    dbr.tbl_SAPPostReturn.RemoveRange(returnMsgDataKR);
+                    dbr.SaveChanges();
+
+                    msg = "berjaya";
+                }
+
+                msg = "berjaya";
+
+
+                string appname = Request.ApplicationPath;
+                string domain = Request.Url.GetLeftPart(UriPartial.Authority);
+                var lang = Request.RequestContext.RouteData.Values["lang"];
+
+                if (appname != "/")
+                {
+                    domain = domain + appname;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                msg = GlobalResEstate.msgError;
+                statusmsg = "warning";
+                return Json(new { success = false, msg = GlobalResEstate.msgError, status = "danger", checkingdata = "1" });
+            }
+            return Json(new { statusmsg });
+         //   return Json(new { success = true, msg = GlobalResEstate.msgUpdate, status = "success", method = "2", btn = "btnCari" });
+        }
+
+        //Added by Shazana 1/9/2023
+        public ActionResult ReverseSAP(string filter,int? MonthList, int? YearList)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            DateTime Minus1month = timezone.gettimezone().AddMonths(-1);
+
+            int year = Minus1month.Year;
+            int month = Minus1month.Month;
+            int drpyear = 0;
+            int drprangeyear = 0;
+
+            drpyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
+            drprangeyear = timezone.gettimezone().Year;
+
+            var yearlist = new List<SelectListItem>();
+
+            if (YearList == null)
+            {
+                for (var i = drpyear; i <= drprangeyear; i++)
+                {
+                    if (i == year)
+                    {
+                        yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                    }
+                    else
+                    {
+                        yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                    }
+                }
+            }
+            else
+            {
+                for (var i = drpyear; i <= drprangeyear; i++)
+                {
+                    if (i == YearList)
+                    {
+                        yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                    }
+                    else
+                    {
+                        yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                    }
+                }
+            }
+            if (MonthList == null) 
+            {            
+                ViewBag.MonthList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc", month);
+            }
+            else
+            {
+                ViewBag.MonthList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc", MonthList);
+            }
+
+
+            ViewBag.YearList = yearlist;
+            ViewBag.ClosingTransaction = "class = active";
+
+            return View();
+        }
+
+        public ActionResult _ReverseSAP(int? MonthList, int? YearList)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            //added by kamalia 24/11/21
+            MVC_SYSTEM_MasterModels MasterModel = new MVC_SYSTEM_MasterModels();
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            //Added by Shazana 23/6/2023
+            int? roleuser = getidentity.getRoleID(getuserid);
+            ViewBag.RoleUser = roleuser;
+
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            var message = "";
+
+            var postingData = new List<vw_SAPPostData>();
+
+            if (!String.IsNullOrEmpty(MonthList.ToString()) && !String.IsNullOrEmpty(YearList.ToString()))
+            {
+                postingData = dbr.vw_SAPPostData
+                    .Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID).ToList(); //modified by kamalia 21/3/2022 reverted back
+
+                var ClosingTransaction = dbr.tbl_TutupUrusNiaga.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Month == MonthList && x.fld_Year == YearList).FirstOrDefault();
+
+
+                //farahin tambah - 30/12/2021
+                var statusProceedA2 = dbr.tbl_SAPPostRef.Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID && x.fld_DocType == "A2").FirstOrDefault();
+
+
+                var statusProceedKR = dbr.tbl_SAPPostRef.Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID && x.fld_DocType == "KR").FirstOrDefault();
+            }
+
+            else
+            {
+                message = GlobalResEstate.msgChooseMonthYear;
+            }
+
+            ViewBag.Message = message;
+            var Ladang = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_LdgCode).FirstOrDefault();
+            ViewBag.Ladang = Ladang;         
+            ViewBag.Year = YearList;
+            ViewBag.Month = MonthList;
+            return View(postingData);
+
+
+        }
     }
 }

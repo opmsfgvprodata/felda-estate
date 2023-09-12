@@ -1,0 +1,413 @@
+﻿@model IEnumerable<MVC_SYSTEM.Models.vw_SAPPostData>
+
+@using System.Linq.Dynamic
+@using Microsoft.Ajax.Utilities
+@using MVC_SYSTEM.Class
+
+@{
+    GetConfig GetConfig = new GetConfig();
+    GetTriager GetTriager = new GetTriager(); //added by kamalia 24/12/21
+    GlobalFunction GlobalFunction = new GlobalFunction();
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "unitMaintenanceDetails",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+    bool? closing = ViewBag.ClosingStatus;
+    string ClosingStatus = "False";
+    if (closing != null)
+    {
+        if (closing == true)
+        {
+            ClosingStatus = "True";
+        }
+        else
+        {
+            ClosingStatus = "False";
+        }
+    }
+    else
+    {
+        ClosingStatus = "False";
+    }
+
+    //farahin - 30/12/2021
+    bool? statusProceedA2 = ViewBag.statusProceedA2;
+    string statusA2 = "False";
+    if (statusProceedA2 != null)
+    {
+        if (statusProceedA2 == true)
+        {
+            statusA2 = "True";
+        }
+        else
+        {
+            statusA2 = "False";
+        }
+    }
+    else
+    {
+        statusA2 = "False";
+    }
+
+    bool? statusProceedKR = ViewBag.statusProceedKR;
+    string statusKR = "False";
+    if (statusProceedKR != null)
+    {
+        if (statusProceedKR == true)
+        {
+            statusKR = "True";
+        }
+        else
+        {
+            statusKR = "False";
+        }
+    }
+    else
+    {
+        statusKR = "False";
+    }
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Reverse File Posting Information</div>
+    <div class="panel-body">
+        @if (Model.Any())
+        {
+            var dataCount = 0;
+            int flag = 1;
+            var EstateDetail = Model.Take(1).FirstOrDefault();
+
+            foreach (var postItem in Model.DistinctBy(s => s.fld_Year).DistinctBy(s => s.fld_Month))
+            {
+                <div class="modal-body">
+                    <div class="panel with-nav-tabs panel-info">
+                        <div class="panel-heading">
+                            <ul class="nav nav-tabs">
+                                <li class="active" id="li1" onclick="getheading(this.id)"><a href="#tab1primary" data-toggle="tab">GL To GL</a></li>
+                                <li class="" id="li2" onclick="getheading(this.id)"><a href="#tab2primary" data-toggle="tab">GL To Vendor</a></li>
+                                <li class="" id="li4" onclick="getheading(this.id)"><a href="#tab4primary" data-toggle="tab">GL To GL & GL To Vendor</a></li>
+                            </ul>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" id="tab1primary">
+                                    <div class="form-horizontal">
+                                        @if (Model.Any(x => x.fld_DocType == "A2"))
+                                        {
+                                            dataCount++;
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ref Id</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Checkrol Ref No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Header Text</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Doc Type</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Year</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Month</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">SAP Doc No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    @{
+                                                        var a2Info = @Model.Where(x => x.fld_DocType == "A2").FirstOrDefault();
+                                                        <tr>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_PostRefID</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_RefNo</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_HeaderText</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_DocType</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_Year</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_Month</td>
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info.fld_NoDocSAP</td>
+
+                                                            @if (a2Info.fld_StatusProceed == true)
+                                                            {
+
+
+                                                                var PostRefIDA2 = @a2Info.fld_PostRefID;
+                                                                var RefNo = @a2Info.fld_RefNo;
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> <button type="button" class="btn btn-primary btn-lg" style="font-size:10px; border-right-color:black" id="btnsemakid" onclick="UpdateStatus('@PostRefIDA2','00000000-0000-0000-0000-000000000000',@a2Info.fld_NegaraID, @a2Info.fld_SyarikatID, @a2Info.fld_WilayahID, @a2Info.fld_LadangID, @a2Info.fld_Month, @a2Info.fld_Year, 1);">Reverse</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Has not post</th>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center">
+                                                @Html.Label("No Record")
+                                            </div>
+                                            <hr />}
+
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane fade" id="tab2primary">
+                                    <div class="form-horizontal">
+
+                                        @if (Model.Any(x => x.fld_DocType == "KR"))
+                                        {
+                                            dataCount++;
+
+                                            var DocNo = Model.DistinctBy(s => s.fld_DocNoSAP).Where(x => x.fld_DocType == "KR").Select(s => s.fld_DocNoSAP).FirstOrDefault();
+                                            int bill = 0;
+
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Ref Id</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Checkrol Ref No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Header Text</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Doc Type</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Year</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Month</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">SAP Doc No</th>
+                                                        <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        var KRInfo = @Model.Where(x => x.fld_DocType == "KR").FirstOrDefault();
+                                                        var GLToVendorDetails = "";
+                                                        <tr>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_PostRefID</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_RefNo</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_HeaderText</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_DocType</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_Year</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo.fld_Month</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                                                                @foreach (var GLToVendor in Model.Where(x => x.fld_DocType == "KR").OrderBy(x => x.fld_DocNoSAP))
+                                                                {
+                                                                    <table class="table table-hover">
+                                                                        <tr>
+                                                                            <td>@GLToVendor.fld_DocNoSAP</td>
+                                                                        </tr>
+
+                                                                    </table>
+                                                                }
+                                                            </td>
+                                                            @if (@KRInfo.fld_StatusProceed == true)
+                                                            {
+                                                                var PostRefIDKR = @KRInfo.fld_PostRefID;
+                                                                var RefNo = @KRInfo.fld_RefNo;
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> <button type="button" class="btn btn-primary btn-lg" style="font-size:10px; border-right-color:black" id="btnsemakid" onclick="UpdateStatus('00000000-0000-0000-0000-000000000000','@PostRefIDKR',@KRInfo.fld_NegaraID, @KRInfo.fld_SyarikatID, @KRInfo.fld_WilayahID, @KRInfo.fld_LadangID, @KRInfo.fld_Month, @KRInfo.fld_Year, 2);">Reverse</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> Has not post</td>
+                                                            }
+
+
+
+                                                        </tr>
+                                                    }
+                                                </tbody>
+
+                                            </table>
+
+                                        }
+
+
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center">
+                                                @Html.Label("No Record")
+                                            </div>
+                                            <hr />}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab4primary">
+                                    <div class="form-horizontal">
+                                            @if (Model.Any(x => x.fld_DocType == "A2" || x.fld_DocType == "KR"))
+                                            {
+                                                dataCount++;
+
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ref Id</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Checkrol Ref No</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Header Text</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Doc Type</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Year</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Posting Month</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">SAP Doc No</th>
+                                                            <th bgcolor="#ffcc80" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @{
+                                                            var a2Info2 = @Model.Where(x => x.fld_DocType == "A2").FirstOrDefault();
+                                                            var KRInfo2 = @Model.Where(x => x.fld_DocType == "KR").FirstOrDefault();
+                                                        }
+                                                        @if (a2Info2 != null)
+                                                        {
+                                                            <tr>
+                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info2.fld_PostRefID</td>
+                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info2.fld_RefNo</td>
+                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info2.fld_HeaderText</td>
+                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info2.fld_DocType</td>
+                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info2.fld_Year</td>
+                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info2.fld_Month</td>
+                                                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a2Info2.fld_NoDocSAP</td>
+                                                                @if (KRInfo2 == null)
+                                                                {
+                                                                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> Has not post</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> </td>
+                                                                }
+
+                                                            </tr>
+                                                        }
+
+
+                                                        @if (KRInfo2 != null)
+                                                        {
+                                                            <tr>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo2.fld_PostRefID</td>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo2.fld_RefNo</td>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo2.fld_HeaderText</td>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo2.fld_DocType</td>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo2.fld_Year</td>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@KRInfo2.fld_Month</td>
+                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">
+                                                                    @foreach (var GLToVendor in Model.Where(x => x.fld_DocType == "KR").OrderBy(x => x.fld_DocNoSAP))
+
+                                                                    {
+                                                                        <table class="table table-hover" cellpadding="0" cellspacing="0" width="90%">
+                                                                            <tr>
+                                                                                <td>@GLToVendor.fld_DocNoSAP</td>
+                                                                            </tr>
+
+                                                                        </table>
+                                                                    }
+                                                                </td>
+
+                                                                @if (KRInfo2.fld_StatusProceed == true && a2Info2 != null && KRInfo2 != null)
+                                                                {
+                                                                    var PostRefIDA2 = a2Info2.fld_PostRefID;
+                                                                    var PostRefIDKR = KRInfo2.fld_PostRefID;
+                                                                    var RefNo = KRInfo2.fld_RefNo;
+                                                                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> <button type="button" class="btn btn-primary btn-lg" style="font-size:10px; border-right-color:black" id="btnsemakid" onclick="UpdateStatus('@PostRefIDA2','@PostRefIDKR',@KRInfo2.fld_NegaraID, @KRInfo2.fld_SyarikatID, @KRInfo2.fld_WilayahID, @KRInfo2.fld_LadangID, @KRInfo2.fld_Month, @KRInfo2.fld_Year, 3);">Reverse All</button></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1"> Has not post</td>
+                                                                }
+
+
+                                                            </tr>
+
+                                                        }
+
+                                                        @if (a2Info2 == null && KRInfo2 == null)
+                                                        {
+                                                            <hr />
+                                                            <div class="text-center">
+                                                                @Html.Label("No Record")
+                                                            </div>
+                                                            <hr />
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+
+                                            else
+                                            {
+                                                <hr />
+                                                <div class="text-center">
+                                                    @Html.Label("No Record")
+                                                </div>
+                                                <hr />
+                                                }
+
+                                        </div>
+
+                                </div>
+                            </div>
+                            @Html.Hidden("dataCount", null, htmlAttributes: new { @class = "dataCountClass", @Value = @dataCount })
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        else
+        {
+            <hr />
+            <div class="text-center">
+                @Html.Label("No Record")
+            </div>
+
+            <hr />
+        }
+    </div>
+</div>
+
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .kod {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .keterangan {
+        width: 150px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .tetapan1 {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tetapan2 {
+        width: 150px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 80px !important;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+</style>
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>

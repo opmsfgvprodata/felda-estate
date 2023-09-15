@@ -27,6 +27,19 @@
                         @Html.Label(GlobalResEstate.lblSearch)
                         @Html.TextBox("filter", null, htmlAttributes: new { @class = "form-control", placeholder = GlobalResEstate.lblSearchPkj, @id = "txtfilter", @value = "" })
                     </div>
+
+                    @*yana add 020823*@
+
+                    <div class="col-sm-1" id="divlist">
+                        @Html.Label(GlobalResEstate.lblMonth)
+                        @Html.DropDownList("MonthList", null, htmlAttributes: new { @class = "form-control" })
+                    </div>
+                    <div class="col-sm-1" id="divlist">
+                        @Html.Label(GlobalResEstate.lblYear)
+                        @Html.DropDownList("YearList", null, htmlAttributes: new { @class = "form-control" })
+                    </div>
+
+                    @*end here 020823*@
                     <div class="col-sm-6 btn-group" style="padding-top:24px;">
                         <input class="btn btn-primary col-sm-3" type="submit" id="btnCari" name="Lihat" value=@GlobalResEstate.btnView />
                         <input type="button" class="btn btn-primary col-sm-3" value=@GlobalResEstate.btnList onclick="javascript:resetSearch1();" />

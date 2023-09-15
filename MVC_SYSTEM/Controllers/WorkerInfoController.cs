@@ -1089,6 +1089,11 @@ namespace MVC_SYSTEM.Controllers
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value,
                 NegaraID.Value);
+            //yana add 020823
+            int month = timezone.gettimezone().Month;
+            int year = timezone.gettimezone().Year;
+            int rangeyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
+            // end here 020823
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
             MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
 
@@ -1106,7 +1111,29 @@ namespace MVC_SYSTEM.Controllers
                 "Value", "Text").ToList();
             GroupList.Insert(0, (new SelectListItem {Text = GlobalResEstate.lblAll, Value = "0"}));
 
+            //yana add 020823
+            var yearlist = new List<SelectListItem>();
+            for (var i = rangeyear; i <= year; i++)
+            {
+                if (i == timezone.gettimezone().Year)
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                }
+            }
+
+            var MonthList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc", month);
+
+            // end here 020823
+
             ViewBag.GroupList = GroupList;
+            //yana add 020823
+            ViewBag.MonthList = MonthList;
+            ViewBag.YearList = yearlist;
+            //end here 020823
 
             ViewBag.WorkerInfo = "class = active";
 
@@ -1115,9 +1142,11 @@ namespace MVC_SYSTEM.Controllers
             return View();
         }
 
-        public ViewResult _WorkerIncentiveSearch(string workerid, string filter = "", int page = 1,
+        // yana update 020823 - tambah int YearList = 0, int MonthList = 0
+        public ViewResult _WorkerIncentiveSearch(string workerid, string filter = "", int YearList = 0, int MonthList = 0, int page = 1,
             string sort = "fld_Nama1",
             string sortdir = "ASC")
+        // end here 020823
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = getidentity.ID(User.Identity.Name);
@@ -1142,11 +1171,13 @@ namespace MVC_SYSTEM.Controllers
 
                 foreach (var i in workerData)
                 {
+                    // yana update monthlist & yearlist 020823
                     var insentiveData = dbview.vw_MaklumatInsentif
-                        .Where(a => a.fld_Nopkj == i.fld_Nopkj && a.fld_Month == DateTime.Now.Month &&
-                                    a.fld_Year == DateTime.Now.Year && a.fld_NegaraID == NegaraID &&
+                        .Where(a => a.fld_Nopkj == i.fld_Nopkj /*&& a.fld_Month == DateTime.Now.Month &&
+                                    a.fld_Year == DateTime.Now.Year*/ && a.fld_NegaraID == NegaraID &&
                                     a.fld_SyarikatID == SyarikatID && a.fld_WilayahID == WilayahID &&
-                                    a.fld_LadangID == LadangID && a.fld_Deleted == false)
+                                    a.fld_LadangID == LadangID && a.fld_Deleted == false && a.fld_Month == MonthList && a.fld_Year == YearList)
+                        // end here 020823
                         .OrderBy(x => x.fld_KodInsentif)
                         .ToList();
                     MaklumatInsentifPekerja.Add(new vw_MaklumatInsentifPekerja {Pkjmast = i, Insentif = insentiveData});
@@ -1162,11 +1193,13 @@ namespace MVC_SYSTEM.Controllers
 
                 foreach (var i in workerData)
                 {
+                    // yana update monthlist & yearlist 020823
                     var insentiveData = dbview.vw_MaklumatInsentif
-                        .Where(a => a.fld_Nopkj == i.fld_Nopkj && a.fld_Month == DateTime.Now.Month &&
-                                    a.fld_Year == DateTime.Now.Year && a.fld_NegaraID == NegaraID &&
+                        .Where(a => a.fld_Nopkj == i.fld_Nopkj /*&& a.fld_Month == DateTime.Now.Month &&
+                                    a.fld_Year == DateTime.Now.Year*/ && a.fld_NegaraID == NegaraID &&
                                     a.fld_SyarikatID == SyarikatID && a.fld_WilayahID == WilayahID &&
-                                    a.fld_LadangID == LadangID && a.fld_Deleted == false)
+                                    a.fld_LadangID == LadangID && a.fld_Deleted == false && a.fld_Month == MonthList && a.fld_Year == YearList)
+                        // end here 020823
                         .OrderBy(x => x.fld_KodInsentif)
                         .ToList();
                     MaklumatInsentifPekerja.Add(new vw_MaklumatInsentifPekerja {Pkjmast = i, Insentif = insentiveData});

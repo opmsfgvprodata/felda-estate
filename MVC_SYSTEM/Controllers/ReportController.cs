@@ -433,8 +433,8 @@ namespace MVC_SYSTEM.Controllers
 
             var GetWorkerList = GetKerjaInfoDetailsList.Select(s => s.fld_Nopkj.Trim()).Distinct();
 
-            //fatin added - 20/06/2023
-            var companycode = db.tbl_Ladang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).Select(s => s.fld_CostCentre).FirstOrDefault();
+            //fatin modified - 18/09/2023
+            var companycode = db.tbl_Ladang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WlyhID == WilayahID && x.fld_ID == LadangID && x.fld_Deleted == false).Select(s => s.fld_CostCentre).FirstOrDefault();
             //end
             List<SelectListItem> PilihanAktvt = new List<SelectListItem>();
             PilihanAktvt = new SelectList(db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_compcode == companycode).OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt + " - " + s.fld_Desc }), "Value", "Text").ToList(); // fatin modified - 20/06/2023

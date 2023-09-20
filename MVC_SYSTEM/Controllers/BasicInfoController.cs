@@ -5495,5 +5495,379 @@ namespace MVC_SYSTEM.Controllers
             return Json(TahapKesukaranlist);
         }
 
+        //fatin added - 16/06/2023
+        public ActionResult WorkerPrmtPsprt(string FreeText, string StartDate, string EndDate, string sortOrder)
+        {
+
+            ViewBag.WorkerPrmtPsprt = "class = active";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+
+            DateTime DT = new DateTime();
+            DT = timezone.gettimezone();
+
+            int Month = DT.AddMonths(-1).Month;
+            int Year = DT.Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
+            int RangeYear = DT.Year + 1;
+
+            var YearList1 = new List<SelectListItem>();
+            for (var i = Year; i <= RangeYear; i++)
+            {
+                if (i == DT.Year)
+                {
+                    YearList1.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    YearList1.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                }
+            }
+
+            var MonthList1 = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc");
+            var MonthList_2 = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc");
+
+            ViewBag.YearList = YearList1;
+            ViewBag.MonthList = MonthList1;
+            ViewBag.MonthList2 = MonthList_2;
+
+            DateTime? StartDate1 = Convert.ToDateTime(StartDate);
+            DateTime? EndDate1 = Convert.ToDateTime(EndDate);
+
+            //if (StartDate == null || FreeText == null)
+            //{
+            //    ViewBag.Message = "Sila pilih tarikh";
+
+            //}
+
+            if (string.IsNullOrEmpty(FreeText))
+            {
+
+                var WkrDataInfo = dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && (x.fld_T2prmt >= StartDate1 && x.fld_T2prmt <= EndDate1) && (x.fld_T2pspt >= StartDate1 && x.fld_T2pspt <= EndDate1) && x.fld_Kdrkyt != "MA").OrderBy(x => x.fld_Nopkj).ToList();
+                return View(WkrDataInfo);
+            }
+            else
+            {
+                var WkrDataInfo = dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Kdrkyt != "MA" && (x.fld_T2prmt >= StartDate1 && x.fld_T2prmt <= EndDate1) && (x.fld_T2pspt >= StartDate1 && x.fld_T2pspt <= EndDate1) && (x.fld_Nopkj.Contains(FreeText) || x.fld_Nama.Contains(FreeText) || x.fld_Nokp.Contains(FreeText))).OrderBy(x => x.fld_Nopkj).ToList();
+                return View(WkrDataInfo);
+            }
+
+
+            ViewBag.fld_Nopkj = string.IsNullOrEmpty(sortOrder) ? "fld_Nopkj" : "";
+            ViewBag.fld_Nokp = sortOrder == "fld_Nokp" ? "fld_Nokp desc" : "fld_Nokp";
+            ViewBag.fld_Nama = sortOrder == "fld_Nama" ? "fld_Nama desc" : "fld_Nama";
+
+        }
+
+        public ActionResult _WorkerPrmtPsprt(string FreeText, string StartDate, string EndDate, string sortOrder, string print)
+        {
+            ViewBag.WorkerPrmtPsprt = "class = active";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            DateTime DT = new DateTime();
+            DT = timezone.gettimezone();
+
+            int Month = DT.AddMonths(-1).Month;
+            int Year = DT.Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
+            int RangeYear = DT.Year + 1;
+
+            var YearList1 = new List<SelectListItem>();
+            for (var i = Year; i <= RangeYear; i++)
+            {
+                if (i == DT.Year)
+                {
+                    YearList1.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    YearList1.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                }
+            }
+
+            var MonthList1 = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc");
+            var MonthList_2 = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc");
+
+            ViewBag.YearList = YearList1;
+            ViewBag.MonthList = MonthList1;
+            ViewBag.MonthList2 = MonthList_2;
+
+            //if (WilayahIDList == null && LadangIDList == null)
+            //{
+            //    ViewBag.Message = GlobalResEstate.msgChooseRegionEstateMonthYear;
+
+            //}
+            if (StartDate == null && EndDate == null && FreeText == null)
+            {
+                ViewBag.Message = "Sila pilih tarikh atau passport/id/nama pekerja";
+
+            }
+
+            DT = timezone.gettimezone();
+            DateTime StartDate1 = DT.Date;
+            string Start = StartDate;
+            if (Start != null)
+            {
+                StartDate1 = DateTime.ParseExact(Start, @"dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            DateTime EndDate1 = DT.Date;
+            string End = EndDate;
+            if (End != null)
+            {
+                EndDate1 = DateTime.ParseExact(End, @"dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+
+            if (string.IsNullOrEmpty(FreeText))
+            {
+
+                var WkrDataInfo = dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && (x.fld_T2prmt >= StartDate1 && x.fld_T2prmt <= EndDate1) && (x.fld_T2pspt >= StartDate1 && x.fld_T2pspt <= EndDate1) && x.fld_Kdrkyt != "MA").OrderBy(x => x.fld_Nopkj).ToList();
+                return View(WkrDataInfo);
+
+
+            }
+            //else if (!string.IsNullOrEmpty(FreeText))
+            //{
+
+            //    var WkrDataInfo = dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && (x.fld_Nopkj.Contains(FreeText) || x.fld_Nama.Contains(FreeText) || x.fld_Nokp.Contains(FreeText)) && x.fld_Kdrkyt != "MA").OrderBy(x => x.fld_Nopkj).ToList();
+            //    return View(WkrDataInfo);
+
+
+            //}
+            else
+            {
+                var WkrDataInfo = dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Kdrkyt != "MA" && (x.fld_Nopkj.Contains(FreeText) || x.fld_Nama.Contains(FreeText) || x.fld_Nokp.Contains(FreeText))).OrderBy(x => x.fld_Nopkj).ToList();
+                return View(WkrDataInfo);
+            }
+
+            ViewBag.fld_Nopkj = string.IsNullOrEmpty(sortOrder) ? "fld_Nopkj" : "";
+            ViewBag.fld_Nokp = sortOrder == "fld_Nokp" ? "fld_Nokp desc" : "fld_Nokp";
+            ViewBag.fld_Nama = sortOrder == "fld_Nama" ? "fld_Nama desc" : "fld_Nama";
+
+        }
+
+        public ActionResult PermitUpdate(Guid? id)
+        {
+            ViewBag.WorkerPrmtPsprt = "class = active";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            DateTime DT = new DateTime();
+            DT = timezone.gettimezone();
+
+            if (id == null)
+            {
+                return RedirectToAction("WorkerPrmtPsprt");
+            }
+            Models.tbl_Pkjmast tbl_Pkjmast = dbr.tbl_Pkjmast.Where(w => w.fld_UniqueID == id && w.fld_WilayahID == WilayahID && w.fld_SyarikatID == SyarikatID && w.fld_NegaraID == NegaraID).FirstOrDefault();
+
+            if (tbl_Pkjmast == null)
+            {
+                return RedirectToAction("WorkerPrmtPsprt");
+            }
+
+            return PartialView(tbl_Pkjmast);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PermitUpdate(Models.tbl_LbrPrmtPsprtUpdate tbl_LbrPrmtPsprtUpdate, Models.tbl_Pkjmast tbl_Pkjmast)
+        {
+            //fld_PurposeIndicator = 1 is for permit
+            ViewBag.WorkerPrmtPsprt = "class = active";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            DateTime DT = new DateTime();
+            DT = timezone.gettimezone();
+
+            try
+            {
+                var GetExistingPermit = dbr.tbl_LbrPrmtPsprtUpdate.Where(x => x.fld_LbrRefID == tbl_LbrPrmtPsprtUpdate.fld_LbrRefID && (x.fld_NewPrmtPsprtNo == tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo || x.fld_OldPrmtPsprtNo == tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo) && x.fld_PurposeIndicator == 1 && x.fld_Deleted == false).Count();
+                var GetWorkerDetails = dbr.tbl_Pkjmast.Find(tbl_LbrPrmtPsprtUpdate.fld_LbrRefID);
+                if (GetExistingPermit == 0)
+                {
+                    tbl_LbrPrmtPsprtUpdate LbrPrmtPsprtUpdate = new tbl_LbrPrmtPsprtUpdate();
+                    LbrPrmtPsprtUpdate.fld_LbrRefID = tbl_LbrPrmtPsprtUpdate.fld_LbrRefID;
+                    LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo = tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo;
+                    LbrPrmtPsprtUpdate.fld_NewPrmtPsrtEndDT = tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsrtEndDT;
+                    LbrPrmtPsprtUpdate.fld_OldPrmtPsprtNo = tbl_LbrPrmtPsprtUpdate.fld_OldPrmtPsprtNo;
+                    LbrPrmtPsprtUpdate.fld_OldPrmtPsrtEndDT = GetWorkerDetails.fld_T2prmt;
+                    LbrPrmtPsprtUpdate.fld_CreatedBy = getuserid;
+                    LbrPrmtPsprtUpdate.fld_CreatedDT = DT;
+                    LbrPrmtPsprtUpdate.fld_PurposeIndicator = 1;
+                    LbrPrmtPsprtUpdate.fld_LadangID = GetWorkerDetails.fld_LadangID;
+                    LbrPrmtPsprtUpdate.fld_NegaraID = GetWorkerDetails.fld_NegaraID;
+                    LbrPrmtPsprtUpdate.fld_SyarikatID = GetWorkerDetails.fld_SyarikatID;
+                    LbrPrmtPsprtUpdate.fld_WilayahID = GetWorkerDetails.fld_WilayahID;
+                    LbrPrmtPsprtUpdate.fld_Deleted = false;
+                    dbr.tbl_LbrPrmtPsprtUpdate.Add(LbrPrmtPsprtUpdate);
+                    dbr.SaveChanges();
+
+
+                    GetWorkerDetails.fld_Prmtno = tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo;
+                    GetWorkerDetails.fld_T2prmt = tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsrtEndDT;
+                    //GetWorkerDetails.fld_ActionBy = GetUserID;
+                    //GetWorkerDetails.fld_ActionDate = DT;
+                    dbr.Entry(GetWorkerDetails).State = EntityState.Modified;
+                    dbr.SaveChanges();
+
+
+                    ModelState.AddModelError("", "Maklumat berjaya dikemaskini");
+                    ViewBag.MsgColor = "color: green";
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Permit telah diperbaharui");
+                    ViewBag.MsgColor = "color: orange";
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Sila isi ruang bertanda *");
+                ViewBag.MsgColor = "color: red";
+            }
+
+            var WkrDataInfo = dbr.tbl_Pkjmast.Where(w => w.fld_UniqueID == tbl_LbrPrmtPsprtUpdate.fld_LbrRefID && w.fld_WilayahID == WilayahID && w.fld_SyarikatID == SyarikatID && w.fld_NegaraID == NegaraID).FirstOrDefault();
+            return View(WkrDataInfo);
+        }
+
+        public ActionResult _WorkerPermitDetail(Guid WorkerID)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            return View(dbr.vw_LbrPrmtPsprtUpdate.Where(x => x.fld_LbrRefID == WorkerID && x.fld_PurposeIndicator == 1).ToList());
+        }
+
+        public ActionResult PassportUpdate(Guid? id)
+        {
+            ViewBag.WorkerPrmtPsprt = "class = active";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            DateTime DT = new DateTime();
+            DT = timezone.gettimezone();
+
+            if (id == null)
+            {
+                return RedirectToAction("WorkerPrmtPsprt");
+            }
+            Models.tbl_Pkjmast tbl_Pkjmast = dbr.tbl_Pkjmast.Where(w => w.fld_UniqueID == id && w.fld_WilayahID == WilayahID && w.fld_SyarikatID == SyarikatID && w.fld_NegaraID == NegaraID).FirstOrDefault();
+
+            if (tbl_Pkjmast == null)
+            {
+                return RedirectToAction("WorkerPrmtPsprt");
+            }
+
+            return PartialView("PassportUpdate", tbl_Pkjmast);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PassportUpdate(tbl_LbrPrmtPsprtUpdate tbl_LbrPrmtPsprtUpdate)
+        {
+            //fld_PurposeIndicator = 1 is for permit
+            ViewBag.WorkerPrmtPsprt = "class = active";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            DateTime DT = new DateTime();
+            DT = timezone.gettimezone();
+
+            try
+            {
+                var GetExistingPassport = dbr.tbl_LbrPrmtPsprtUpdate.Where(x => x.fld_LbrRefID == tbl_LbrPrmtPsprtUpdate.fld_LbrRefID && (x.fld_NewPrmtPsprtNo == tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo || x.fld_OldPrmtPsprtNo == tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo) && x.fld_PurposeIndicator == 2 && x.fld_Deleted == false).Count();
+                var GetWorkerDetails = dbr.tbl_Pkjmast.Find(tbl_LbrPrmtPsprtUpdate.fld_LbrRefID);
+                if (GetExistingPassport == 0)
+                {
+                    tbl_LbrPrmtPsprtUpdate LbrPrmtPsprtUpdate = new tbl_LbrPrmtPsprtUpdate();
+                    LbrPrmtPsprtUpdate.fld_LbrRefID = tbl_LbrPrmtPsprtUpdate.fld_LbrRefID;
+                    LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo = tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo;
+                    LbrPrmtPsprtUpdate.fld_NewPrmtPsrtEndDT = tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsrtEndDT;
+                    LbrPrmtPsprtUpdate.fld_OldPrmtPsprtNo = tbl_LbrPrmtPsprtUpdate.fld_OldPrmtPsprtNo;
+                    LbrPrmtPsprtUpdate.fld_OldPrmtPsrtEndDT = GetWorkerDetails.fld_T2pspt;
+                    LbrPrmtPsprtUpdate.fld_CreatedBy = getuserid;
+                    LbrPrmtPsprtUpdate.fld_CreatedDT = DT;
+                    LbrPrmtPsprtUpdate.fld_PurposeIndicator = 2;
+                    LbrPrmtPsprtUpdate.fld_LadangID = GetWorkerDetails.fld_LadangID;
+                    LbrPrmtPsprtUpdate.fld_NegaraID = GetWorkerDetails.fld_NegaraID;
+                    LbrPrmtPsprtUpdate.fld_SyarikatID = GetWorkerDetails.fld_SyarikatID;
+                    LbrPrmtPsprtUpdate.fld_WilayahID = GetWorkerDetails.fld_WilayahID;
+                    LbrPrmtPsprtUpdate.fld_Deleted = false;
+                    dbr.tbl_LbrPrmtPsprtUpdate.Add(LbrPrmtPsprtUpdate);
+                    dbr.SaveChanges();
+
+
+                    GetWorkerDetails.fld_Nokp = tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsprtNo;
+                    GetWorkerDetails.fld_T2pspt = tbl_LbrPrmtPsprtUpdate.fld_NewPrmtPsrtEndDT;
+                    //GetWorkerDetails.fld_ActionBy = GetUserID;
+                    //GetWorkerDetails.fld_ActionDate = DT;
+                    dbr.Entry(GetWorkerDetails).State = EntityState.Modified;
+                    dbr.SaveChanges();
+
+                    ModelState.AddModelError("", "Maklumat berjaya dikemaskini");
+                    ViewBag.MsgColor = "color: green";
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Passport telah diperbaharui");
+                    ViewBag.MsgColor = "color: orange";
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Sila isi ruang bertanda *");
+                ViewBag.MsgColor = "color: red";
+            }
+
+           
+            var WkrDataInfo = dbr.tbl_Pkjmast.Where(w => w.fld_UniqueID == tbl_LbrPrmtPsprtUpdate.fld_LbrRefID && w.fld_WilayahID == WilayahID && w.fld_SyarikatID == SyarikatID && w.fld_NegaraID == NegaraID).FirstOrDefault();
+            return View(WkrDataInfo);
+        }
+
+        public ActionResult _WorkerPassportDetail(Guid WorkerID)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            return View(dbr.vw_LbrPrmtPsprtUpdate.Where(x => x.fld_LbrRefID == WorkerID && x.fld_PurposeIndicator == 2).ToList());
+        }
+
+        //end
+
     }
 }

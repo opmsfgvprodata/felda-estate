@@ -44,6 +44,19 @@ namespace MVC_SYSTEM.Class
                 LadangID = getcountycompany.fldLadangID;
             }
         }
+
+        //fatin added - 16/06/2023
+        public List<vw_NSWL> GetLadang()
+        {
+            List<vw_NSWL> NSWL = new List<vw_NSWL>();
+
+            NSWL = db.vw_NSWL.Where(x => x.fld_Deleted_L == false).ToList();
+
+            db.Dispose();
+
+            return NSWL;
+        }
+        //end
         public vw_NSWL GetLadangDetail(int LadangID)
         {
             vw_NSWL NSWL = new vw_NSWL();

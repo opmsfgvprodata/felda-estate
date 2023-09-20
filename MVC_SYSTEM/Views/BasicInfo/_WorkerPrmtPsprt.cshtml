@@ -1,0 +1,288 @@
+﻿@*@model IEnumerable<MVC_SYSTEM.LabourModels.tbl_LbrDataInfo>*@
+@model IEnumerable<MVC_SYSTEM.Models.tbl_Pkjmast>
+
+@{
+    /**/
+
+    ViewBag.Title = "WorkerPrmtPsprt";
+    //Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    GetIdentity GetIdentity = new GetIdentity();
+    GetNSWL GetNSWL = new GetNSWL();
+    GeneralFunc GeneralFunc = new GeneralFunc();
+    GetTriager GetTriager = new GetTriager();
+    // string DisableAll = ViewBag.DisableAll;  //commented by wani 16.3.2020 (1)
+
+    //var GetWorkerOnStatus = GetTriager.StatusWorker(1);
+
+
+    var LadangList = GetNSWL.GetLadang();
+    string WilayahName = "";
+    string LadangName = "";
+    string[] WebConfigFilter = new string[] { "krytnlist" };
+    GetConfig GetConfig = new GetConfig();
+    bool FlagBr = false;
+    long YearEndPassport, YearEndPermit;
+    int i = 1;
+    //ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+    //DateTime Todaydate = ChangeTimeZone.gettimezone();
+    //string uniquefilename = "LabourPermitPaspport_" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+
+
+}
+
+@if (Model != null && Model.Count() != 0)
+{
+    <div class="modal-body" id="scrollArea2">
+        <table class="table table-hover" style="font-size: 11px;" cellspacing="0" border="0" width="100%" id="PRMTPASS">
+            <thead>
+                <tr>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">No</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">ID Pekerja </th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">No Passport</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Nama Pekerja</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Wilayah</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Ladang</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Kerakyatan</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Tarikh Lahir</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Umur</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Tarikh Mula Khidmat</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Tarikh Tamat Permit</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Tarikh Tamat Passport</th>
+                    <th rowspan="2" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Year Sticker</th>
+                    <th colspan="3" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Jumlah Hari Khidmat</th>
+                    <th colspan="4" bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Tindakan</th>
+                </tr>
+                <tr>
+                    <th bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Tahun</th>
+                    <th bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Bulan</th>
+                    <th bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Hari</th>
+                    <th bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Perbaharui Permit</th>
+                    <th bgcolor="#ffcc80" style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;" border="1">Perbaharui Passport</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    YearEndPassport = 0;
+                    YearEndPermit = 0;
+                    WilayahName = LadangList.Where(x => x.fld_WilayahID == item.fld_WilayahID).Select(s => s.fld_NamaWilayah).Distinct().FirstOrDefault();
+                    LadangName = LadangList.Where(x => x.fld_LadangID == item.fld_LadangID).Select(s => s.fld_NamaLadang).Distinct().FirstOrDefault();
+                    var GetConfigData = GetConfig.GetWebConfigList(WebConfigFilter, item.fld_NegaraID, item.fld_SyarikatID);
+                    var GetKerayatan = GetConfigData.Where(x => x.fldOptConfValue == item.fld_Kdrkyt && x.fldOptConfFlag1 == "krytnlist").Select(s => s.fldOptConfDesc).FirstOrDefault();
+                    var Age = GeneralFunc.CalAge(item.fld_Trlhr.Value);
+                    var YearStiker = GeneralFunc.CalAge(item.fld_Trmlkj.Value) + 1;
+                    var TotalDayServiceYMD = GeneralFunc.TimeSpanToDate(item.fld_Trmlkj.Value);
+                    var months = GeneralFunc.TimeSpanToMonth(item.fld_Trmlkj.Value);
+                    var days = GeneralFunc.TimeSpanToDay(item.fld_Trmlkj.Value);
+                    //var OnStatus = GetWorkerOnStatus.Contains(item.fld_UniqueID);
+                    if (item.fld_T2pspt != null && item.fld_T2prmt != null)
+                    {
+                        YearEndPassport = GeneralFunc.CalEndDate(item.fld_T2pspt.Value);
+                        YearEndPermit = GeneralFunc.CalEndDate(item.fld_T2prmt.Value);
+                    }
+                    FlagBr = false;
+
+                    <tr>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@i</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Html.DisplayFor(modelItem => item.fld_Nopkj)</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Html.DisplayFor(modelItem => item.fld_Nokp)</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Html.DisplayFor(modelItem => item.fld_Nama)</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@WilayahName</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@LadangName</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GetKerayatan</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Html.DisplayFor(modelItem => item.fld_Trlhr)</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Age</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Html.DisplayFor(modelItem => item.fld_Trmlkj)</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Html.DisplayFor(modelItem => item.fld_T2prmt)</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Html.DisplayFor(modelItem => item.fld_T2pspt)</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@YearStiker</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@TotalDayServiceYMD</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@months</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@days</td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @if (YearEndPermit <= 0)
+                            {
+
+
+                                @Html.ActionLink("Perbaharui Permit", "PermitUpdate", "BasicInfo", new { id = item.fld_UniqueID }, null)
+                                FlagBr = true;
+
+
+                            }
+                            else
+                            {
+                                if (YearEndPermit >= 0)
+                                {
+                                    @Html.ActionLink("Perbaharui Permit", "PermitUpdate", "BasicInfo", new { id = item.fld_UniqueID }, null)
+                                    FlagBr = true;
+                                }
+                            }
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @if (YearEndPassport <= 0)
+                            {
+
+                                @Html.ActionLink("Perbaharui Passport", "PassportUpdate", "BasicInfo", new { id = item.fld_UniqueID }, null)
+                                FlagBr = true;
+
+                            }
+                        </td>
+                    </tr>
+                    i++;
+
+                }
+
+            </tbody>
+        </table>
+        @*</div>
+            @if (ViewBag.Print == null)
+            {
+                <div style="text-align:right; margin-top:10px">
+                    <a class="btn btn-default btn-sm" href="#" id="printpage">
+                        <span class="glyphicon glyphicon-print"> </span>Print
+                    </a>
+
+
+                    <a class="btn btn-default btn-sm" href="#" id="downloadpdf2">
+                        <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> Download PDF
+                    </a>
+                    <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('LabourPermitPassportUpdate')">
+                        <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span>download Excel
+                    </a>
+                </div>
+            }*@
+    </div>
+    <!--if (ViewBag.Print == null)
+    {-->
+        @*<a href="#" onclick="HTMLtoExcel('LabourFomema')">Download Excel</a>*@
+
+        <!--<div style="text-align:right; margin-top:10px" id="AllDownload">-->
+            @*<a class="btn btn-default btn-sm" href="#" id="printpage">
+                    <span class="glyphicon glyphicon-print"> </span>Print
+                </a>*@
+            <!--<a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+                <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> Muat Turun PDF
+            </a>
+            <a class="btn btn-default btn-sm" href="#" id="HTMLtoExcel">
+                <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> Muat Turun Excel
+            </a>
+        </div>
+    }-->
+
+}
+
+else
+{
+    <div id="scrollArea2" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+
+    </div>
+}
+
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+
+
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+
+    table {
+        page-break-inside: avoid
+    }
+
+    #content {
+        display: table;
+    }
+
+    #pageFooter {
+        display: table-footer-group;
+    }
+
+    #page_number:after {
+        content: "";
+        counter-increment: pagenumber;
+        content: "Page" counter(pagenumber) "of" counter(pagenumber);
+    }
+
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-row-group
+    }
+
+    tr {
+        page-break-inside: avoid
+    }
+</style>
+
+<script>
+
+    $("#HTMLtoExcel").click(function () {
+
+
+        var blob = new Blob([document.getElementById('scrollArea2').innerHTML], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+        })
+        saveAs(blob, 'WorkerPrmtPsprt' + ".xls");
+
+    });
+
+    $(document).ready(function () {
+        $("#printpage").click(function () {
+            var DivElement = document.getElementById("scrollArea2").innerHTML;
+            var page_number;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+            document.getElementById("content").innerHTML = page_number.toString();
+            window.toLocaleString.print();
+
+        })
+
+        $("#downloadpdf").click(function () {
+
+            $("#AllDownload").attr("style", "display:none");
+
+            var StartDate = $("#StartDate").val();
+            var EndDate = $("#EndDate").val();
+            var FreeText = $("#FreeText").val();
+            var param = '/?FreeText=' + FreeText + '&StartDate=' + StartDate + '&EndDate=' + EndDate;
+
+            var controller = 'BasicInfo';
+            var action = 'PrintWorkerPdf';
+
+            var ajxfn = {};
+            ajxfn.url = "@Url.Action("PDFIndetifier", "PdfCreator")";
+            ajxfn.type = "POST";
+            ajxfn.data = JSON.stringify({ controller: controller, action: action, param: param });
+            ajxfn.datatype = "json";
+            ajxfn.contentType = "application/json";
+            ajxfn.success = function (result)
+
+            {
+
+               // alert("Success!");
+
+                //var win = window.open(result.link, '_blank');
+                //win.focus();
+                PDFObject.embed(result.link, "#scrollArea2", { height: "450px" });
+            };
+
+
+            ajxfn.error = function () {
+                alert("Failed!");
+                $.simplyToast('@GlobalResEstate.msgError', 'danger');
+                $("#UpdateProgress1").css("display", "none");
+            };
+            $.ajax(ajxfn);
+
+            return false;
+        });
+    });
+</script>

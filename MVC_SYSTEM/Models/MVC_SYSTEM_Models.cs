@@ -120,6 +120,11 @@ namespace MVC_SYSTEM.Models
         public virtual DbSet<vw_Kerja_Hdr_Cuti> vw_Kerja_Hdr_Cuti { get; set; }
         public virtual DbSet<vw_Kerja_OT> vw_Kerja_OT { get; set; }
 
+        //fatin added - 16/06/2023
+        public virtual DbSet<tbl_LbrPrmtPsprtUpdate> tbl_LbrPrmtPsprtUpdate { get; set; }
+        public virtual DbSet<vw_LbrPrmtPsprtUpdate> vw_LbrPrmtPsprtUpdate { get; set; }
+        //end
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<vw_Kerja_Bonus>()

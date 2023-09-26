@@ -891,7 +891,8 @@ namespace MVC_SYSTEM.Controllers
 
                                         if (JenisKesukaran != "0" || TahapKesukaran != "0")
                                         {
-                                            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && x.fldOptConfFlag2.Contains("HargaKesukaran") && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+                                            //Modified by Shazana 21/9/2023
+                                            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && (x.fldOptConfFlag2.Contains("HargaKesukaran") || x.fldOptConfFlag2.Contains("HargaTambahan")) && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
                                             //Commented by Shazana 18/7/2023
                                             // var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
                                             //Added by Shazana 18/7/2023
@@ -901,8 +902,11 @@ namespace MVC_SYSTEM.Controllers
                                             //var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_JenisHargaKesukaran == JenisKesukaran && x.fld_PktUtama == tbl_PktUtama.fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
                                             //Added by Shazana 22/7/2023
                                             var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_PktUtama == tbl_PktUtama.fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                                            //Added by Shazana 21/9/2023
+                                            var checkdeleted = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == TahapKesukaran && x.fld_PktUtama == tbl_PktUtama.fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
 
-                                            if (checkKwsn == null && JenisKesukaranDetails != null && TahapKesukaranDetails != null)
+                                            //Modified by Shazana 21/9/2023
+                                            if (checkdeleted == null && JenisKesukaranDetails != null)
                                             {
                                                 Models.tbl_PktHargaKesukaran PktHargaKesukaran = new Models.tbl_PktHargaKesukaran();
                                                 PktHargaKesukaran.fld_PktUtama = tbl_PktUtama.fld_PktUtama;
@@ -988,7 +992,8 @@ namespace MVC_SYSTEM.Controllers
 
             //Added by Shazana 13/6/2023
             List<SelectListItem> JenisKesukaranlist = new List<SelectListItem>();
-            JenisKesukaranlist = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "HargaKesukaran" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => new SelectListItem { Value = s.fldOptConfFlag1, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
+            //Modified by Shazana 21/9/2023
+            JenisKesukaranlist = new SelectList(db.tblOptionConfigsWebs.Where(x => (x.fldOptConfFlag2 == "HargaKesukaran" || x.fldOptConfFlag2 == "HargaTambahan") && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => new SelectListItem { Value = s.fldOptConfFlag1, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
             JenisKesukaranlist.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
 
             List<SelectListItem> TahapKesukaranlist = new List<SelectListItem>();
@@ -5415,7 +5420,7 @@ namespace MVC_SYSTEM.Controllers
             //return Json(flag);
             return RedirectToAction("LevelsInfo");
         }
-
+        //Modified by Shazana 21/9/2023
         public ActionResult SaveKesukaran(string fld_JenisHargaKesukaran, string fld_TahapHargaKesukaran, string fld_PktUtama)
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
@@ -5428,8 +5433,8 @@ namespace MVC_SYSTEM.Controllers
             Models.tbl_PktHargaKesukaran tbl_PktHargaKesukaran = new Models.tbl_PktHargaKesukaran();
 
             int flag = 0;
-
-            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == fld_JenisHargaKesukaran && x.fldOptConfFlag2.Contains("HargaKesukaran") && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+            //Modified by Shazana 21/9/2023
+            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == fld_JenisHargaKesukaran && (x.fldOptConfFlag2.Contains("HargaKesukaran") || x.fldOptConfFlag2.Contains("HargaTambahan")) && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
             //Commented by Shazana 18/7/2023
             // var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == fld_TahapHargaKesukaran).FirstOrDefault();
 
@@ -5441,11 +5446,11 @@ namespace MVC_SYSTEM.Controllers
             //Added by Shazana 18/7/2023
             var TahapKesukaranDetails = db.tbl_HargaKesukaran.Where(x => x.fld_NegaraId == NegaraID && x.fld_SyarikatId == SyarikatID && x.fld_KodHargaKesukaran == fld_TahapHargaKesukaran && x.fld_Deleted == false).FirstOrDefault();
             var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_PktUtama == fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
+            //Modified by Shazana 21/9/2023
+            //Pernah wujud tapi deleted dan kodharga kesukaran telah wujud dalam ladang tersebut
+            var checkdeleted = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == fld_TahapHargaKesukaran && x.fld_PktUtama == fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
 
-            //Pernah wujud tapi deleted
-            var checkdeleted = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == fld_TahapHargaKesukaran && x.fld_PktUtama == fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == true).FirstOrDefault();
-
-            if (checkdeleted != null && checkKwsn == null)
+            if (checkdeleted != null)
             {
                 checkdeleted.fld_Deleted = false;
                 checkdeleted.fld_ModifiedBy = getuserid.ToString();
@@ -5454,13 +5459,14 @@ namespace MVC_SYSTEM.Controllers
                 dbr.Entry(checkdeleted).State = EntityState.Modified;
                 dbr.SaveChanges();
                 dbr.Dispose();
+                flag = 1;
             }
 
             else
             {
 
                 //Modified by Shazana 18/7/2023
-                if (checkKwsn == null && JenisKesukaranDetails != null)
+                if (JenisKesukaranDetails != null && TahapKesukaranDetails != null)
                 {
                     tbl_PktHargaKesukaran.fld_PktUtama = fld_PktUtama;
                     tbl_PktHargaKesukaran.fld_KodJenisHargaKesukaran = JenisKesukaranDetails.fldOptConfFlag3; //Modify by Shazana 13/6/2023
@@ -5502,8 +5508,8 @@ namespace MVC_SYSTEM.Controllers
 
             List<SelectListItem> HargaKesukaranlist = new List<SelectListItem>();
 
-
-            HargaKesukaranlist = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "HargaKesukaran" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => new SelectListItem { Value = s.fldOptConfFlag1, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
+            //Modified by Shazana 21/9/2023
+            HargaKesukaranlist = new SelectList(db.tblOptionConfigsWebs.Where(x => (x.fldOptConfFlag2 == "HargaKesukaran" || x.fldOptConfFlag2 == "HargaTambahan") && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => new SelectListItem { Value = s.fldOptConfFlag1, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
 
             return Json(HargaKesukaranlist);
         }
@@ -5519,7 +5525,7 @@ namespace MVC_SYSTEM.Controllers
             //Commented by Shazana 18/7/2023
             //TahapKesukaranlist = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaran && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).OrderBy(x => x.fldOptConfDesc).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc + " - " + s.fldOptConfFlag2 }), "Value", "Text").ToList();
             //Added by Shazana 18/7/2023
-            var JenisTahapDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && x.fldOptConfFlag2.ToUpper() == "HARGAKESUKARAN" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).FirstOrDefault();
+            var JenisTahapDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && (x.fldOptConfFlag2.ToUpper() == "HARGAKESUKARAN" || x.fldOptConfFlag2.ToUpper() == "HARGATAMBAHAN") && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).FirstOrDefault();
             TahapKesukaranlist = new SelectList(db.tbl_HargaKesukaran.Where(x => x.fld_JenisHargaKesukaran == JenisTahapDetails.fldOptConfDesc && x.fld_NegaraId == NegaraID && x.fld_SyarikatId == SyarikatID && x.fld_Deleted == false).OrderBy(x => x.fld_Keterangan).Select(s => new SelectListItem { Value = s.fld_KodHargaKesukaran, Text = s.fld_Keterangan + " - " + s.fld_HargaKesukaran }), "Value", "Text").ToList();
 
             return Json(TahapKesukaranlist);

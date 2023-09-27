@@ -904,6 +904,11 @@ namespace MVC_SYSTEM.Controllers
                                                     {
                                                         bapiacgl09_details.Orderid = GLtoGLItem.fld_IO;
                                                     }
+                                                    //farahin tambah 22/9/2023 - RISE
+                                                    else if (GLtoGLItem.fld_SAPType == "WBS")
+                                                    {
+                                                        bapiacgl09_details.WbsElement = GLtoGLItem.fld_IO + ".B";
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -1105,20 +1110,25 @@ namespace MVC_SYSTEM.Controllers
                                                     bapiacgl09_details.ItemText = GLtoVendorItem.fld_Desc;
                                                     bapiacgl09_details.GlAccount = GLtoVendorItem.fld_GL.ToString().PadLeft(10, '0');
 
-                                                    if (GLtoVendorItem.fld_WilayahID == 12)
+                                                    if (GLtoVendorItem.fld_IO != null)
                                                     {
-                                                        bapiacgl09_details.Costcenter = GLtoVendorItem.fld_IO;
-                                                    }
-                                                    else
-                                                    {
-                                                        if (GLtoVendorItem.fld_IO != null)
+                                                        if (GLtoVendorItem.fld_SAPType == "CC")
+                                                        {
+                                                            bapiacgl09_details.Costcenter = GLtoVendorItem.fld_IO;
+                                                        }
+                                                        else if (GLtoVendorItem.fld_SAPType == "IO")
                                                         {
                                                             bapiacgl09_details.Orderid = GLtoVendorItem.fld_IO;
                                                         }
-                                                        else
+                                                        //farahin tambah 22/9/2023 - RISE
+                                                        else if (GLtoVendorItem.fld_SAPType == "WBS")
                                                         {
-                                                            bapiacgl09_details.Orderid = null;
+                                                            bapiacgl09_details.WbsElement = GLtoVendorItem.fld_IO + ".B";
                                                         }
+                                                    }
+                                                    else
+                                                    {
+                                                        bapiacgl09_details.Orderid = "";
                                                     }
                                                     bapiacgl09[i] = bapiacgl09_details;
                                                 }

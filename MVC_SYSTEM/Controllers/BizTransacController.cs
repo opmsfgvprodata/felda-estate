@@ -815,30 +815,30 @@ namespace MVC_SYSTEM.Controllers
                 {
                     if (compCode == "1000")
                     {
-                        var ireq = new SAPPosting.ZfmDocpostOpmsRequest();
-                        var iresponse = new SAPPosting.ZfmDocpostOpmsResponse();
-                        var ICred = new SAPPosting.ZWS_OPMS_DOCPOSTClient();
+                        var ireq = new SAPPosting_FLQ.ZfmDocpostOpmsRequest();
+                        var iresponse = new SAPPosting_FLQ.ZfmDocpostOpmsResponse();
+                        var ICred = new SAPPosting_FLQ.ZWS_OPMS_DOCPOSTClient();
 
                         ICred.ClientCredentials.UserName.UserName = userName;
                         ICred.ClientCredentials.UserName.Password = password;
 
-                        var docPost = new SAPPosting.ZfmDocpostOpms();
+                        var docPost = new SAPPosting_FLQ.ZfmDocpostOpms();
 
                         //account payable
-                        SAPPosting.Bapiacap09[] bapiacap09 = null;
-                        SAPPosting.Bapiacap09 bapiacap09_details = new SAPPosting.Bapiacap09();
+                        SAPPosting_FLQ.Bapiacap09[] bapiacap09 = null;
+                        SAPPosting_FLQ.Bapiacap09 bapiacap09_details = new SAPPosting_FLQ.Bapiacap09();
 
                         //accountGL
-                        SAPPosting.Bapiacgl09[] bapiacgl09 = null;
-                        SAPPosting.Bapiacgl09 bapiacgl09_details = new SAPPosting.Bapiacgl09();
+                        SAPPosting_FLQ.Bapiacgl09[] bapiacgl09 = null;
+                        SAPPosting_FLQ.Bapiacgl09 bapiacgl09_details = new SAPPosting_FLQ.Bapiacgl09();
 
                         //currency
-                        SAPPosting.Bapiaccr09[] bapiaccr09 = null;
-                        SAPPosting.Bapiaccr09 bapiaccr09_details = new SAPPosting.Bapiaccr09();
+                        SAPPosting_FLQ.Bapiaccr09[] bapiaccr09 = null;
+                        SAPPosting_FLQ.Bapiaccr09 bapiaccr09_details = new SAPPosting_FLQ.Bapiaccr09();
 
-                        SAPPosting.Bapiacpa09 bapiacpa09 = new SAPPosting.Bapiacpa09(); //customer cpd
-                        SAPPosting.Bapiache09 bapiache09 = new SAPPosting.Bapiache09(); //documentHeader
-                        SAPPosting.Bapiret2[] BAPIRET2 = new SAPPosting.Bapiret2[1]; //return structure
+                        SAPPosting_FLQ.Bapiacpa09 bapiacpa09 = new SAPPosting_FLQ.Bapiacpa09(); //customer cpd
+                        SAPPosting_FLQ.Bapiache09 bapiache09 = new SAPPosting_FLQ.Bapiache09(); //documentHeader
+                        SAPPosting_FLQ.Bapiret2[] BAPIRET2 = new SAPPosting_FLQ.Bapiret2[1]; //return structure
 
                         ICred.Open();
 
@@ -878,14 +878,14 @@ namespace MVC_SYSTEM.Controllers
 
                                         //GL to GL - ACCOUNTGL
 
-                                        bapiacgl09 = new SAPPosting.Bapiacgl09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                        bapiaccr09 = new SAPPosting.Bapiaccr09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                        bapiacgl09 = new SAPPosting_FLQ.Bapiacgl09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                        bapiaccr09 = new SAPPosting_FLQ.Bapiaccr09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
 
                                         foreach (var GLtoGLItem in GLToGLPostingData.DistinctBy(x => x.fld_ItemNo))
                                         {
-                                            bapiacgl09_details = new SAPPosting.Bapiacgl09();
-                                            bapiaccr09_details = new SAPPosting.Bapiaccr09();
-                                            bapiacap09_details = new SAPPosting.Bapiacap09();
+                                            bapiacgl09_details = new SAPPosting_FLQ.Bapiacgl09();
+                                            bapiaccr09_details = new SAPPosting_FLQ.Bapiaccr09();
+                                            bapiacap09_details = new SAPPosting_FLQ.Bapiacap09();
 
                                             if (!String.IsNullOrEmpty(GLtoGLItem.fld_GL))
                                             {
@@ -907,7 +907,7 @@ namespace MVC_SYSTEM.Controllers
                                                     //farahin tambah 22/9/2023 - RISE
                                                     else if (GLtoGLItem.fld_SAPType == "WBS")
                                                     {
-                                                        bapiacgl09_details.WbsElement = GLtoGLItem.fld_IO +".B";
+                                                        bapiacgl09_details.WbsElement = GLtoGLItem.fld_IO + ".B";
                                                     }
                                                 }
                                                 else
@@ -948,7 +948,7 @@ namespace MVC_SYSTEM.Controllers
                                         };
 
 
-                                        docPost = new SAPPosting.ZfmDocpostOpms
+                                        docPost = new SAPPosting_FLQ.ZfmDocpostOpms
                                         {
                                             Accountgl = bapiacgl09,
                                             Documentheader = bapiache09,
@@ -1095,22 +1095,21 @@ namespace MVC_SYSTEM.Controllers
                                             }
 
                                             //GL to Vendor Line Item Details
-                                            bapiacgl09 = new SAPPosting.Bapiacgl09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                            bapiacap09 = new SAPPosting.Bapiacap09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                            bapiaccr09 = new SAPPosting.Bapiaccr09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiacgl09 = new SAPPosting_FLQ.Bapiacgl09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiacap09 = new SAPPosting_FLQ.Bapiacap09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiaccr09 = new SAPPosting_FLQ.Bapiaccr09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
 
                                             i = 0;
                                             foreach (var GLtoVendorItem in GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo))
                                             {
                                                 //GLAccount
-                                                bapiacgl09_details = new SAPPosting.Bapiacgl09();
+                                                bapiacgl09_details = new SAPPosting_FLQ.Bapiacgl09();
                                                 if (GLtoVendorItem.fld_GL != null)
                                                 {
                                                     bapiacgl09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                     bapiacgl09_details.ItemText = GLtoVendorItem.fld_Desc;
                                                     bapiacgl09_details.GlAccount = GLtoVendorItem.fld_GL.ToString().PadLeft(10, '0');
 
-                                                    //farahin - untuk cater RISE Requirement
                                                     if (GLtoVendorItem.fld_IO != null)
                                                     {
                                                         if (GLtoVendorItem.fld_SAPType == "CC")
@@ -1121,6 +1120,7 @@ namespace MVC_SYSTEM.Controllers
                                                         {
                                                             bapiacgl09_details.Orderid = GLtoVendorItem.fld_IO;
                                                         }
+                                                        //farahin tambah 22/9/2023 - RISE
                                                         else if (GLtoVendorItem.fld_SAPType == "WBS")
                                                         {
                                                             bapiacgl09_details.WbsElement = GLtoVendorItem.fld_IO + ".B";
@@ -1130,30 +1130,13 @@ namespace MVC_SYSTEM.Controllers
                                                     {
                                                         bapiacgl09_details.Orderid = "";
                                                     }
-
-                                                    //farahin comment 25/9/2023
-                                                    //if (GLtoVendorItem.fld_WilayahID == 12)
-                                                    //{
-                                                    //    bapiacgl09_details.Costcenter = GLtoVendorItem.fld_IO;
-                                                    //}
-                                                    //else
-                                                    //{
-                                                    //    if (GLtoVendorItem.fld_IO != null)
-                                                    //    {
-                                                    //        bapiacgl09_details.Orderid = GLtoVendorItem.fld_IO;
-                                                    //    }
-                                                    //    else
-                                                    //    {
-                                                    //        bapiacgl09_details.Orderid = null;
-                                                    //    }
-                                                    //}
                                                     bapiacgl09[i] = bapiacgl09_details;
                                                 }
 
                                                 if (GLtoVendorItem.fld_VendorCode != null)
                                                 {
                                                     //Acc Payable
-                                                    bapiacap09_details = new SAPPosting.Bapiacap09();
+                                                    bapiacap09_details = new SAPPosting_FLQ.Bapiacap09();
                                                     bapiacap09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                     bapiacap09_details.VendorNo = GLtoVendorItem.fld_VendorCode.ToString().PadLeft(10, '0');
                                                     bapiacap09_details.ItemText = GLtoVendorItem.fld_Desc.ToString();
@@ -1163,7 +1146,7 @@ namespace MVC_SYSTEM.Controllers
                                                 }
 
                                                 //Currency Amt
-                                                bapiaccr09_details = new SAPPosting.Bapiaccr09();
+                                                bapiaccr09_details = new SAPPosting_FLQ.Bapiaccr09();
                                                 bapiaccr09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                 bapiaccr09_details.Currency = GLtoVendorItem.fld_Currency;
                                                 //modified by kamalia 24/11/21
@@ -1192,7 +1175,7 @@ namespace MVC_SYSTEM.Controllers
                                                 SYSTEM = null
                                             };
 
-                                            docPost = new SAPPosting.ZfmDocpostOpms
+                                            docPost = new SAPPosting_FLQ.ZfmDocpostOpms
                                             {
                                                 Accountgl = bapiacgl09,
                                                 Documentheader = bapiache09,
@@ -1632,7 +1615,6 @@ namespace MVC_SYSTEM.Controllers
                                                         {
                                                             BAPIACGL09_details.ORDERID = GLtoVendorItem.fld_IO;
                                                         }
-                                                       
                                                     }
                                                     else
                                                     {

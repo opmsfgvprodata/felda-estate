@@ -219,7 +219,7 @@
                             @Html.ValidationMessageFor(model => model.fld_PaymentMode, "", new { @class = "text-danger" })
                         </div>
                         <div class="col-sm-3">
-                            <label>4 PAN Terakhir [cth: 1111]<font style="color:red">*</font></label>
+                            <label id='lblPanNo'>4 PAN Terakhir [cth: 1111]<font style="color:red">*</font></label>  @*fatin modified add id - 02/10/2023*@
                             @Html.EditorFor(model => model.fld_Last4Pan, new { htmlAttributes = new { @class = "form-control digit", @maxlength = "4", @minlength = "4" } })
                             @Html.ValidationMessageFor(model => model.fld_Last4Pan, "", new { @class = "text-danger" })
                         </div>
@@ -396,6 +396,29 @@
 </script>
 <script>
     $(document).ready(function () {
+
+        //fatin added - 02/10/2023
+        if ($("#fld_PaymentMode").val() != "3") {
+            $("#fld_Last4Pan").hide();
+            $("#lblPanNo").hide();
+        }
+        else {
+            $("#fld_Last4Pan").show();
+            $("#lblPanNo").show();
+        }
+
+        $("#fld_PaymentMode").change(function () {
+            if ($("#fld_PaymentMode").val() != "3") {
+                $("#fld_Last4Pan").hide();
+                $("#lblPanNo").hide();
+            }
+            else {
+                $("#fld_Last4Pan").show();
+                $("#lblPanNo").show();
+            }
+        });
+        //end
+
         if ($("#fld_Trlhr").val() != "") {
             var Getumur = {};
             var disableoption = "";

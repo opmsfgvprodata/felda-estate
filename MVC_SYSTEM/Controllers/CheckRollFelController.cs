@@ -1149,12 +1149,6 @@ namespace MVC_SYSTEM.Controllers
         [HttpPost]
         public ActionResult Working(DateTime SelectDate, string SelectionData, int SelectionCategory, string Lejar, byte JnisPkt, string PilihanPkt, string JnisAktvt, string PilihanAktvt, decimal? HrgaKwsnSkr, string KdKwsnSkr, int AppKwnsSkrLainID, DateTime? AppKwnsSkrLainDT, byte TrnsfrLvl, List<Kesukaran> kesukaran, List<CustMod_Work> HadirData)
         {
-            foreach(var sukar in kesukaran)
-            {
-                var kd = sukar.fld_KodHargaKesukaran;
-                var hrg = sukar.fld_HargaKesukaran;
-                var jns = sukar.fldOptConfFlag2;
-            }
             string msg = "";
             string statusmsg = "";
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
@@ -1279,6 +1273,7 @@ namespace MVC_SYSTEM.Controllers
                                 }
                                 dbr.tbl_Kerja.AddRange(tbl_KerjaList);
                                 dbr.SaveChanges();
+                                EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
                                 EstateFunction.SaveDataKerjaSAP(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, TransferPkt, transferPktCode);
                                 msg = GlobalResEstate.msgAdd;
                                 statusmsg = "success";
@@ -1369,6 +1364,7 @@ namespace MVC_SYSTEM.Controllers
                             }
                             dbr.tbl_Kerja.AddRange(tbl_KerjaList);
                             dbr.SaveChanges();
+                            EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
                             EstateFunction.SaveDataKerjaSAPFPM(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode);
                             msg = GlobalResEstate.msgAdd;
                             statusmsg = "success";

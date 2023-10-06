@@ -554,6 +554,7 @@
     <Compile Include="Models\tbl_IO.cs" />
     <Compile Include="Models\tbl_KawTidakBerhasil.cs" />
     <Compile Include="Models\tbl_Kepuasan.cs" />
+    <Compile Include="Models\tbl_KerjaKesukaran.cs" />
     <Compile Include="Models\tbl_Kerja.cs" />
     <Compile Include="Models\tbl_KerjaHariTerabai.cs" />
     <Compile Include="Models\tbl_Kerjahdr.cs" />

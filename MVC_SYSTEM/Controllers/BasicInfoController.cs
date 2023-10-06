@@ -893,8 +893,7 @@ namespace MVC_SYSTEM.Controllers
 
                                         if (JenisKesukaran != "0" || TahapKesukaran != "0")
                                         {
-                                            string[] jeniskesukaran = new string[] { "HargaKesukaran", "HargaTambahan" };
-                                            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && jeniskesukaran.Contains(x.fldOptConfFlag2) && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+                                            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && x.fldOptConfFlag2.Contains("HargaKesukaran") && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
                                             var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
 
                                             //Commented by Shazana 22/7/2023
@@ -987,9 +986,7 @@ namespace MVC_SYSTEM.Controllers
 
             //Added by Shazana 13/6/2023
             List<SelectListItem> JenisKesukaranlist = new List<SelectListItem>();
-
-            string[] jeniskesukaran = new string[] { "HargaKesukaran", "HargaTambahan" };
-            JenisKesukaranlist = new SelectList(db.tblOptionConfigsWebs.Where(x => jeniskesukaran.Contains(x.fldOptConfFlag2) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => new SelectListItem { Value = s.fldOptConfFlag1, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
+            JenisKesukaranlist = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "HargaKesukaran" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => new SelectListItem { Value = s.fldOptConfFlag1, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
             JenisKesukaranlist.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
 
             List<SelectListItem> TahapKesukaranlist = new List<SelectListItem>();
@@ -5430,8 +5427,7 @@ namespace MVC_SYSTEM.Controllers
 
             int flag = 0;
 
-            string[] jeniskesukaran = new string[] { "HargaKesukaran", "HargaTambahan" };
-            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == fld_JenisHargaKesukaran && jeniskesukaran.Contains(x.fldOptConfFlag2) && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == fld_JenisHargaKesukaran && x.fldOptConfFlag2.Contains("HargaKesukaran") && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
             var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == fld_TahapHargaKesukaran).FirstOrDefault();
 
             //Commented by Shazana 22/7/2023
@@ -5440,8 +5436,7 @@ namespace MVC_SYSTEM.Controllers
             //Added by Shazana 22/7/2023
             var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_PktUtama == fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
 
-            //if (checkKwsn == null && JenisKesukaranDetails != null && TahapKesukaranDetails != null)
-            if (1 == 1)
+            if (checkKwsn == null && JenisKesukaranDetails != null && TahapKesukaranDetails != null)
             {
                 tbl_PktHargaKesukaran.fld_PktUtama = fld_PktUtama;
                 tbl_PktHargaKesukaran.fld_KodJenisHargaKesukaran = JenisKesukaranDetails.fldOptConfFlag3; //Modify by Shazana 13/6/2023

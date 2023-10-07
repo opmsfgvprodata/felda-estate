@@ -5525,8 +5525,10 @@ namespace MVC_SYSTEM.Controllers
             //Commented by Shazana 18/7/2023
             //TahapKesukaranlist = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaran && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).OrderBy(x => x.fldOptConfDesc).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc + " - " + s.fldOptConfFlag2 }), "Value", "Text").ToList();
             //Added by Shazana 18/7/2023
-            var JenisTahapDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && (x.fldOptConfFlag2.ToUpper() == "HARGAKESUKARAN" || x.fldOptConfFlag2.ToUpper() == "HARGATAMBAHAN") && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).FirstOrDefault();
-            TahapKesukaranlist = new SelectList(db.tbl_HargaKesukaran.Where(x => x.fld_JenisHargaKesukaran == JenisTahapDetails.fldOptConfDesc && x.fld_NegaraId == NegaraID && x.fld_SyarikatId == SyarikatID && x.fld_Deleted == false).OrderBy(x => x.fld_Keterangan).Select(s => new SelectListItem { Value = s.fld_KodHargaKesukaran, Text = s.fld_Keterangan + " - " + s.fld_HargaKesukaran }), "Value", "Text").ToList();
+            //var JenisTahapDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && (x.fldOptConfFlag2.ToUpper() == "HARGAKESUKARAN" || x.fldOptConfFlag2.ToUpper() == "HARGATAMBAHAN") && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).FirstOrDefault();
+            //TahapKesukaranlist = new SelectList(db.tbl_HargaKesukaran.Where(x => x.fld_JenisHargaKesukaran == JenisTahapDetails.fldOptConfFlag1 && x.fld_NegaraId == NegaraID && x.fld_SyarikatId == SyarikatID && x.fld_Deleted == false).OrderBy(x => x.fld_Keterangan).Select(s => new SelectListItem { Value = s.fld_KodHargaKesukaran, Text = s.fld_Keterangan + " - " + s.fld_HargaKesukaran }), "Value", "Text").ToList();
+            //modified by faeza 07.10.2023
+            TahapKesukaranlist = new SelectList(db.tbl_HargaKesukaran.Where(x => x.fld_JenisHargaKesukaran == JenisKesukaran && x.fld_NegaraId == NegaraID && x.fld_SyarikatId == SyarikatID && x.fld_Deleted == false).OrderBy(x => x.fld_KodHargaKesukaran).Select(s => new SelectListItem { Value = s.fld_KodHargaKesukaran, Text = s.fld_KodHargaKesukaran + " - " + s.fld_Keterangan + "(RM" + s.fld_HargaKesukaran + ")" }), "Value", "Text").ToList();
 
             return Json(TahapKesukaranlist);
         }

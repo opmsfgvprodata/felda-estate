@@ -138,6 +138,8 @@ namespace MVC_SYSTEM.MasterModels
         //Shazana 17/11/2022
         public virtual DbSet<vw_PermohonanKewangan> vw_PermohonanKewangan { get; set; }
 
+        //Added by Shazana 18/7/2023
+        public virtual DbSet<tbl_HargaKesukaran> tbl_HargaKesukaran { get; set; }
         public virtual DbSet<tblSubMenuList> tblSubMenuLists { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

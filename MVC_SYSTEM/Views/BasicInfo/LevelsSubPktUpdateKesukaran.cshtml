@@ -19,51 +19,90 @@
 
 @*<div class="text-center">@grid.TotalRowCount @Html.Label(GlobalResEstate.lblTotalRecord)</div>*@
 <div>
-    @{
-        @grid.GetHtml(htmlAttributes: new { id = "grid" }, // id for ajaxUpdateContainerId parameter
-                                     fillEmptyRows: false,
-                                     tableStyle: "table table-bordered table-striped table-list table-hover",
-                                     headerStyle: "header_table",
-                                     alternatingRowStyle: "Grid-alt",
-                                     selectedRowStyle: "Grid-selected",
-                                     rowStyle: "Grid-rowstyle",
-                                     footerStyle: "table-pager",
-                                     mode: WebGridPagerModes.All,
-                                     columns: grid.Columns(
-                                         grid.Column(GlobalResEstate.hdrNo, canSort: false, format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, style: "count"),
-                                    //Modify by Shazana 15/6/2023
-                                    grid.Column("fld_PktUtama", "Pkt", style: "namapkj"),
-                                    grid.Column("fld_KodHargaKesukaran", "Kod Kesukaran", style: "nopkj"),
-                                    grid.Column("Jenis Kesukaran", canSort: false, style: "tindakan1",
-                                       format: (item) =>
-                                       {
-                                           var tindakan1 = GetIdentity.GetKesukaran(item.fld_JenisHargaKesukaran, item.fld_NegaraID, item.fld_SyarikatID);
-                                           return @Html.Raw(tindakan1);
-                                       }),
 
-                                    grid.Column("fld_KeteranganHargaKesukaran", "Keterangan", style: "namapkj"),
-                                    grid.Column("fld_HargaKesukaran", "Harga Kesukaran", style: "namapkj"),
-                                    grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "tindakan",
-format: (item) =>
-{
 
-    //Modified by Shazana 22/7/2023
-    if (ViewBag.rolename == "Super Power Admin" || ViewBag.rolename == "Super Admin" || ViewBag.rolename == "Admin 1" || ViewBag.rolename == "Admin 2")
+    @*Modified by Shazana 11/8/2023*@
+    @if (ViewBag.rolename == "Super Power Admin" || ViewBag.rolename == "Super Admin" || ViewBag.rolename == "Admin 1" || ViewBag.rolename == "Admin 2")
     {
+        {
+            @grid.GetHtml(htmlAttributes: new { id = "grid" }, // id for ajaxUpdateContainerId parameter
+                                         fillEmptyRows: false,
+                                         tableStyle: "table table-bordered table-striped table-list table-hover",
+                                         headerStyle: "header_table",
+                                         alternatingRowStyle: "Grid-alt",
+                                         selectedRowStyle: "Grid-selected",
+                                         rowStyle: "Grid-rowstyle",
+                                         footerStyle: "table-pager",
+                                         mode: WebGridPagerModes.All,
+                                         columns: grid.Columns(
+                                             grid.Column(GlobalResEstate.hdrNo, canSort: false, format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, style: "count"),
+                                        //Modify by Shazana 15/6/2023
+                                        grid.Column("fld_PktUtama", "Pkt", style: "namapkj"),
+                                        grid.Column("fld_KodHargaKesukaran", "Kod Kesukaran", style: "nopkj"),
+                                        grid.Column("Jenis Kesukaran", canSort: false, style: "tindakan1",
+                                           format: (item) =>
+                                           {
+                                               var tindakan1 = GetIdentity.GetKesukaran(item.fld_JenisHargaKesukaran, item.fld_NegaraID, item.fld_SyarikatID);
+                                               return @Html.Raw(tindakan1);
+                                           }),
 
-        var tindakan = "<a data-modal1='' href='" + @Url.Action("RemoveKesukaran", "BasicInfo") + "/?fld_KodPkt=" + item.fld_PktUtama + "&KodHargaKesukaran=" + item.fld_KodHargaKesukaran + "' class='btn btn-danger' role='button' title='" + GlobalResEstate.btnDelete + "' onclick='return DisplayProgressMessage(this);'><i class='fa fa-trash fa-lg'></i></a>&nbsp;";
-        return @Html.Raw(tindakan);
+                                        grid.Column("fld_KeteranganHargaKesukaran", "Keterangan", style: "namapkj"),
+                                        grid.Column("fld_HargaKesukaran", "Harga Kesukaran", style: "namapkj"),
+                                        //Commented by Shazana 11/8/2023
+                                        grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "tindakan",
+                                                   format: (item) =>
+
+                                                   {
+                                                       //Modified by Shazana 22/7/2023
+                                                       if (ViewBag.rolename == "Super Power Admin" || ViewBag.rolename == "Super Admin" || ViewBag.rolename == "Admin 1" || ViewBag.rolename == "Admin 2")
+                                                       {
+
+                                                           var tindakan = "<a data-modal1='' href='" + @Url.Action("RemoveKesukaran", "BasicInfo") + "/?fld_KodPkt=" + item.fld_PktUtama + "&KodHargaKesukaran=" + item.fld_KodHargaKesukaran + "' class='btn btn-danger' role='button' title='" + GlobalResEstate.btnDelete + "' onclick='return DisplayProgressMessage(this);'><i class='fa fa-trash fa-lg'></i></a>&nbsp;";
+                                                           return @Html.Raw(tindakan);
+                                                       }
+                                                       else
+                                                       {
+                                                           //Modified by Shazana
+                                                           var tindakan = " ";
+                                                           return @Html.Raw(tindakan);
+                                                       }
+
+                                                   })
+                                                      ))
+        }
     }
+
     else
     {
 
-        var tindakan = GlobalResEstate.btnDelete;
-        return @Html.Raw(tindakan);
-    }
+        {
+            @grid.GetHtml(htmlAttributes: new { id = "grid" }, // id for ajaxUpdateContainerId parameter
+                                         fillEmptyRows: false,
+                                         tableStyle: "table table-bordered table-striped table-list table-hover",
+                                         headerStyle: "header_table",
+                                         alternatingRowStyle: "Grid-alt",
+                                         selectedRowStyle: "Grid-selected",
+                                         rowStyle: "Grid-rowstyle",
+                                         footerStyle: "table-pager",
+                                         mode: WebGridPagerModes.All,
+                                         columns: grid.Columns(
+                                             grid.Column(GlobalResEstate.hdrNo, canSort: false, format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, style: "count"),
+                                        //Modify by Shazana 15/6/2023
+                                        grid.Column("fld_PktUtama", "Pkt", style: "namapkj"),
+                                        grid.Column("fld_KodHargaKesukaran", "Kod Kesukaran", style: "nopkj"),
+                                        grid.Column("Jenis Kesukaran", canSort: false, style: "tindakan1",
+                                           format: (item) =>
+                                           {
+                                               var tindakan1 = GetIdentity.GetKesukaran(item.fld_JenisHargaKesukaran, item.fld_NegaraID, item.fld_SyarikatID);
+                                               return @Html.Raw(tindakan1);
+                                           }),
 
-})
-                                                   ))
+                                        grid.Column("fld_KeteranganHargaKesukaran", "Keterangan", style: "namapkj"),
+                                        grid.Column("fld_HargaKesukaran", "Harga Kesukaran", style: "namapkj")
+                                            ))
+        }
     }
+    @*Close Modified by Shazana 11/8/2023*@
 </div>
 
 <script>
@@ -88,30 +127,4 @@ format: (item) =>
             Kawasan.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
             $.ajax(Kawasan);
     }
-
-
-
-
-
-    @*$("#btnDelete").click(function (e) {
-                event.preventDefault()
-                //btnClickPkt += 1;
-                var Kawasan = {};
-            var disableoption = "";
-            Kawasan.url = "@Url.Action("RemoveKaw", "BasicInfo")";
-            Kawasan.type = "POST";
-            Kawasan.data = JSON.stringify({ kodpkt });
-            Kawasan.datatype = "json";
-            Kawasan.contentType = "application/json";
-            Kawasan.success = function (result) {
-                if (result == 1) {
-                    $.simplyToast('Data berjaya dihapuskan', 'danger');
-                }
-                else if (result == 2) {
-                    $.simplyToast('Data telah dihapuskan', 'danger');
-                }
-            };
-            Kawasan.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
-            $.ajax(Kawasan);
-        });*@
 </script>

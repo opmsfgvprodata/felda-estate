@@ -6,6 +6,8 @@ namespace MVC_SYSTEM.Models
     using System.Linq;
     using System.Data.SqlClient;
     using System.Data.Entity.Core.EntityClient;
+    using MVC_SYSTEM.ViewingModels;
+
     [DbConfigurationType(typeof(MVC_SYSTEM_Models_Config))]
     public partial class MVC_SYSTEM_Models : DbContext
     {
@@ -119,6 +121,7 @@ namespace MVC_SYSTEM.Models
         public virtual DbSet<vw_Kerja_Bonus> vw_Kerja_Bonus { get; set; }
         public virtual DbSet<vw_Kerja_Hdr_Cuti> vw_Kerja_Hdr_Cuti { get; set; }
         public virtual DbSet<vw_Kerja_OT> vw_Kerja_OT { get; set; }
+        public virtual DbSet<tbl_KerjaKesukaran> tbl_KerjaKesukaran { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

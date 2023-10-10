@@ -615,6 +615,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Service References\FPM_FTP\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Service References\FPM_FTQ\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2492,6 +2497,18 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <None Include="Service References\FPM_FTP\configuration91.svcinfo" />
+    <None Include="Service References\FPM_FTP\configuration.svcinfo" />
+    <Content Include="Service References\FPM_FTP\MVC_SYSTEM.FPM_FTP.ZFM_DOCPOST_OPMSResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\FPM_FTP\MVC_SYSTEM.FPM_FTP.ZFM_DOCPOST_OPMSResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Service References\FPM_FTP\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Service References\FPM_FTQ\MVC_SYSTEM.FPM_FTQ.ZFM_DOCPOST_OPMSResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
@@ -2499,6 +2516,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
     <None Include="Service References\FPM_FTD\zws_opms_docpost.wsdl" />
+    <None Include="Service References\FPM_FTP\zws_opms_docpost.wsdl" />
     <None Include="Service References\FPM_FTQ\zws_opms_docpost.wsdl" />
     <None Include="Service References\SAPMD\document.wsdl" />
     <None Include="Service References\FPM_FTQ\configuration91.svcinfo" />
@@ -3397,6 +3415,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\FPM_FTD\" />
+    <WCFMetadataStorage Include="Service References\FPM_FTP\" />
     <WCFMetadataStorage Include="Service References\FPM_FTQ\" />
     <WCFMetadataStorage Include="Service References\SAPMD\" />
     <WCFMetadataStorage Include="Service References\SAPMD_FLP\" />

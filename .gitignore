@@ -7,3 +7,12 @@
 /packages
 /MVC_SYSTEM/obj
 MVC_SYSTEM/MVC_SYSTEM.csproj.user
+MVC_SYSTEM/obj/Debug/en/MVC_SYSTEM.resources.dll
+MVC_SYSTEM/obj/Debug/id/MVC_SYSTEM.resources.dll
+MVC_SYSTEM/obj/Debug/MVC_SYSTEM.App_LocalResources.GlobalResEstate.resources
+MVC_SYSTEM/obj/Debug/MVC_SYSTEM.csproj.CoreCompileInputs.cache
+MVC_SYSTEM/obj/Debug/MVC_SYSTEM.csproj.FileListAbsolute.txt
+MVC_SYSTEM/obj/Debug/MVC_SYSTEM.csproj.GenerateResource.cache
+MVC_SYSTEM/obj/Debug/MVC_SYSTEM.dll
+MVC_SYSTEM/obj/Debug/MVC_SYSTEM.pdb
+MVC_SYSTEM/Web.config

@@ -361,6 +361,7 @@
     <Compile Include="MasterModels\tbl_BatchRunRefNo.cs" />
     <Compile Include="MasterModels\tbl_GajiMinimaLdg.cs" />
     <Compile Include="MasterModels\tbl_HargaGetahSMR.cs" />
+    <Compile Include="MasterModels\tbl_HargaKesukaran.cs" />
     <Compile Include="MasterModels\tbl_InsentifKGK.cs" />
     <Compile Include="MasterModels\tbl_Messaging.cs" />
     <Compile Include="MasterModels\tbl_ProduktivitiGetah.cs" />

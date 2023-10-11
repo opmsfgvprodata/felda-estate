@@ -418,18 +418,20 @@
                         hargakwsnskr1 = parseFloat(hargakwsnskr1);
                         jeniskwsnskr = $("#kesukarantype_" + j).val();
                         if (jeniskwsnskr == "HargaTambahan") {
-                            hargakwsnskr += hargakwsnskr1 * hasil1 * gandaankadar1
+                            hargakwsnskr += hargakwsnskr1 * hasil1 * gandaankadar1;
+                            hargakwsnskr = roundToTwo(hargakwsnskr);
                         }
                         else {
                             hargakwsnskr += hargakwsnskr1 * hasil1;
+                            hargakwsnskr = roundToTwo(hargakwsnskr);
                         }
                     }
                     gettotal = kadar1 * hasil1 * gandaankadar1
                     gettotal2 = kadar1 * hasil1 * gandaankadar1 + hargakwsnskr
                     $("#hasil_" + splitdata[i]).val(hasil1);
-                    $("#jumlah_" + splitdata[i]).val(gettotal2.toFixed(2));
-                    $("#jumlahH_" + splitdata[i]).val(gettotal.toFixed(2));
-                    $("#jumlahHS_" + splitdata[i]).val(gettotal2.toFixed(2));
+                    $("#jumlah_" + splitdata[i]).val(roundToTwo(gettotal2));
+                    $("#jumlahH_" + splitdata[i]).val(roundToTwo(gettotal));
+                    $("#jumlahHS_" + splitdata[i]).val(roundToTwo(gettotal2));
                 }
             }
             else {
@@ -441,23 +443,29 @@
                     hargakwsnskr1 = parseFloat(hargakwsnskr1);
                     jeniskwsnskr = $("#kesukarantype_" + j).val();
                     if (jeniskwsnskr == "HargaTambahan") {
-                        hargakwsnskr += hargakwsnskr1 * hasil1 * gandaankadar1
+                        hargakwsnskr += hargakwsnskr1 * hasil1 * gandaankadar1;
+                        hargakwsnskr = roundToTwo(hargakwsnskr);
                     }
                     else {
                         hargakwsnskr += hargakwsnskr1 * hasil1;
+                        hargakwsnskr = roundToTwo(hargakwsnskr);
                     }
                 }
                 gettotal = kadar1 * hasil1 * gandaankadar1
                 gettotal2 = kadar1 * hasil1 * gandaankadar1 + hargakwsnskr
-                $("#" + jumlah).val(gettotal2.toFixed(2));
-                $("#" + jumlahH).val(gettotal.toFixed(2));
-                $("#" + jumlahHS).val(gettotal2.toFixed(2));
+                $("#" + jumlah).val(roundToTwo(gettotal2));
+                $("#" + jumlahH).val(roundToTwo(gettotal));
+                $("#" + jumlahHS).val(roundToTwo(gettotal2));
             }
         }
         else {
             alertmsg('@GlobalResEstate.msgError', '@GlobalResEstate.lblMaxHasil' + ' ' + maxhasil);
         }
         $("#UpdateProgress1").css("display", "none");
+    }
+
+    function roundToTwo(num) {
+        return + (Math.round(num * 100) / 100);
     }
 
     function checkvalidkwsnsukar(JnisAktvt) {

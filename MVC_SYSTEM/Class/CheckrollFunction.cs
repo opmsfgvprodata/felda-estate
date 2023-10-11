@@ -501,6 +501,7 @@ namespace MVC_SYSTEM.Class
                 {
                     gandaanSave = item.fldOptConfFlag2 == "HargaTambahan" ? Gandaan : (short)1;
                     var jumlah = EachDataKerja.fld_JumlahHasil * item.fld_HargaKesukaran * gandaanSave;
+                    jumlah = Math.Round(jumlah.Value, 2);
                     jumlahKeseluruhan += jumlah;
                     KerjaKesukaran.Add(new tbl_KerjaKesukaran { fld_KerjaID = EachDataKerja.fld_ID, fld_Kadar = item.fld_HargaKesukaran, fld_KodKesukaran = item.fld_KodHargaKesukaran, fld_Gandaan = gandaanSave, fld_Nopkj = EachDataKerja.fld_Nopkj, fld_Kuantiti = EachDataKerja.fld_JumlahHasil, fld_Kum = EachDataKerja.fld_Kum, fld_Tarikh = EachDataKerja.fld_Tarikh, fld_Jumlah = jumlah, fld_NegaraID = EachDataKerja.fld_NegaraID, fld_SyarikatID = EachDataKerja.fld_SyarikatID, fld_WilayahID = EachDataKerja.fld_WilayahID, fld_LadangID = EachDataKerja.fld_LadangID });
                 }

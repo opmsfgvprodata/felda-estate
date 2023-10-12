@@ -339,6 +339,7 @@
     <Compile Include="CustomModels\CustMod_MinimumWage.cs" />
     <Compile Include="CustomModels\CustMod_MonthYearList.cs" />
     <Compile Include="CustomModels\CustMod_NewRequestIncrement.cs" />
+    <Compile Include="CustomModels\CustMod_OptionConfig.cs" />
     <Compile Include="CustomModels\CustMod_Peringkat.cs" />
     <Compile Include="CustomModels\CustMod_PktOthr.cs" />
     <Compile Include="CustomModels\CustMod_RequestDataSLP.cs" />
@@ -554,6 +555,7 @@
     <Compile Include="Models\tbl_IO.cs" />
     <Compile Include="Models\tbl_KawTidakBerhasil.cs" />
     <Compile Include="Models\tbl_Kepuasan.cs" />
+    <Compile Include="Models\tbl_KerjaKesukaran.cs" />
     <Compile Include="Models\tbl_Kerja.cs" />
     <Compile Include="Models\tbl_KerjaHariTerabai.cs" />
     <Compile Include="Models\tbl_Kerjahdr.cs" />

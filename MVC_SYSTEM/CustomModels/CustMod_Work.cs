@@ -37,4 +37,11 @@ namespace MVC_SYSTEM.CustomModels
 
         public string PaysheetID { get; set; }
     }
+
+    public class Kesukaran
+    {
+        public string fld_KodHargaKesukaran { get; set;}
+        public decimal fld_HargaKesukaran { get; set; }
+        public string fldOptConfFlag2 { get;set; }
+    }
 }

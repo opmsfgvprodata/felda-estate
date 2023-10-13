@@ -367,18 +367,6 @@
                 for (var i = 0; i < result.PilihPeringkat.length; i++) {
                     $("#PilihanPkt").append("<option value=" + result.PilihPeringkat[i].Value + ">" + result.PilihPeringkat[i].Text + "</option>");
                 }
-                //if (result.hargaKesukaran != 0) {
-                //    $('#kesukaranlbl').text(result.descKesukaran);
-                //    $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
-                //    $('#kesukarankod').val(result.cdKesukaran);
-                //    $('#kesukaranprice').val(result.hargaKesukaran);
-                //}
-                //else {
-                //    $('#kesukaranlbl').text('');
-                //    $('#kesukaranpriceshow').text('');
-                //    $('#kesukarankod').val(result.cdKesukaran);
-                //    $('#kesukaranprice').val(result.hargaKesukaran);
-                //}
                 GetKesukaran(result.kesukaran);
                 $("#UpdateProgress1").css("display", "none");
             };
@@ -1589,6 +1577,7 @@
                 }
                 $("#PilihanAktvt").append("<option title='" + AktivitiToolTip + "' value=" + result.PilihAktiviti[i].Value + ">" + result.PilihAktiviti[i].Text + "</option>");
             }
+            GetKesukaran(result.kesukaran);
             if (result.Lain2JnsAtvt == "-") {
                 $('#OtherDiff').css("display", "none");
                 $('#KesukaranLain').css("display", "none");
@@ -1599,19 +1588,6 @@
                 $('#KesukaranLain').css("display", "");
                 $('#addksranlain').css("display", "");
                 $('#OtherDiff').text(result.Lain2JnsAtvt + " :");
-            }
-            if (result.hargaKesukaran != 0) {
-
-                $('#kesukaranlbl').text(result.descKesukaran);
-                $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
-                $('#kesukarankod').val(result.cdKesukaran);
-                $('#kesukaranprice').val(result.hargaKesukaran);
-            }
-            else {
-                $('#kesukaranlbl').text('');
-                $('#kesukaranpriceshow').text('');
-                $('#kesukarankod').val(result.cdKesukaran);
-                $('#kesukaranprice').val(result.hargaKesukaran);
             }
             $("#UpdateProgress1").css("display", "none");
         };
@@ -1650,20 +1626,7 @@
             }
 
             GetKesukaran(result.kesukaran);
-            
-            //if (result.hargaKesukaran != 0) {
 
-            //    $('#kesukaranlbl').text(result.descKesukaran);
-            //    $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
-            //    $('#kesukarankod').val(result.cdKesukaran);
-            //    $('#kesukaranprice').val(result.hargaKesukaran);
-            //}
-            //else {
-            //    $('#kesukaranlbl').text('');
-            //    $('#kesukaranpriceshow').text('');
-            //    $('#kesukarankod').val(result.cdKesukaran);
-            //    $('#kesukaranprice').val(result.hargaKesukaran);
-            //}
             $("#UpdateProgress1").css("display", "none");
         };
         ajxfn.error = function () {

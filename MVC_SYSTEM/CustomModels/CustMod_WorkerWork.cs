@@ -43,6 +43,7 @@ namespace MVC_SYSTEM.CustomModels
         public int? fld_WilayahID { get; set; }
 
         public int? fld_LadangID { get; set; }
+        public decimal? fld_LsPktUtama { get; set; }
 
     }
 }

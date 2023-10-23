@@ -664,46 +664,46 @@ namespace MVC_SYSTEM.Controllers
                                         cell.Border = Rectangle.BOTTOM_BORDER;
                                         cell.BorderColor = BaseColor.BLACK;
                                         table.AddCell(cell);
+
+                                        getdeduction = deductiondata.Where(x => x.fldID == f).FirstOrDefault();
+                                        if (getdeduction != null)
+                                        {
+                                            //farahin - comment - 15/09/2021
+                                            //chunk = new Chunk(item.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            //farahin modified - 15/09/2021
+                                            chunk = new Chunk(getdeduction.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+
+                                            chunk = new Chunk(GetTriager.GetTotalForMoney(getdeduction.fldJumlah), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+                                        }
+                                        else
+                                        {
+                                            cell = new PdfPCell();
+                                            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = 0;
+                                            table.AddCell(cell);
+
+                                            cell = new PdfPCell();
+                                            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = 0;
+                                            table.AddCell(cell);
+                                        }
+
+                                        f++;
                                     }
-
-                                    getdeduction = deductiondata.Where(x => x.fldID == f).FirstOrDefault();
-                                    if (getdeduction != null)
-                                    {
-                                        //farahin - comment - 15/09/2021
-                                        //chunk = new Chunk(item.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                                        //farahin modified - 15/09/2021
-                                        chunk = new Chunk(getdeduction.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                                        cell = new PdfPCell(new Phrase(chunk));
-                                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                                        cell.Border = Rectangle.BOTTOM_BORDER;
-                                        cell.BorderColor = BaseColor.BLACK;
-                                        table.AddCell(cell);
-
-                                        chunk = new Chunk(GetTriager.GetTotalForMoney(getdeduction.fldJumlah), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                                        cell = new PdfPCell(new Phrase(chunk));
-                                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                                        cell.Border = Rectangle.BOTTOM_BORDER;
-                                        cell.BorderColor = BaseColor.BLACK;
-                                        table.AddCell(cell);
-                                    }
-                                    else
-                                    {
-                                        cell = new PdfPCell();
-                                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                                        cell.Border = 0;
-                                        table.AddCell(cell);
-
-                                        cell = new PdfPCell();
-                                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                                        cell.Border = 0;
-                                        table.AddCell(cell);
-                                    }
-
-                                    f++;
                                 }
                             }
                         }

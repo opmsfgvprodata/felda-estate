@@ -13,6 +13,7 @@
     var hardWorkDatas = ViewBag.HardWorkDatas as List<MVC_SYSTEM.Models.tbl_Kerja>;
     var webConfigList = ViewBag.WebConfigList as List<MVC_SYSTEM.MasterModels.tblOptionConfigsWeb>;
     var pktHargaKesukaran = ViewBag.PktHargaKesukaran as List<tbl_PktHargaKesukaran>;
+    var hardWorkDatasNew = ViewBag.HardWorkDatasNew as List<tbl_KerjaKesukaran>;
 }
 
 @if (Model.Count() > 0)
@@ -101,6 +102,7 @@
                             decimal? totalAmount = 0;
                             decimal? quantity = 0;
                             List<MVC_SYSTEM.Models.tbl_Kerja> hardWorkData = null;
+                            List<tbl_KerjaKesukaran> hardWorkDataNew = null;
                             if (item.fldKodPkt != null)
                             {
                                 string codeAtt = "";
@@ -118,8 +120,12 @@
                                 }
                                 var attWorkDate = attWorkDatas.Where(x => x.fld_Kdhdct == codeAtt).Select(s => s.fld_Tarikh).ToArray();
                                 hardWorkData = hardWorkDatas.Where(x => x.fld_KodPkt == item.fldKodPkt && x.fld_KodAktvt == item.fldKod && attWorkDate.Contains(x.fld_Tarikh)).ToList();
+                                var hardWorkDataIDs = hardWorkData.Select(s => s.fld_ID).ToList();
+                                var hardWorkDataNewFilter = hardWorkDatasNew.Where(x => hardWorkDataIDs.Contains(x.fld_KerjaID.Value)).ToList();
                                 quantity = hardWorkDatas.Where(x => x.fld_KodPkt == item.fldKodPkt).Sum(s => s.fld_JumlahHasil);
                                 hardWorkPrice = hardWorkData.Where(x => x.fld_KodPkt == item.fldKodPkt).Sum(s => s.fld_HrgaKwsnSkar);
+                                var hardWorkPriceIDs = hardWorkData.Where(x => x.fld_KodPkt == item.fldKodPkt).Select(s => s.fld_ID).ToList();
+                                hardWorkDataNew = hardWorkDataNewFilter.Where(x => hardWorkPriceIDs.Contains(x.fld_KerjaID.Value)).ToList();
                                 totalAmount = item.fldJumlah - hardWorkPrice;
                             }
                             else
@@ -144,17 +150,37 @@
                             if (hardWorkPrice > 0)
                             {
                                 var hardWorkCode = hardWorkData.Select(s => s.fld_KodKwsnSkar).FirstOrDefault();
-                                var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
-                                var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
-                                var desc = item.fldKeterangan + " (" + hardWorkDesc + ")";
-                                <tr>
-                                    <td width="4%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@desc</td>
-                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-@*@GetTriager.GetDashForNull(quantity.ToString())*@</td>
-                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-</td>
-                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetDashForNull(hardWorkRate.ToString())</td>
-                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none"></td>
-                                    <td width="1.5%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetTotalForMoney(hardWorkPrice)</td>
-                                </tr>
+                                if (hardWorkCode == "**")
+                                {
+                                    foreach (var item2 in hardWorkDataNew)
+                                    {
+                                        var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.fld_KodKesukaran).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
+                                        var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.fld_KodKesukaran).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
+                                        var desc = item.fldKeterangan + " (" + hardWorkDesc + ")";
+                                        <tr>
+                                            <td width="4%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@desc</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-@*@GetTriager.GetDashForNull(quantity.ToString())*@</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetDashForNull(item2.fld_Kadar.ToString())</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none"></td>
+                                            <td width="1.5%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetTotalForMoney(item2.fld_Jumlah)</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
+                                    var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
+                                    var desc = item.fldKeterangan + " (" + hardWorkDesc + ")";
+                                    <tr>
+                                        <td width="4%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@desc</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-@*@GetTriager.GetDashForNull(quantity.ToString())*@</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetDashForNull(hardWorkRate.ToString())</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none"></td>
+                                        <td width="1.5%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetTotalForMoney(hardWorkPrice)</td>
+                                    </tr>
+                                }
                             }
                         }
                     }

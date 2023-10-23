@@ -152,18 +152,18 @@
                                 var hardWorkCode = hardWorkData.Select(s => s.fld_KodKwsnSkar).FirstOrDefault();
                                 if (hardWorkCode == "**")
                                 {
-                                    foreach (var item2 in hardWorkDataNew)
+                                    foreach (var item2 in hardWorkDataNew.GroupBy(g => new { g.fld_KodKesukaran, g.fld_Kadar }).Select(s=> new { kod = s.Key.fld_KodKesukaran, kadar = s.Key.fld_Kadar, amount = s.Sum(am => am.fld_Jumlah)}).ToList())
                                     {
-                                        var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.fld_KodKesukaran).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
-                                        var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.fld_KodKesukaran).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
+                                        var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.kod).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
+                                        var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.kod).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
                                         var desc = item.fldKeterangan + " (" + hardWorkDesc + ")";
                                         <tr>
                                             <td width="4%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@desc</td>
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-@*@GetTriager.GetDashForNull(quantity.ToString())*@</td>
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">-</td>
-                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetDashForNull(item2.fld_Kadar.ToString())</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetDashForNull(item2.kadar.ToString())</td>
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none"></td>
-                                            <td width="1.5%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetTotalForMoney(item2.fld_Jumlah)</td>
+                                            <td width="1.5%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; text-align: right; border-right: none; border-left: none">@GetTriager.GetTotalForMoney(item2.amount)</td>
                                         </tr>
                                     }
                                 }

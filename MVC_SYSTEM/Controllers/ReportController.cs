@@ -6622,6 +6622,8 @@ namespace MVC_SYSTEM.Controllers
             var getpkjInfo = dbr.tbl_Pkjmast.Where(x => x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1);
             var hardWorkDatas = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == pkj && x.fld_Tarikh.Value.Month == month && x.fld_Tarikh.Value.Year == year && x.fld_LadangID == LadangID && x.fld_HrgaKwsnSkar > 0.00m && !string.IsNullOrEmpty(x.fld_HrgaKwsnSkar.Value.ToString())).ToList();
             var attWorkDatas = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == pkj && x.fld_Tarikh.Value.Month == month && x.fld_Tarikh.Value.Year == year && x.fld_LadangID == LadangID).ToList();
+            var hardWorkDataIDs = hardWorkDatas.Select(s => s.fld_ID).ToList();
+            var hardWorkDatasNew = dbr.tbl_KerjaKesukaran.Where(x => hardWorkDataIDs.Contains(x.fld_KerjaID.Value)).ToList();
 
             ViewBag.NamaPkj = getpkjInfo.Select(s => s.fld_Nama).FirstOrDefault();
             ViewBag.NoKwsp = getpkjInfo.Select(s => s.fld_Nokwsp).FirstOrDefault();
@@ -6649,6 +6651,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.HardWorkDatas = hardWorkDatas;
             ViewBag.WebConfigList = webConfigList;
             ViewBag.PktHargaKesukaran = pktHargaKesukaran;
+            ViewBag.HardWorkDatasNew = hardWorkDatasNew;
             return View(result);
         }
 

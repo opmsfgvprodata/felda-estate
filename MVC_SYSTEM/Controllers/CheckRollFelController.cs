@@ -1190,7 +1190,8 @@ namespace MVC_SYSTEM.Controllers
             var sapType = "";
             if (TransferPkt)
             {
-                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID).FirstOrDefault();
+                var PilihanPktID = int.Parse(PilihanPkt);
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
                 if (pktTransfer != null)
                 {
                     JnisPkt = byte.Parse(pktTransfer.fld_JenisPkt.ToString());
@@ -1407,7 +1408,7 @@ namespace MVC_SYSTEM.Controllers
             var kesukaranList = getConfig.GetWebConfigFlag2Filter(jenisKesukaran, NegaraID, SyarikatID);
 
             var SelectPkt = dbr.tbl_PktPinjam.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_JenisPkt == JnsPkt && x.fld_EndDT >= CurrentDate).ToList();
-            PilihPeringkat = new SelectList(SelectPkt.Select(s => new SelectListItem { Value = s.fld_KodPkt, Text = s.fld_KodPkt + " - " + s.fld_NamaPkt + " - (" + s.fld_SAPCode + ")" }), "Value", "Text").ToList();
+            PilihPeringkat = new SelectList(SelectPkt.Select(s => new SelectListItem { Value = s.fld_ID.ToString(), Text = s.fld_KodPkt + " - " + s.fld_NamaPkt + " - (" + s.fld_SAPCode + ")" }), "Value", "Text").ToList();
 
             if (PilihPeringkat.Count == 0)
             {
@@ -1419,9 +1420,9 @@ namespace MVC_SYSTEM.Controllers
 
             if (SelectPkt.Count() > 0)
             {
-                var PilihanPkt = SelectPkt.FirstOrDefault().fld_KodPkt;
-                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID && x.fld_EndDT >= CurrentDate).FirstOrDefault();
-
+                var PilihanPktID = SelectPkt.FirstOrDefault().fld_ID;
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID && x.fld_EndDT >= CurrentDate).FirstOrDefault();
+                var PilihanPkt = "";
                 if (pktTransfer != null)
                 {
                     NegaraID = pktTransfer.fld_NegaraIDAsal;
@@ -1440,15 +1441,15 @@ namespace MVC_SYSTEM.Controllers
 
                         break;
                     case 2:
-                        var SelectPkt2 = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == PilihanPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).ToList();
+                        var SelectPkt2 = dbr.tbl_SubPkt.Where(x => x.fld_KodPktUtama == PilihanPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).ToList();
                         var firstSelectPkt2 = SelectPkt2.FirstOrDefault();
                         tbl_PktHargaKesukaran = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JnisAktvt && x.fld_PktUtama == firstSelectPkt2.fld_KodPktUtama && x.fld_LadangID == LadangID).ToList();
                         kesukaran = tbl_PktHargaKesukaran.Join(kesukaranList, a => a.fld_JenisHargaKesukaran, b => b.fldOptConfFlag1, (a, b) => new { a.fld_KodHargaKesukaran, a.fld_HargaKesukaran, a.fld_JenisHargaKesukaran, a.fld_KeteranganHargaKesukaran, b.fldOptConfFlag2 }).ToList();
 
                         break;
                     case 3:
-                        var SelectPkt3 = dbr.tbl_Blok.Where(x => x.fld_Blok == PilihanPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).ToList();
-                        PilihPeringkat = new SelectList(SelectPkt3.Select(s => new SelectListItem { Value = s.fld_Blok, Text = s.fld_Blok + " - " + s.fld_NamaBlok }), "Value", "Text").ToList();
+                        var SelectPkt3 = dbr.tbl_Blok.Where(x => x.fld_KodPktutama == PilihanPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).ToList();
+                        //PilihPeringkat = new SelectList(SelectPkt3.Select(s => new SelectListItem { Value = s.fld_Blok, Text = s.fld_Blok + " - " + s.fld_NamaBlok }), "Value", "Text").ToList();
                         var firstSelectPkt3 = SelectPkt3.FirstOrDefault();
                         tbl_PktHargaKesukaran = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JnisAktvt && x.fld_PktUtama == firstSelectPkt3.fld_KodPktutama && x.fld_LadangID == LadangID).ToList();
                         kesukaran = tbl_PktHargaKesukaran.Join(kesukaranList, a => a.fld_JenisHargaKesukaran, b => b.fldOptConfFlag1, (a, b) => new { a.fld_KodHargaKesukaran, a.fld_HargaKesukaran, a.fld_JenisHargaKesukaran, a.fld_KeteranganHargaKesukaran, b.fldOptConfFlag2 }).ToList();
@@ -2159,7 +2160,8 @@ namespace MVC_SYSTEM.Controllers
 
             if (TrnsfrLvl == 1)
             {
-                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID).FirstOrDefault();
+                var PilihanPktID = int.Parse(PilihanPkt);
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
                 //var pktHargaKesukaran = PktHargaKesukaran(dbr, JnisAktvt, PilihanPkt, LadangID);
                 if (pktTransfer != null)
                 {
@@ -2244,7 +2246,8 @@ namespace MVC_SYSTEM.Controllers
 
             if (TrnsfrLvl == 1)
             {
-                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID).FirstOrDefault();
+                var PilihanPktID = int.Parse(PilihanPkt);
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
                 //var pktHargaKesukaran = PktHargaKesukaran(dbr, JnisAktvt, PilihanPkt, LadangID);
                 if (pktTransfer != null)
                 {
@@ -2520,7 +2523,8 @@ namespace MVC_SYSTEM.Controllers
             }
             else
             {
-                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == PilihanPkt && x.fld_LadangID == LadangID).FirstOrDefault();
+                var PilihanPktID = int.Parse(PilihanPkt);
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
                 if (pktTransfer != null)
                 {
                     IOCC = pktTransfer.fld_SAPCode;

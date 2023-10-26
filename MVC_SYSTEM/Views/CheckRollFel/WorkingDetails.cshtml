@@ -1370,6 +1370,7 @@
                 for (var i = 0; i < result.PilihPeringkat.length; i++) {
                     $("#PilihanPkt").append("<option value=" + result.PilihPeringkat[i].Value + ">" + result.PilihPeringkat[i].Text + "</option>");
                 }
+                GetKesukaran(result.kesukaran);
                 if (result.hargaKesukaran != 0) {
                     $('#kesukaranlbl').text(result.descKesukaran);
                     $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
@@ -1402,6 +1403,7 @@
                 for (var i = 0; i < result.PilihPeringkat.length; i++) {
                     $("#PilihanPkt").append("<option value=" + result.PilihPeringkat[i].Value + ">" + result.PilihPeringkat[i].Text + "</option>");
                 }
+                GetKesukaran(result.kesukaran);
                 if (result.hargaKesukaran != 0) {
                     $('#kesukaranlbl').text(result.descKesukaran);
                     $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);

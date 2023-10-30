@@ -112,15 +112,17 @@
                         <p>CASH</p>
                         <p>CHEQUE</p>
                         <p>CDMAS</p>
-                        <p>EWALLET</p>
+                        <p>EWALLET MTA</p>
                         @*Commented by Shazana 19/8/2023*@
                         @*<p>M2U</p>
-                        <p>M2E</p>*@
+        <p>M2E</p>*@
                         @*Added by Shazana 19/8/2023*@
                         <p>M2E-E</p>
                         <p>M2E-HQ</p>
+                        <p>EWALLET TNG</p>
                     </div>
                     <div class="column" width: 20%;>
+                        <p>:</p>
                         <p>:</p>
                         <p>:</p>
                         <p>:</p>
@@ -135,6 +137,7 @@
                         <p>@GetTriager.GetTotalForMoney(item.fld_JumlahEwallet)</p>
                         <p>@GetTriager.GetTotalForMoney(item.fld_JumlahM2U)</p>
                         <p>@GetTriager.GetTotalForMoney(item.fld_JumlahM2E)</p> @*Added by Shazana 25/7/2023*@
+                        <p>@GetTriager.GetTotalForMoney(item.fld_JumlahEwalletTnG)</p>
                     </div>
                 </div>
             </td>
@@ -157,26 +160,26 @@
             @if (item.fld_SemakWil_Status == 0 && item.fld_TolakWil_Status == 0 && item.fld_SokongWilGM_Status == 0 && item.fld_TolakWilGM_Status == 0 && item.fld_TerimaHQ_Status == 0 && item.fld_TolakHQ_Status == 0 && ViewBag.getgmstatus == 0)
             {
                 //Modified by Shazana 25/7/2023
-                <button type="button" class="btn btn-primary btn-lg" style="font-size:10px;" id="@btnsemakid" onclick="UpdateStatus(this,@item.fld_ID,'SemakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Approve</button>
-                <button type="button" class="btn btn-danger btn-lg" style="font-size:10px;" id="@btntolakid" onclick="UpdateStatus(this,@item.fld_ID,'TolakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Reject</button>
+                <button type="button" class="btn btn-primary btn-lg" style="font-size:10px;" id="@btnsemakid" onclick="UpdateStatus(this,@item.fld_ID,'SemakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@item.fld_JumlahEwalletTnG','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Approve</button>
+                <button type="button" class="btn btn-danger btn-lg" style="font-size:10px;" id="@btntolakid" onclick="UpdateStatus(this,@item.fld_ID,'TolakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@item.fld_JumlahEwalletTnG','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Reject</button>
             }
             else if (item.fld_SemakWil_Status == 1 && item.fld_TolakWil_Status == 0 && item.fld_SokongWilGM_Status == 0 && item.fld_TolakWilGM_Status == 0 && item.fld_TerimaHQ_Status == 0 && item.fld_TolakHQ_Status == 0 && ViewBag.getgmstatus == 0)
             {
                 //Modified by Shazana 25/7/2023
-                <button type="button" class="btn btn-primary btn-lg" disabled style="font-size:10px;" id="@btnsemakid" onclick="UpdateStatus(this,@item.fld_ID,'SemakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Approve</button>
-                <button type="button" class="btn btn-danger btn-lg" style="font-size:10px;" id="@btntolakid" onclick="UpdateStatus(this,@item.fld_ID,'TolakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Reject</button>
+                <button type="button" class="btn btn-primary btn-lg" disabled style="font-size:10px;" id="@btnsemakid" onclick="UpdateStatus(this,@item.fld_ID,'SemakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@item.fld_JumlahEwalletTnG','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Approve</button>
+                <button type="button" class="btn btn-danger btn-lg" style="font-size:10px;" id="@btntolakid" onclick="UpdateStatus(this,@item.fld_ID,'TolakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@item.fld_JumlahEwalletTnG','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Reject</button>
             }
             else if (item.fld_SemakWil_Status == 0 && item.fld_TolakWil_Status == 1 && item.fld_SokongWilGM_Status == 0 && item.fld_TolakWilGM_Status == 0 && item.fld_TerimaHQ_Status == 0 && item.fld_TolakHQ_Status == 0 && ViewBag.getgmstatus == 0)
             {
                 //Modified by Shazana 25/7/2023
-                <button type="button" class="btn btn-primary btn-lg" style="font-size:10px;" id="@btnsemakid" onclick="UpdateStatus(this,@item.fld_ID,'SemakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Approve</button>
-                <button type="button" class="btn btn-danger btn-lg" disabled style="font-size:10px;" id="@btntolakid" onclick="UpdateStatus(this,@item.fld_ID,'TolakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Reject</button>
+                <button type="button" class="btn btn-primary btn-lg" style="font-size:10px;" id="@btnsemakid" onclick="UpdateStatus(this,@item.fld_ID,'SemakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@item.fld_JumlahEwalletTnG','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Approve</button>
+                <button type="button" class="btn btn-danger btn-lg" disabled style="font-size:10px;" id="@btntolakid" onclick="UpdateStatus(this,@item.fld_ID,'TolakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@item.fld_JumlahEwalletTnG','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Reject</button>
             }
             else if ((item.fld_SemakWil_Status == 1 && item.fld_TolakWil_Status == 0) && (item.fld_SokongWilGM_Status == 1 || item.fld_TolakWilGM_Status == 1 || item.fld_TerimaHQ_Status == 1 || item.fld_TolakHQ_Status == 1 || ViewBag.getgmstatus > 0))
             {
                 //Modified by Shazana 25/7/2023
-                <button type="button" class="btn btn-primary btn-lg" disabled style="font-size:10px;" id="@btnsemakid" onclick="UpdateStatus(this,@item.fld_ID,'SemakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Approve</button>
-                <button type="button" class="btn btn-danger btn-lg" disabled style="font-size:10px;" id="@btntolakid" onclick="UpdateStatus(this,@item.fld_ID,'TolakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Reject</button>
+                <button type="button" class="btn btn-primary btn-lg" disabled style="font-size:10px;" id="@btnsemakid" onclick="UpdateStatus(this,@item.fld_ID,'SemakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@item.fld_JumlahEwalletTnG','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Approve</button>
+                <button type="button" class="btn btn-danger btn-lg" disabled style="font-size:10px;" id="@btntolakid" onclick="UpdateStatus(this,@item.fld_ID,'TolakWil','@btnsemakid','@wlyhid','@item.fld_JumlahPermohonan','@item.fld_JumlahCash','@item.fld_JumlahCheque','@item.fld_JumlahEwallet','@item.fld_JumlahCdmas','@item.fld_JumlahM2U','@item.fld_JumlahM2E','@item.fld_JumlahEwalletTnG','@NoAcc', '@NoGL', '@NoCIT', '@item.fld_LdgName','@item.fld_SkbNo');">Reject</button>
             }
         </td>
 
@@ -190,9 +193,12 @@
                         if (item.fld_JumlahM2E == null)
                         { item.fld_JumlahM2E = 0; }
 
+                        if (item.fld_JumlahEwalletTnG == null)
+                        { item.fld_JumlahEwalletTnG = 0; }
+
                         totalprmhnnwng = totalprmhnnwng + item.fld_JumlahPermohonan;
                         //Modified by Shazana 25/7/2023
-                        totalpaymentmode = item.fld_JumlahCash + item.fld_JumlahCheque + item.fld_JumlahCdmas + item.fld_JumlahEwallet + item.fld_JumlahM2U + item.fld_JumlahM2E;
+                        totalpaymentmode = item.fld_JumlahCash + item.fld_JumlahCheque + item.fld_JumlahCdmas + item.fld_JumlahEwallet + item.fld_JumlahM2U + item.fld_JumlahM2E + item.fld_JumlahEwalletTnG;
                         bill++;
                     }
     </tbody>

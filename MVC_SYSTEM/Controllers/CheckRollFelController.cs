@@ -2020,9 +2020,13 @@ namespace MVC_SYSTEM.Controllers
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = getidentity.ID(User.Identity.Name);
             string host, catalog, user, pass = "";
-            int year = timezone.gettimezone().Year;
-            int month = timezone.gettimezone().Month;
+            var dT = timezone.gettimezone();
+            int day = dT.Day;
             string bodyview = "";
+            var getDayShowLastMnthData = int.Parse(GetConfig.GetWebConfigValue("DateToShowLastMonth", 1, 1));
+            dT = day > getDayShowLastMnthData? dT : dT.AddMonths(-1);
+            int year = dT.Year;
+            int month = dT.Month;
             List<vw_Kerjahdr> vw_Kerjahdr = new List<vw_Kerjahdr>();
             List<CustMod_Kerjahdrgroup> CustMod_Kerjahdrgroups = new List<CustMod_Kerjahdrgroup>();
 

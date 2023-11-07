@@ -339,6 +339,7 @@
     <Compile Include="CustomModels\CustMod_MinimumWage.cs" />
     <Compile Include="CustomModels\CustMod_MonthYearList.cs" />
     <Compile Include="CustomModels\CustMod_NewRequestIncrement.cs" />
+    <Compile Include="CustomModels\CustMod_OptionConfig.cs" />
     <Compile Include="CustomModels\CustMod_Peringkat.cs" />
     <Compile Include="CustomModels\CustMod_PktOthr.cs" />
     <Compile Include="CustomModels\CustMod_RequestDataSLP.cs" />
@@ -361,6 +362,7 @@
     <Compile Include="MasterModels\tbl_BatchRunRefNo.cs" />
     <Compile Include="MasterModels\tbl_GajiMinimaLdg.cs" />
     <Compile Include="MasterModels\tbl_HargaGetahSMR.cs" />
+    <Compile Include="MasterModels\tbl_HargaKesukaran.cs" />
     <Compile Include="MasterModels\tbl_InsentifKGK.cs" />
     <Compile Include="MasterModels\tbl_Messaging.cs" />
     <Compile Include="MasterModels\tbl_ProduktivitiGetah.cs" />
@@ -553,6 +555,7 @@
     <Compile Include="Models\tbl_IO.cs" />
     <Compile Include="Models\tbl_KawTidakBerhasil.cs" />
     <Compile Include="Models\tbl_Kepuasan.cs" />
+    <Compile Include="Models\tbl_KerjaKesukaran.cs" />
     <Compile Include="Models\tbl_Kerja.cs" />
     <Compile Include="Models\tbl_KerjaHariTerabai.cs" />
     <Compile Include="Models\tbl_Kerjahdr.cs" />
@@ -611,6 +614,11 @@
     <Compile Include="Security\MyPrincipal.cs" />
     <Compile Include="Security\UserIdentity.cs" />
     <Compile Include="Service References\FPM_FTD\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\FPM_FTP\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -2492,6 +2500,18 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <None Include="Service References\FPM_FTP\configuration91.svcinfo" />
+    <None Include="Service References\FPM_FTP\configuration.svcinfo" />
+    <Content Include="Service References\FPM_FTP\MVC_SYSTEM.FPM_FTP.ZFM_DOCPOST_OPMSResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\FPM_FTP\MVC_SYSTEM.FPM_FTP.ZFM_DOCPOST_OPMSResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Service References\FPM_FTP\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Service References\FPM_FTQ\MVC_SYSTEM.FPM_FTQ.ZFM_DOCPOST_OPMSResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
@@ -2499,6 +2519,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
     <None Include="Service References\FPM_FTD\zws_opms_docpost.wsdl" />
+    <None Include="Service References\FPM_FTP\zws_opms_docpost.wsdl" />
     <None Include="Service References\FPM_FTQ\zws_opms_docpost.wsdl" />
     <None Include="Service References\SAPMD\document.wsdl" />
     <None Include="Service References\FPM_FTQ\configuration91.svcinfo" />
@@ -3397,6 +3418,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\FPM_FTD\" />
+    <WCFMetadataStorage Include="Service References\FPM_FTP\" />
     <WCFMetadataStorage Include="Service References\FPM_FTQ\" />
     <WCFMetadataStorage Include="Service References\SAPMD\" />
     <WCFMetadataStorage Include="Service References\SAPMD_FLP\" />

@@ -577,7 +577,7 @@ namespace MVC_SYSTEM.Class
         //Added by Shazana 15/6/20023
         public string GetKesukaran(string JenisHargaKesukaran, int? NegaraID, int? SyarikatID)
         {
-            string NamaJenisHargaKesukaran = db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag2 == "HargaKesukaran" && x.fldOptConfFlag1 == JenisHargaKesukaran && x.fldDeleted == false).Select(x => x.fldOptConfDesc).FirstOrDefault();
+            string NamaJenisHargaKesukaran = db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && (x.fldOptConfFlag2 == "HargaKesukaran" || x.fldOptConfFlag2 == "HargaTambahan") && x.fldOptConfFlag1 == JenisHargaKesukaran && x.fldDeleted == false).Select(x => x.fldOptConfDesc).FirstOrDefault();
             return NamaJenisHargaKesukaran;
         }
 

@@ -139,6 +139,7 @@
 <script>
     var heightglobal = 0;
     var paidLeaveCodes = [];
+    var kesukaran = [];
     paidLeaveCodes = @Html.Raw(ViewBag.PaidLeaveCodes);
     var estateLevels = [];
     estateLevels = @Html.Raw(ViewBag.EstateLevels);
@@ -366,18 +367,7 @@
                 for (var i = 0; i < result.PilihPeringkat.length; i++) {
                     $("#PilihanPkt").append("<option value=" + result.PilihPeringkat[i].Value + ">" + result.PilihPeringkat[i].Text + "</option>");
                 }
-                if (result.hargaKesukaran != 0) {
-                    $('#kesukaranlbl').text(result.descKesukaran);
-                    $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
-                    $('#kesukarankod').val(result.cdKesukaran);
-                    $('#kesukaranprice').val(result.hargaKesukaran);
-                }
-                else {
-                    $('#kesukaranlbl').text('');
-                    $('#kesukaranpriceshow').text('');
-                    $('#kesukarankod').val(result.cdKesukaran);
-                    $('#kesukaranprice').val(result.hargaKesukaran);
-                }
+                GetKesukaran(result.kesukaran);
                 $("#UpdateProgress1").css("display", "none");
             };
             ajxfn.error = function () {
@@ -396,47 +386,74 @@
     function calculatetotal(hasil, kadar, gandaankadar, jumlah, jumlahH, jumlahHS, JnisAktvt) {
         $("#UpdateProgress1").css("display", "");
         var hargakwsnskr = 0;
-        var hargakwsnskr = $("#kesukaranprice").val();
-        hargakwsnskr = parseFloat(hargakwsnskr);
-
+        var jeniskwsnskr = "";
+        var kesukaranCount = $("#kesukarancount").val();
         var maxhasil = $("#maxhasil").val();
         var hasil1 = $(hasil).val();
-        var hargakwsnskr1 = hargakwsnskr;
         if (parseFloat(hasil1) <= parseFloat(maxhasil)) {
             var datano = $("#datano").val();
             var loopdatahdr = $("#loopdatahdr").val();
             var splitdata = datano.split(',');
             if ($("#allsame").is(":checked")) {
                 for (var i = 0; i < loopdatahdr; i++) {
+                    hargakwsnskr = 0;
                     var kadar1 = $("#kadar_" + splitdata[i]).val();
                     var gandaankadar1 = $("#gandaankadar_" + splitdata[i]).val();
                     var gettotal = 0;
                     var gettotal2 = 0;
-                    hargakwsnskr = hargakwsnskr1 * hasil1 * gandaankadar1
+                    for (var j = 1; j < kesukaranCount; j++) {
+                        var hargakwsnskr1 = $("#kesukaranprice_" + j).val();
+                        hargakwsnskr1 = parseFloat(hargakwsnskr1);
+                        jeniskwsnskr = $("#kesukarantype_" + j).val();
+                        if (jeniskwsnskr == "HargaTambahan") {
+                            hargakwsnskr += hargakwsnskr1 * hasil1 * gandaankadar1;
+                            hargakwsnskr = roundToTwo(hargakwsnskr);
+                        }
+                        else {
+                            hargakwsnskr += hargakwsnskr1 * hasil1;
+                            hargakwsnskr = roundToTwo(hargakwsnskr);
+                        }
+                    }
                     gettotal = kadar1 * hasil1 * gandaankadar1
                     gettotal2 = kadar1 * hasil1 * gandaankadar1 + hargakwsnskr
                     $("#hasil_" + splitdata[i]).val(hasil1);
-                    $("#jumlah_" + splitdata[i]).val(gettotal2.toFixed(2));
-                    $("#jumlahH_" + splitdata[i]).val(gettotal.toFixed(2));
-                    $("#jumlahHS_" + splitdata[i]).val(gettotal2.toFixed(2));
+                    $("#jumlah_" + splitdata[i]).val(roundToTwo(gettotal2));
+                    $("#jumlahH_" + splitdata[i]).val(roundToTwo(gettotal));
+                    $("#jumlahHS_" + splitdata[i]).val(roundToTwo(gettotal2));
                 }
             }
             else {
                 var kadar1 = $("#" + kadar).val();
                 var gandaankadar1 = $("#" + gandaankadar).val();
                 var gettotal2 = 0;
-                hargakwsnskr = hargakwsnskr1 * hasil1 * gandaankadar1
+                for (var j = 1; j < kesukaranCount; j++) {
+                    var hargakwsnskr1 = $("#kesukaranprice_" + j).val();
+                    hargakwsnskr1 = parseFloat(hargakwsnskr1);
+                    jeniskwsnskr = $("#kesukarantype_" + j).val();
+                    if (jeniskwsnskr == "HargaTambahan") {
+                        hargakwsnskr += hargakwsnskr1 * hasil1 * gandaankadar1;
+                        hargakwsnskr = roundToTwo(hargakwsnskr);
+                    }
+                    else {
+                        hargakwsnskr += hargakwsnskr1 * hasil1;
+                        hargakwsnskr = roundToTwo(hargakwsnskr);
+                    }
+                }
                 gettotal = kadar1 * hasil1 * gandaankadar1
                 gettotal2 = kadar1 * hasil1 * gandaankadar1 + hargakwsnskr
-                $("#" + jumlah).val(gettotal2.toFixed(2));
-                $("#" + jumlahH).val(gettotal.toFixed(2));
-                $("#" + jumlahHS).val(gettotal2.toFixed(2));
+                $("#" + jumlah).val(roundToTwo(gettotal2));
+                $("#" + jumlahH).val(roundToTwo(gettotal));
+                $("#" + jumlahHS).val(roundToTwo(gettotal2));
             }
         }
         else {
             alertmsg('@GlobalResEstate.msgError', '@GlobalResEstate.lblMaxHasil' + ' ' + maxhasil);
         }
         $("#UpdateProgress1").css("display", "none");
+    }
+
+    function roundToTwo(num) {
+        return + (Math.round(num * 100) / 100);
     }
 
     function checkvalidkwsnsukar(JnisAktvt) {
@@ -574,8 +591,11 @@
                 "AppKwnsSkrLainID": AppKwnsSkrLainID,
                 "AppKwnsSkrLainDT": AppKwnsSkrLainDT,
                 "TrnsfrLvl": TrnsfrLvl,
+                "Kesukaran": kesukaran,
                 "HadirData": []
             };
+
+            //for (var i = )
 
             for (var i = 0; i < loopdatahdr; i++) {
                 var loopdataitems = {};
@@ -1350,6 +1370,7 @@
                 for (var i = 0; i < result.PilihPeringkat.length; i++) {
                     $("#PilihanPkt").append("<option value=" + result.PilihPeringkat[i].Value + ">" + result.PilihPeringkat[i].Text + "</option>");
                 }
+                GetKesukaran(result.kesukaran);
                 if (result.hargaKesukaran != 0) {
                     $('#kesukaranlbl').text(result.descKesukaran);
                     $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
@@ -1382,6 +1403,7 @@
                 for (var i = 0; i < result.PilihPeringkat.length; i++) {
                     $("#PilihanPkt").append("<option value=" + result.PilihPeringkat[i].Value + ">" + result.PilihPeringkat[i].Text + "</option>");
                 }
+                GetKesukaran(result.kesukaran);
                 if (result.hargaKesukaran != 0) {
                     $('#kesukaranlbl').text(result.descKesukaran);
                     $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
@@ -1557,6 +1579,7 @@
                 }
                 $("#PilihanAktvt").append("<option title='" + AktivitiToolTip + "' value=" + result.PilihAktiviti[i].Value + ">" + result.PilihAktiviti[i].Text + "</option>");
             }
+            GetKesukaran(result.kesukaran);
             if (result.Lain2JnsAtvt == "-") {
                 $('#OtherDiff').css("display", "none");
                 $('#KesukaranLain').css("display", "none");
@@ -1567,19 +1590,6 @@
                 $('#KesukaranLain').css("display", "");
                 $('#addksranlain').css("display", "");
                 $('#OtherDiff').text(result.Lain2JnsAtvt + " :");
-            }
-            if (result.hargaKesukaran != 0) {
-
-                $('#kesukaranlbl').text(result.descKesukaran);
-                $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
-                $('#kesukarankod').val(result.cdKesukaran);
-                $('#kesukaranprice').val(result.hargaKesukaran);
-            }
-            else {
-                $('#kesukaranlbl').text('');
-                $('#kesukaranpriceshow').text('');
-                $('#kesukarankod').val(result.cdKesukaran);
-                $('#kesukaranprice').val(result.hargaKesukaran);
             }
             $("#UpdateProgress1").css("display", "none");
         };
@@ -1616,19 +1626,9 @@
             if (result.hargaKesukaranMemunggah === null) {
                 result.hargaKesukaranMemunggah = 0;
             }
-            if (result.hargaKesukaran != 0) {
 
-                $('#kesukaranlbl').text(result.descKesukaran);
-                $('#kesukaranpriceshow').text(' - RM' + result.hargaKesukaran);
-                $('#kesukarankod').val(result.cdKesukaran);
-                $('#kesukaranprice').val(result.hargaKesukaran);
-            }
-            else {
-                $('#kesukaranlbl').text('');
-                $('#kesukaranpriceshow').text('');
-                $('#kesukarankod').val(result.cdKesukaran);
-                $('#kesukaranprice').val(result.hargaKesukaran);
-            }
+            GetKesukaran(result.kesukaran);
+
             $("#UpdateProgress1").css("display", "none");
         };
         ajxfn.error = function () {
@@ -1637,6 +1637,22 @@
         };
         $.ajax(ajxfn);
     });
+
+    function GetKesukaran(arrKesukaran) {
+        kesukaran = arrKesukaran;
+        $('#divkesukaran').empty();
+        var i = 1;
+        var html = "";
+        arrKesukaran.forEach(function (item, index) {
+            html += '<p><label id="kesukaranlbl_' + i + '">' + item.fld_KeteranganHargaKesukaran + '</label> : <b id="kesukaranpriceshow_' + i + '">RM' + item.fld_HargaKesukaran +'</b>';
+            html += '<input type="hidden" name="kesukarankod_' + i + '" id="kesukarankod_' + i + '" value="' + item.fld_KodHargaKesukaran + '" />';
+            html += '<input type="hidden" name="kesukaranprice_' + i + '" id="kesukaranprice_' + i + '" value="' + item.fld_HargaKesukaran + '" />';
+            html += '<input type="hidden" name="kesukarantype_' + i + '" id="kesukarantype_' + i + '" value="' + item.fldOptConfFlag2 + '" />';
+            i++;
+        });
+        html += '<input type="hidden" name="kesukarancount" id="kesukarancount" value="' + i + '" />';
+        $('#divkesukaran').append(html);
+    }
 
     $("#Lejar").change(function () {
         ClearInput();

@@ -212,7 +212,8 @@ namespace MVC_SYSTEM.Models
         [StringLength(15)]
         public string fld_Nokp { get; set; }
 
-        [StringLength(40)]
+        //[StringLength(40)]
+        [StringLength(100)] //sarah modified 24/10
         public string fld_Nama { get; set; }
 
         [StringLength(100)]
@@ -400,7 +401,8 @@ namespace MVC_SYSTEM.Models
         [StringLength(15)]
         public string fld_Nokp { get; set; }
 
-        [StringLength(40)]
+        //[StringLength(40)]
+        [StringLength(100)] //sarah modified 24/10
         public string fld_Nama { get; set; }
 
         [StringLength(100)]
@@ -591,7 +593,8 @@ namespace MVC_SYSTEM.Models
         [StringLength(15)]
         public string fld_Nokp { get; set; }
 
-        [StringLength(40)]
+        //[StringLength(40)]
+        [StringLength(100)] //sarah modified 24/10
         public string fld_Nama { get; set; }
 
         [StringLength(100)]

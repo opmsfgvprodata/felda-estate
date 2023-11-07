@@ -95,6 +95,16 @@ namespace MVC_SYSTEM.Class
             return getvalue;
         }
 
+        public List<MasterModels.tblOptionConfigsWeb> GetWebConfigFlag2Filter(string[] flag2, int? NegaraID, int? SyarikatID)
+        {
+            var listOptionConfig = db.tblOptionConfigsWebs
+                .Where(x => flag2.Contains(x.fldOptConfFlag2) && x.fldDeleted == false &&
+                            x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID)
+                .ToList();
+
+            return listOptionConfig;
+        }
+
         public string GetBank(string kod, int negara, int syrkt)
         {
             string bankname = db.tbl_Bank.Where(x => x.fld_KodBank == kod && x.fld_NegaraID == negara && x.fld_SyarikatID == syrkt && x.fld_Deleted == false).Select(s => s.fld_NamaBank).FirstOrDefault();

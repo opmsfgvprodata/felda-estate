@@ -482,6 +482,42 @@ namespace MVC_SYSTEM.Class
 
         }
 
+        public void SaveDataKerjaKesukaran(MVC_SYSTEM_Models dbr, List<tbl_Kerja> DataKerja, List<Kesukaran> kesukaran, int? NegaraID, int? SyarikatID)
+        {
+            List<tbl_KerjaKesukaran> KerjaKesukaran = new List<tbl_KerjaKesukaran>();
+            var keteranganhdr = "";
+            var statushdr = "";
+            short Gandaan = 0;
+            short gandaanSave = 0;
+
+            if ( kesukaran != null)
+            {
+                var oneDataKerja = DataKerja.FirstOrDefault();
+
+                var kodKehadiran = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == oneDataKerja.fld_Nopkj && x.fld_LadangID == oneDataKerja.fld_LadangID && x.fld_Tarikh == oneDataKerja.fld_Tarikh).Select(s => s.fld_Kdhdct).FirstOrDefault();
+
+                GetConfig.GetCutiDesc(kodKehadiran, "cuti", out keteranganhdr, out statushdr, out Gandaan, NegaraID, SyarikatID);
+
+                foreach (var EachDataKerja in DataKerja)
+                {
+                    decimal? jumlahKeseluruhan = 0m;
+                    foreach (var item in kesukaran)
+                    {
+                        gandaanSave = item.fldOptConfFlag2 == "HargaTambahan" ? Gandaan : (short)1;
+                        var jumlah = EachDataKerja.fld_JumlahHasil * item.fld_HargaKesukaran * gandaanSave;
+                        jumlah = Math.Round(jumlah.Value, 2);
+                        jumlahKeseluruhan += jumlah;
+                        KerjaKesukaran.Add(new tbl_KerjaKesukaran { fld_KerjaID = EachDataKerja.fld_ID, fld_Kadar = item.fld_HargaKesukaran, fld_KodKesukaran = item.fld_KodHargaKesukaran, fld_Gandaan = gandaanSave, fld_Nopkj = EachDataKerja.fld_Nopkj, fld_Kuantiti = EachDataKerja.fld_JumlahHasil, fld_Kum = EachDataKerja.fld_Kum, fld_Tarikh = EachDataKerja.fld_Tarikh, fld_Jumlah = jumlah, fld_NegaraID = EachDataKerja.fld_NegaraID, fld_SyarikatID = EachDataKerja.fld_SyarikatID, fld_WilayahID = EachDataKerja.fld_WilayahID, fld_LadangID = EachDataKerja.fld_LadangID });
+                    }
+                    EachDataKerja.fld_HrgaKwsnSkar = jumlahKeseluruhan;
+                    EachDataKerja.fld_KodKwsnSkar = "**";
+                }
+
+                dbr.tbl_KerjaKesukaran.AddRange(KerjaKesukaran);
+                dbr.SaveChanges();
+            }
+        }
+
         public void SaveDataKerjaSAP2(MVC_SYSTEM_Models dbr, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID)
         {
             //get PaysheetID

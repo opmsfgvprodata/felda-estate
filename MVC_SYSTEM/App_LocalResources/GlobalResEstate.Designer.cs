@@ -9745,6 +9745,15 @@ namespace MVC_SYSTEM.App_LocalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sila isi Luas di Maklumat Asas Peringkat.
+        /// </summary>
+        public static string msgLuasNull {
+            get {
+                return ResourceManager.GetString("msgLuasNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Had nilai adalah dari 0 hingga 99.
         /// </summary>
         public static string msgMaxAgeModelValidation {
@@ -10101,6 +10110,15 @@ namespace MVC_SYSTEM.App_LocalResources {
         public static string msgSaveKept {
             get {
                 return ResourceManager.GetString("msgSaveKept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tidak dibenarkan keyin kod aktiviti dan peringkat yang sama.
+        /// </summary>
+        public static string msgSimilarAktivitiPeringkat {
+            get {
+                return ResourceManager.GetString("msgSimilarAktivitiPeringkat", resourceCulture);
             }
         }
         

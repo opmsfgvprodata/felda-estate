@@ -2256,4 +2256,10 @@
   <data name="lblCodeWBS" xml:space="preserve">
     <value>Kod WBS</value>
   </data>
+  <data name="msgLuasNull" xml:space="preserve">
+    <value>Sila isi Luas di Maklumat Asas Peringkat</value>
+  </data>
+  <data name="msgSimilarAktivitiPeringkat" xml:space="preserve">
+    <value>Tidak dibenarkan keyin kod aktiviti dan peringkat yang sama</value>
+  </data>
 </root>

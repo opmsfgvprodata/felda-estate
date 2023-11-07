@@ -3516,4 +3516,10 @@
   <data name="lblCodeWBS" xml:space="preserve">
     <value>WBS Code</value>
   </data>
+  <data name="msgLuasNull" xml:space="preserve">
+    <value>Please fill in Luas in Maklumat Asas Peringkat</value>
+  </data>
+  <data name="msgSimilarAktivitiPeringkat" xml:space="preserve">
+    <value>Activiti and Peringkat have been used. Please use different type of activities and peringkat</value>
+  </data>
 </root>

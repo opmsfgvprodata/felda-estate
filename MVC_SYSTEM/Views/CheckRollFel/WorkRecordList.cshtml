@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<MVC_SYSTEM.CustomModels.CustMod_WorkerWork>
+@using MVC_SYSTEM.Class;  @*Added by Shazana 9/10/2023*@
 @{
     int itemno = 1;
     int loopitem = 1;
@@ -6,12 +7,16 @@
     string trstrt = "<tr>";
     string trend = "</tr>";
     CheckrollFunction CheckrollFunction = new CheckrollFunction();
+    GetTriager GetTriager = new GetTriager(); /*Added by Shazana 9/10/2023*/
+
 }
 <thead>
     <tr>
         <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@GlobalResEstate.hdrNo</th>
         @*<th bgcolor="#ffcc80" width="3%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@GlobalResEstate.hdrLejar</th>*@
         <th bgcolor="#ffcc80" width="5%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@GlobalResEstate.lblLevel</th>
+        @*Added by Shazana 9/10/2023*@
+        <th bgcolor="#ffcc80" width="5%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@GlobalResEstate.lblLuasPkt</th>
         <th bgcolor="#ffcc80" width="5%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@GlobalResEstate.hdrActvtCode</th>
         <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@GlobalResEstate.hdrNoPkj</th>
         <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@GlobalResEstate.hdrName</th>
@@ -32,6 +37,8 @@
             <tr class="fullrow row_@itemno" data-id="@itemno">
                 <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@itemno</td>
                 @*<td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_KodGL</td>*@
+                @*Added by Shazana 9/10/2023*@
+                <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_KodPkt</td>
                 <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_KodPkt</td>
                 <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_KodAktvt</td>
                 @foreach (var datakrja in datakrjas)
@@ -45,7 +52,7 @@
                     <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">@datakrja.fld_NamaPkj</td>
                     <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">@datakrja.fld_JumlahHasil @kodaktvt.fld_Unit</td>
                     <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">@datakrja.fld_JamOT</td>
-                    <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">@datakrja.fld_AmountOA</td>
+                    <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">@GetTriager.GetTotalForMoney(@datakrja.fld_AmountOA)</td>
                     if (loopitem == 1)
                     {
                         <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">

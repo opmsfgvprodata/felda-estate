@@ -17,7 +17,14 @@
     string uniquefilename = "PaySlipRpt_" + ViewBag.UserID + "_" + year1.ToString() + month1.ToString() + day.ToString() + hour.ToString() + minute.ToString() + second.ToString();
     var webConfigList = ViewBag.WebConfigList as List<MVC_SYSTEM.MasterModels.tblOptionConfigsWeb>;
     var pktHargaKesukaran = ViewBag.PktHargaKesukaran as List<tbl_PktHargaKesukaran>;
-    var payslipList = ViewBag.PayslipList as List<Payslip_Result>;
+    var payslipList  = ViewBag.PayslipList as List<Payslip_Result>;
+    var NamaSyarikat = ViewBag.NamaSyarikat;
+    var NoSyarikat = ViewBag.NoSyarikat;
+    var NamaLadang = ViewBag.NamaLadang;
+    var Kump = ViewBag.Kump as List<tbl_KumpulanKerja>;
+    var KerjaList = ViewBag.KerjaList as List<tbl_Kerja>;
+    var kerjahdrList = ViewBag.KerjahdrList as List<tbl_Kerjahdr>;
+    var kerjakesukaranList = ViewBag.KerjakesukaranList as List<tbl_KerjaKesukaran>;
 }
 
 @if (Model.Count() <= 0)
@@ -38,7 +45,7 @@ else
                 if (payslip.Count() > 0)
                 {
 
-                    @Html.Action("_PaySlipRptDetail", "Report", new { pkj = pkj, payslip = payslip, month = ViewBag.SelectedMonth, year = ViewBag.SelectedYear, webConfigList, pktHargaKesukaran })
+                    @Html.Action("_PaySlipRptDetail", "Report", new { pkj = pkj, payslip = payslip, month = ViewBag.SelectedMonth, year = ViewBag.SelectedYear, webConfigList, pktHargaKesukaran, tbl_Pkjmast = Model, tbl_Kerja = KerjaList, tbl_Kerjahdr = kerjahdrList, tbl_KerjaKesukaran = kerjakesukaranList, tbl_KumpulanKerja = Kump, NamaSyarikat, NoSyarikat, NamaLadang })
                 }
             }
         }

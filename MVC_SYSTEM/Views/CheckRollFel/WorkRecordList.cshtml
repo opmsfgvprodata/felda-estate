@@ -3,12 +3,13 @@
 @{
     int itemno = 1;
     int loopitem = 1;
-    var kodaktvts = Model.Select(s => new { s.fld_KodAktvt, s.fld_KodGL, s.fld_KodPkt, s.fld_Unit }).Distinct().ToList();
+    var kodaktvts = Model.Select(s => new { s.fld_KodAktvt, s.fld_KodGL, s.fld_KodPkt, s.fld_Unit ,s.fld_LsPktUtama}).Distinct().ToList();
     string trstrt = "<tr>";
     string trend = "</tr>";
     CheckrollFunction CheckrollFunction = new CheckrollFunction();
     GetTriager GetTriager = new GetTriager(); /*Added by Shazana 9/10/2023*/
-
+    decimal? grandtotalLuas = 0;
+    decimal? grandTotal = 0;
 }
 <thead>
     <tr>
@@ -32,6 +33,8 @@
     {
         foreach (var kodaktvt in kodaktvts)
         {
+            grandtotalLuas = grandtotalLuas + kodaktvt.fld_LsPktUtama;
+            
             loopitem = 1;
             var datakrjas = Model.Where(x => x.fld_KodAktvt == kodaktvt.fld_KodAktvt && x.fld_KodPkt == kodaktvt.fld_KodPkt).ToList();
             <tr class="fullrow row_@itemno" data-id="@itemno">
@@ -39,7 +42,7 @@
                 @*<td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_KodGL</td>*@
                 @*Added by Shazana 9/10/2023*@
                 <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_KodPkt</td>
-                <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_KodPkt</td>
+                <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_LsPktUtama</td>
                 <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">@kodaktvt.fld_KodAktvt</td>
                 @foreach (var datakrja in datakrjas)
                 {
@@ -53,6 +56,7 @@
                     <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">@datakrja.fld_JumlahHasil @kodaktvt.fld_Unit</td>
                     <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">@datakrja.fld_JamOT</td>
                     <td align="center" style="vertical-align:middle !important; border:1px solid black;" border="1">@GetTriager.GetTotalForMoney(@datakrja.fld_AmountOA)</td>
+                    grandTotal = grandTotal + datakrja.fld_AmountOA;
                     if (loopitem == 1)
                     {
                         <td align="center" rowspan="@datakrjas.Count()" style="vertical-align:middle !important; border:1px solid black;" border="1">
@@ -75,6 +79,20 @@
             </tr>
             itemno++;
         }
+
+
+<tr>
+    <th bgcolor="#ffcc80" width="2%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"></th>
+    <th bgcolor="#ffcc80" width="5%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"></th>
+    <th bgcolor="#ffcc80" width="5%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@grandtotalLuas</th>
+    <th bgcolor="#ffcc80" width="5%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"></th>
+    <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"></th>
+    <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"></th>
+    <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"></th>
+    <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"></th>
+    <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1">@GetTriager.GetTotalForMoney(@grandTotal)</th>
+    <th bgcolor="#ffcc80" width="10%" style="color:black; text-align:center; vertical-align:middle;border:1px solid black;" border="1"></th>
+</tr>
     }
     else
     {

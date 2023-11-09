@@ -1456,6 +1456,7 @@ namespace MVC_SYSTEM.Controllers
             {
                 if (HadirData != null)
                 {
+                    decimal? kadarbayarLast = 0;
                     CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbr, SelectDate, NegaraID, SyarikatID, WilayahID, LadangID);
                     if (!CutOfDateStatus)
                     {
@@ -1513,7 +1514,6 @@ namespace MVC_SYSTEM.Controllers
                                         datakerja.bonus = 0;
                                         break;
                                 }
-
                                 datakerja.jumlah = datakerja.hasil == null ? datakerja.kadar : datakerja.jumlah;
                                 datakerja.kdhmnuai = datakerja.kdhmnuai == null ? "-" : datakerja.kdhmnuai;
                                 datakerja.kualiti = datakerja.kualiti == null ? 0 : datakerja.kualiti;
@@ -1535,15 +1535,23 @@ namespace MVC_SYSTEM.Controllers
                             EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
                             EstateFunction.SaveDataKerjaSAPFPM(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode);
 
-
                             //Added by Shazana 9/11/2023
+                            var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
+
                             foreach (var datakerja in HadirData)
                             {
-
-                                var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
                                 var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
                                 var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
-
+                                kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                                var JenisHadir =dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x=>x.fld_Kdhdct).FirstOrDefault();
+                                if (JenisHadir == "H02")
+                                {
+                                    kadarbayarLast = kadarbayarLast * 2;
+                                }
+                                else if (JenisHadir == "H03")
+                                {
+                                    kadarbayarLast = kadarbayarLast * 3;
+                                }
                                 List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
                                 decimal? LuasKong = 0;
 
@@ -1558,7 +1566,7 @@ namespace MVC_SYSTEM.Controllers
                                 int i = 0;
                                 decimal? valueLs = 0;
                                 //Added by Shazana 9/11/2023
-                                decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                                //decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
 
                                 foreach (var detaildatakerja in KongList)
                                 {
@@ -1666,11 +1674,21 @@ namespace MVC_SYSTEM.Controllers
                             }
 
                             //Added by Shazana 9/10/2023
+                            var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
                             foreach (var datakerja in HadirData)
                             {
-
-                                var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag== 3).Select(x=>x.fld_KodJnsAktvt).ToList();
+                                kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                                var JenisHadir = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_Kdhdct).FirstOrDefault();
+                                if (JenisHadir == "H02")
+                                {
+                                    kadarbayarLast = kadarbayarLast * 2;
+                                }
+                                else if (JenisHadir == "H03")
+                                {
+                                    kadarbayarLast = kadarbayarLast * 3;
+                                }
                                 var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                                //decimal? kadarbayarLast = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).OrderByDescending(x=>x.fld_CreatedDT).Select(x=>x.fld_KadarByr).FirstOrDefault();
                                 var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
 
                                 List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
@@ -1687,7 +1705,7 @@ namespace MVC_SYSTEM.Controllers
                                 int i = 0;
                                 decimal? valueLs = 0;
                                 //Added by Shazana 9/11/2023
-                                decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                               // decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
 
                                 foreach (var detaildatakerja in KongList)
                                 {
@@ -2031,22 +2049,38 @@ namespace MVC_SYSTEM.Controllers
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
             GlobalFunction GlobalFunction = new GlobalFunction();
+            decimal? kadarbayarLast = 0;
             if (SelectionCategory == 1)
             {
+               
                 var deleteworkerinfo = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Kum == SelectionData && x.fld_KodPkt == pkt && x.fld_KodAktvt == kodatvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
                 dbr.tbl_Kerja.RemoveRange(deleteworkerinfo);
                 GlobalFunction.CreateAuditTrail(dbr, "D", "Working Data (Delete Work)", getuserid.Value, deleteworkerinfo, deleteworkerinfo, NegaraID, SyarikatID, WilayahID, LadangID);
                 dbr.SaveChanges();
 
+
+                var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
+                var kodaktivitiinfo = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3 && x.fld_KodJnsAktvt == kodatvt).Select(x => x.fld_KodJnsAktvt).ToList();
+                //var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+
                 //Added by Shazana 9/10/2023 - Kiraan semula harga jenis aktiviti kong kerana 1 data telah didelete
-                if (kodatvt.Substring(0, 2) == "05")
+                if (kodaktivitiinfo != null)
                 {
                     foreach (var workerinfo in deleteworkerinfo)
                     {
 
-                        var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == workerinfo.fld_Nopkj && x.fld_Kum == SelectionData && x.fld_Tarikh == SelectDate && x.fld_JnisAktvt == "05" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
-                        var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == workerinfo.fld_Nopkj && x.fld_Tarikh == SelectDate && x.fld_JnisAktvt == "05" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
-
+                        var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == workerinfo.fld_Nopkj && x.fld_Kum == SelectionData && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                        var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == workerinfo.fld_Nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
+                        kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                        var JenisHadir = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == workerinfo.fld_Nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_Kdhdct).FirstOrDefault();
+                        if (JenisHadir == "H02")
+                        {
+                            kadarbayarLast = kadarbayarLast * 2;
+                        }
+                        else if (JenisHadir == "H03")
+                        {
+                            kadarbayarLast = kadarbayarLast * 3;
+                        }
                         List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
                         decimal? LuasKong = 0;
 
@@ -2062,7 +2096,7 @@ namespace MVC_SYSTEM.Controllers
                         decimal? valueLs = 0;
 
                         //Added by Shazana 9/11/2023
-                        decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                       // decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
 
                         foreach (var detaildatakerja in KongList)
                         {
@@ -2118,7 +2152,16 @@ namespace MVC_SYSTEM.Controllers
                 //Modified by Shazana 9/11/2023
                 //var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && x.fld_JnisAktvt == "05" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
                 var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
-
+                kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                var JenisHadir = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_Kdhdct).FirstOrDefault();
+                if (JenisHadir == "H02")
+                {
+                    kadarbayarLast = kadarbayarLast * 2;
+                }
+                else if (JenisHadir == "H03")
+                {
+                    kadarbayarLast = kadarbayarLast * 3;
+                }
                 List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
                 decimal? LuasKong = 0;
 
@@ -2134,7 +2177,7 @@ namespace MVC_SYSTEM.Controllers
                 decimal? valueLs = 0;
 
                 //Added by Shazana 9/11/2023
-                decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+               // decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
 
                 foreach (var detaildatakerja in KongList)
                 {

@@ -1341,7 +1341,9 @@ namespace MVC_SYSTEM.Controllers
                                     //Filter pilihan peringkat dan kodaktiviti yang sama 
                                     if (semakanexist.Count() == 0)
                                     {
-                                        tbl_KerjaList.Add(new tbl_Kerja() { fld_Nopkj = datakerja.nopkj, fld_Kum = kodkumpulan, fld_Tarikh = SelectDate, fld_KodPkt = PilihanPkt, fld_Amount = datakerja.jumlah, fld_JnsPkt = JnisPkt, fld_JumlahHasil = datakerja.hasil, fld_KadarByr = datakerja.kadar, fld_KodGL = Lejar, fld_KodAktvt = PilihanAktvt, fld_JamOT = OTHour, fld_DataSource = "B", fld_BrtGth = 0, fld_PerBrshGth = 0, fld_Kong = kong, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = DTCreated, fld_JnisAktvt = JnisAktvt, fld_KdhMenuai = datakerja.kdhmnuai, fld_Bonus = datakerja.bonus, fld_Unit = unitcode, fld_Quality = datakerja.kualiti, fld_HrgaKwsnSkar = HrgaKwsnSkr, fld_KodKwsnSkar = KdKwsnSkr, fld_ApprovalKwsnSkarDT = AppKwnsSkrLainDT, fld_ApprovalKwsnSkarLainBy = AppKwnsSkrLainID, fld_OverallAmount = datakerja.jumlahOA, fld_PinjamStatus = TransferPkt });
+
+                                        //Modified by Shazana 9/10/2023
+                                        tbl_KerjaList.Add(new tbl_Kerja() { fld_Nopkj = datakerja.nopkj, fld_Kum = kodkumpulan, fld_Tarikh = SelectDate, fld_KodPkt = PilihanPkt, fld_Amount = datakerja.jumlah, fld_JnsPkt = JnisPkt, fld_JumlahHasil = datakerja.hasil, fld_KadarByr = datakerja.jumlah, fld_KodGL = Lejar, fld_KodAktvt = PilihanAktvt, fld_JamOT = OTHour, fld_DataSource = "B", fld_BrtGth = 0, fld_PerBrshGth = 0, fld_Kong = kong, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = DTCreated, fld_JnisAktvt = JnisAktvt, fld_KdhMenuai = datakerja.kdhmnuai, fld_Bonus = datakerja.bonus, fld_Unit = unitcode, fld_Quality = datakerja.kualiti, fld_HrgaKwsnSkar = HrgaKwsnSkr, fld_KodKwsnSkar = KdKwsnSkr, fld_ApprovalKwsnSkarDT = AppKwnsSkrLainDT, fld_ApprovalKwsnSkarLainBy = AppKwnsSkrLainID, fld_OverallAmount = datakerja.jumlahOA, fld_PinjamStatus = TransferPkt });
                                     }
                                     else
                                     {
@@ -1355,7 +1357,11 @@ namespace MVC_SYSTEM.Controllers
                                     dbr.tbl_Kerja.AddRange(tbl_KerjaList);
                                     dbr.SaveChanges();
                                     dbr.SaveChanges();
+
+                                    //Added by Shazana 9/11/2023
+                                    EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
                                     EstateFunction.SaveDataKerjaSAP(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, TransferPkt, transferPktCode);
+
                                 }
                                 else
                                 {
@@ -1383,19 +1389,23 @@ namespace MVC_SYSTEM.Controllers
                                     int i = 0;
                                     decimal? valueLs = 0;
 
+                                    decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID== NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID== LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
                                     foreach (var detaildatakerja in KongList)
                                     {
-                                        decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
+                                        //Modified by Shazana 9/11/2023
+                                        //decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
                                         decimal? LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                                        decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * detaildatakerja.fld_KadarByr), 2);
-
+                                        decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * kadarbayarLast), 2);
+                                        decimal? kadarbayaranKong = ValuePkt == null ? 0 : ValuePkt;
                                         i = i + 1;
                                         int? dd = KongList.Count();
                                         if (dd == i)
                                         {
-                                            ValuePkt = detaildatakerja.fld_KadarByr - valueLs;
+                                            ValuePkt = kadarbayarLast - valueLs;
                                             detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
                                             detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                            //Added by Shazaa 9/11/2023
+                                            detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
                                             dbr.Entry(detaildatakerja).State = EntityState.Modified;
                                             dbr.SaveChanges();
                                         }
@@ -1404,12 +1414,13 @@ namespace MVC_SYSTEM.Controllers
                                             valueLs = valueLs + ValuePkt;
                                             detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
                                             detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                            //Added by Shazaa 9/11/2023
+                                            detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
                                             dbr.Entry(detaildatakerja).State = EntityState.Modified;
                                             dbr.SaveChanges();
 
                                         }
                                     }
-
                                 }
 
 
@@ -1468,6 +1479,7 @@ namespace MVC_SYSTEM.Controllers
                         //Added by Shazana 9/10/2023 
                         decimal? fld_LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == PilihanPkt && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID2).Select(x => x.fld_LsPktUtama).FirstOrDefault();
                         var repeatingAktivitiPeringkat = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt).ToList();
+                        var namajenisaktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJnsAktvt == JnisAktvt).FirstOrDefault();
 
                         //Added by Shazana 9/10/2023 -Tambah validaton untuk tiada nilai luas dalam peringkat dan kodaktiviti dan peringkat yang sama telah wujud
                         if (fld_LsPktUtama == null || fld_LsPktUtama == 0)
@@ -1522,12 +1534,73 @@ namespace MVC_SYSTEM.Controllers
                             dbr.SaveChanges();
                             EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
                             EstateFunction.SaveDataKerjaSAPFPM(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode);
+
+
+                            //Added by Shazana 9/11/2023
+                            foreach (var datakerja in HadirData)
+                            {
+
+                                var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
+                                var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                                var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
+
+                                List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
+                                decimal? LuasKong = 0;
+
+                                //Dapatkan jumlah keseluruhan luas peringkat utama
+                                foreach (var detailKong in KongList)
+                                {
+                                    var LuasList = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && PktList.Contains(x.fld_PktUtama)).Select(x => x.fld_LsPktUtama).Sum();
+                                    decimal? LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                                    LuasKong = LuasKong + LsPktUtama;
+                                }
+
+                                int i = 0;
+                                decimal? valueLs = 0;
+                                //Added by Shazana 9/11/2023
+                                decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+
+                                foreach (var detaildatakerja in KongList)
+                                {
+                                    //Modified by Shazana 9/11/2023
+                                    //decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
+                                    decimal? LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                                    //Modified by Shazana 9/11/2023
+                                    decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * kadarbayarLast), 2);
+
+                                    i = i + 1;
+                                    int? dd = KongList.Count();
+                                    if (dd == i)
+                                    {
+                                        ValuePkt = kadarbayarLast - valueLs;
+                                        detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
+                                        detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                        //Added by Shazana 9/10/2023
+                                        detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
+                                        dbr.Entry(detaildatakerja).State = EntityState.Modified;
+                                        dbr.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        valueLs = valueLs + ValuePkt;
+                                        detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
+                                        detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                        //Added by Shazana 9/10/2023
+                                        detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
+                                        dbr.Entry(detaildatakerja).State = EntityState.Modified;
+                                        dbr.SaveChanges();
+
+                                    }
+                                }
+
+                            }
+
                             msg = GlobalResEstate.msgAdd;
                             statusmsg = "success";
                         }
                         //Added by Shazana 9/10/2023
                         //Jika ulangan aktiviti , ada hadir data dan jenis aktiviti adalah kong  //kumpulan,dah pernah ada data aktiviti sebelum ni
-                        else if (checksameactvt != 0 && HadirData.Count() != 0 && JnisAktvt == "05")
+                        else if (checksameactvt != 0 && HadirData.Count() != 0 && namajenisaktiviti.fld_DisabledFlag == 3)
                         {
                             foreach (var datakerja in HadirData)
                             {
@@ -1567,7 +1640,7 @@ namespace MVC_SYSTEM.Controllers
                                 //Filter pilihan peringkat dan kodaktiviti yang sama 
                                 if (semakanexist.Count() == 0)
                                 {
-                                    tbl_KerjaList.Add(new tbl_Kerja() { fld_Nopkj = datakerja.nopkj, fld_Kum = kodkumpulan, fld_Tarikh = SelectDate, fld_KodPkt = PilihanPkt, fld_Amount = datakerja.jumlah, fld_JnsPkt = JnisPkt, fld_JumlahHasil = datakerja.hasil, fld_KadarByr = datakerja.kadar, fld_KodGL = Lejar, fld_KodAktvt = PilihanAktvt, fld_JamOT = OTHour, fld_DataSource = "B", fld_BrtGth = 0, fld_PerBrshGth = 0, fld_Kong = kong, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = DTCreated, fld_JnisAktvt = JnisAktvt, fld_KdhMenuai = datakerja.kdhmnuai, fld_Bonus = datakerja.bonus, fld_Unit = unitcode, fld_Quality = datakerja.kualiti, fld_HrgaKwsnSkar = HrgaKwsnSkr, fld_KodKwsnSkar = KdKwsnSkr, fld_ApprovalKwsnSkarDT = AppKwnsSkrLainDT, fld_ApprovalKwsnSkarLainBy = AppKwnsSkrLainID, fld_OverallAmount = datakerja.jumlahOA, fld_PinjamStatus = TransferPkt });
+                                    tbl_KerjaList.Add(new tbl_Kerja() { fld_Nopkj = datakerja.nopkj, fld_Kum = kodkumpulan, fld_Tarikh = SelectDate, fld_KodPkt = PilihanPkt, fld_Amount = datakerja.jumlah, fld_JnsPkt = JnisPkt, fld_JumlahHasil = datakerja.hasil, fld_KadarByr = datakerja.jumlah, fld_KodGL = Lejar, fld_KodAktvt = PilihanAktvt, fld_JamOT = OTHour, fld_DataSource = "B", fld_BrtGth = 0, fld_PerBrshGth = 0, fld_Kong = kong, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = DTCreated, fld_JnisAktvt = JnisAktvt, fld_KdhMenuai = datakerja.kdhmnuai, fld_Bonus = datakerja.bonus, fld_Unit = unitcode, fld_Quality = datakerja.kualiti, fld_HrgaKwsnSkar = HrgaKwsnSkr, fld_KodKwsnSkar = KdKwsnSkr, fld_ApprovalKwsnSkarDT = AppKwnsSkrLainDT, fld_ApprovalKwsnSkarLainBy = AppKwnsSkrLainID, fld_OverallAmount = datakerja.jumlahOA, fld_PinjamStatus = TransferPkt });
                                 }
                                 else
                                 {
@@ -1581,7 +1654,10 @@ namespace MVC_SYSTEM.Controllers
                                 dbr.tbl_Kerja.AddRange(tbl_KerjaList);
                                 dbr.SaveChanges();
                                 dbr.SaveChanges();
-                                EstateFunction.SaveDataKerjaSAP(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, TransferPkt, transferPktCode);
+                                //Added by Shazana 9/11/2023
+                                EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
+                                EstateFunction.SaveDataKerjaSAPFPM(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode);
+
                             }
                             else
                             {
@@ -1592,8 +1668,10 @@ namespace MVC_SYSTEM.Controllers
                             //Added by Shazana 9/10/2023
                             foreach (var datakerja in HadirData)
                             {
-                                var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_JnisAktvt == "05" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
-                                var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_JnisAktvt == "05" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
+
+                                var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag== 3).Select(x=>x.fld_KodJnsAktvt).ToList();
+                                var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                                var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
 
                                 List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
                                 decimal? LuasKong = 0;
@@ -1608,20 +1686,26 @@ namespace MVC_SYSTEM.Controllers
 
                                 int i = 0;
                                 decimal? valueLs = 0;
+                                //Added by Shazana 9/11/2023
+                                decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
 
                                 foreach (var detaildatakerja in KongList)
                                 {
-                                    decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
+                                    //Modified by Shazana 9/11/2023
+                                    //decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
                                     decimal? LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                                    decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * detaildatakerja.fld_KadarByr), 2);
+                                    //Modified by Shazana 9/11/2023
+                                    decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * kadarbayarLast), 2);
 
                                     i = i + 1;
                                     int? dd = KongList.Count();
                                     if (dd == i)
                                     {
-                                        ValuePkt = detaildatakerja.fld_KadarByr - valueLs;
+                                        ValuePkt = kadarbayarLast - valueLs;
                                         detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
                                         detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                        //Added by Shazana 9/10/2023
+                                        detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
                                         dbr.Entry(detaildatakerja).State = EntityState.Modified;
                                         dbr.SaveChanges();
                                     }
@@ -1630,6 +1714,8 @@ namespace MVC_SYSTEM.Controllers
                                         valueLs = valueLs + ValuePkt;
                                         detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
                                         detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                        //Added by Shazana 9/10/2023
+                                        detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
                                         dbr.Entry(detaildatakerja).State = EntityState.Modified;
                                         dbr.SaveChanges();
 
@@ -1975,21 +2061,27 @@ namespace MVC_SYSTEM.Controllers
                         int i = 0;
                         decimal? valueLs = 0;
 
+                        //Added by Shazana 9/11/2023
+                        decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+
                         foreach (var detaildatakerja in KongList)
                         {
-                            decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
+                            //Modified by Shazana 9/11/2023
+                            //decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
                             decimal? LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
                             decimal? ValuePkt = 0;
                             if (LsPktUtama != 0)
-                            { ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * detaildatakerja.fld_KadarByr), 2); }
+                            { ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * kadarbayarLast), 2); }
 
                             i = i + 1;
                             int? dd = KongList.Count();
                             if (dd == i)
                             {
-                                ValuePkt = detaildatakerja.fld_KadarByr - valueLs;
+                                ValuePkt = kadarbayarLast - valueLs;
                                 detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
                                 detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                //Added by Shazana 9/10/2023
+                                detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
                                 dbr.Entry(detaildatakerja).State = EntityState.Modified;
                                 dbr.SaveChanges();
                             }
@@ -1998,6 +2090,8 @@ namespace MVC_SYSTEM.Controllers
                                 valueLs = valueLs + ValuePkt;
                                 detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
                                 detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                //Added by Shazana 9/10/2023
+                                detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
                                 dbr.Entry(detaildatakerja).State = EntityState.Modified;
                                 dbr.SaveChanges();
 
@@ -2018,8 +2112,12 @@ namespace MVC_SYSTEM.Controllers
 
                 //Added by Shazana 9/10/2023 - Kiraan semula harga kong kerana 1 data telah didelete
                 ////nana tambah
-                var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && x.fld_JnisAktvt == "05" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
-                var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && x.fld_JnisAktvt == "05" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
+                ///
+                var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
+                var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                //Modified by Shazana 9/11/2023
+                //var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && x.fld_JnisAktvt == "05" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
 
                 List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
                 decimal? LuasKong = 0;
@@ -2035,19 +2133,25 @@ namespace MVC_SYSTEM.Controllers
                 int i = 0;
                 decimal? valueLs = 0;
 
+                //Added by Shazana 9/11/2023
+                decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+
                 foreach (var detaildatakerja in KongList)
                 {
-                    decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
+                    //Modified by Shazana 9/11/2023
+                    //decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
                     decimal? LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                    decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * detaildatakerja.fld_KadarByr), 2);
+                    decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * kadarbayarLast), 2);
 
                     i = i + 1;
                     int? dd = KongList.Count();
                     if (dd == i)
                     {
-                        ValuePkt = detaildatakerja.fld_KadarByr - valueLs;
+                        ValuePkt = kadarbayarLast - valueLs;
                         detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
                         detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                        //Added by Shazana 9/10/2023
+                        detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
                         dbr.Entry(detaildatakerja).State = EntityState.Modified;
                         dbr.SaveChanges();
                     }
@@ -2056,6 +2160,8 @@ namespace MVC_SYSTEM.Controllers
                         valueLs = valueLs + ValuePkt;
                         detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
                         detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                        //Added by Shazana 9/10/2023
+                        detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
                         dbr.Entry(detaildatakerja).State = EntityState.Modified;
                         dbr.SaveChanges();
 

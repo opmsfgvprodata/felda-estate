@@ -53,6 +53,9 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.1.15\lib\net461\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="ImpersUsr, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\ImpersUsr.dll</HintPath>
@@ -477,6 +480,9 @@
     <Compile Include="MasterModels\vw_Socso.cs" />
     <Compile Include="MasterModels\vw_UpahGMN.cs" />
     <Compile Include="MasterModels\vw_UserIDDetail.cs" />
+    <Compile Include="ModelsDapper\DataSetFunction.cs" />
+    <Compile Include="ModelsDapper\Payslip_Result.cs" />
+    <Compile Include="ModelsDapper\Worker.cs" />
     <Compile Include="ModelsSAPKOL\MVC_SYSTEM_Models_SAPKOL.cs" />
     <Compile Include="ModelsSAPKOL\tbl_SAPPostDataDetails.cs" />
     <Compile Include="ModelsSAPKOL\tbl_SAPPostRef.cs" />

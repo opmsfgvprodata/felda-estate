@@ -37,7 +37,8 @@
     decimal? totalNetPayEwallet = 0;
     decimal? totalNetPayCdmas = 0;
     decimal? totalNetPayM2U = 0;
-    decimal? totalNetPayM2E = 0; 
+    decimal? totalNetPayM2E = 0;
+    decimal? totalNetPayEwalletTnG = 0;
 }
 
 @if (Model != null && Model.Count() != 0)
@@ -210,7 +211,7 @@
                     if (item.PaySheetPekerja.fld_PaymentMode == "3")
                     {
                         totalNetPayEwallet += item.PaySheetPekerja.fld_GajiBersih;
-                        paymentmode = "EWALLET";
+                        paymentmode = "EWALLET MTA";
                     }
 
                     if (item.PaySheetPekerja.fld_PaymentMode == "4")
@@ -233,6 +234,15 @@
                         /* paymentmode = "M2E";*/
                         //Commented by Shazana 19/8/2023
                         paymentmode = "M2E-HQ";/* Added by Shazana 19/8/2023*/
+                    }
+
+                    //Added by Shazana 10/11/2023
+                    if (item.PaySheetPekerja.fld_PaymentMode == "7")
+                    {
+                        totalNetPayEwalletTnG += item.PaySheetPekerja.fld_GajiBersih;
+                        /* paymentmode = "M2E";*/
+                        //Commented by Shazana 19/8/2023
+                        paymentmode = "EWALLET TNG";/* Added by Shazana 19/8/2023*/
                     }
 
                     if (item.PaySheetPekerja.fld_PaymentMode == null)
@@ -469,7 +479,7 @@
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
-                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none; font-weight:bold">eWallet</td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none; font-weight:bold">eWallet MTA</td>
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
@@ -545,6 +555,29 @@
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; border-bottom: none; text-align: right; border-right: none; border-left: none; font-weight:bold">@GetTriager.GetTotalForMoney(totalNetPayM2E)</td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                    </tr>
+
+                    //Added by Shazana 10/11/2023
+                    <tr>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none; font-weight:bold">eWallet TNG</td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
+                        <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; border-bottom: none; text-align: right; border-right: none; border-left: none; font-weight:bold">@GetTriager.GetTotalForMoney(totalNetPayEwalletTnG)</td>
                         <td align="center" style="margin: 2px !important; padding-top: 2px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: none; text-align: right; border-right: none; border-left: none"></td>
                     </tr>
                     <tr>

@@ -1233,6 +1233,7 @@ namespace MVC_SYSTEM.Controllers
                             :
                             dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count();
 
+
                             var getJenisActvtDetails = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3 && x.fld_Deleted == false).FirstOrDefault();
 
                             checkkongactvt = SelectionCategory == 1 ? dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Kum == SelectionData && x.fld_JnisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count()
@@ -1250,7 +1251,9 @@ namespace MVC_SYSTEM.Controllers
                             var repeatingAktivitiPeringkat = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt).ToList();
 
                             //Added by Shazana 9/10/2023 -Tambah validaton untuk tiada nilai luas dalam peringkat dan kodaktiviti dan peringkat yang sama telah wujud
-                            if (fld_LsPktUtama == null || fld_LsPktUtama == 0)
+                            //Modified by Shazana 22/11/2023 -Hanya kong yg tiada luas je tak boleh disimpan
+                            var JenisAktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
+                            if ((fld_LsPktUtama == null || fld_LsPktUtama == 0) && JenisAktiviti.fld_DisabledFlag==3)
                             {
                                 msg = GlobalResEstate.msgLuasNull + " (" + PilihanPkt + ") ";
                                 statusmsg = "warning";
@@ -1491,7 +1494,8 @@ namespace MVC_SYSTEM.Controllers
                         var namajenisaktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJnsAktvt == JnisAktvt).FirstOrDefault();
 
                         //Added by Shazana 9/10/2023 -Tambah validaton untuk tiada nilai luas dalam peringkat dan kodaktiviti dan peringkat yang sama telah wujud
-                        if (fld_LsPktUtama == null || fld_LsPktUtama == 0)
+                        //Added by Shazana 22/11/2023 - add paparan validation luas untuk kong sahaja
+                        if ((fld_LsPktUtama == null || fld_LsPktUtama == 0) && namajenisaktiviti.fld_DisabledFlag == 3)
                         {
                             msg = GlobalResEstate.msgLuasNull + " (" + PilihanPkt + ") ";
                             statusmsg = "warning";

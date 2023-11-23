@@ -3603,7 +3603,4 @@
   <data name="msgSimilarAktivitiPeringkat" xml:space="preserve">
     <value>Tidak dibenarkan keyin kod aktiviti dan peringkat yang sama</value>
   </data>
-  <data name="msgExistKadaran" xml:space="preserve">
-    <value>Sistem tidak membenarkan aktiviti ini dimasukkan kerana aktiviti kadaran telah wujud</value>
-  </data>
 </root>

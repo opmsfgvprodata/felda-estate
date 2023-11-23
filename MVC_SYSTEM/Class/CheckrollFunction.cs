@@ -221,14 +221,7 @@ namespace MVC_SYSTEM.Class
                 //Commented by Shazana 9/10/2023
                 //CustMod_WorkerWorks.Add(new CustMod_WorkerWork() { fld_ID = tbl_KerjaData.fld_ID, fld_Nopkj = tbl_KerjaData.fld_Nopkj, fld_NamaPkj = namepkj, fld_Amount = tbl_KerjaData.fld_Amount, fld_JumlahHasil = tbl_KerjaData.fld_JumlahHasil, fld_KodAktvt = tbl_KerjaData.fld_KodAktvt, fld_KodGL = tbl_KerjaData.fld_KodGL, fld_KodPkt = tbl_KerjaData.fld_KodPkt, fld_Kum = tbl_KerjaData.fld_Kum, fld_Tarikh = tbl_KerjaData.fld_Tarikh, fld_Unit = tbl_KerjaData.fld_Unit, fld_JamOT = tbl_KerjaData.fld_JamOT, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_AmountOA = tbl_KerjaData.fld_OverallAmount });
                 //Added by Shazana 9/10/2023
-                //Added and modified by Shazana 22/11/2023
-                decimal? fld_LsPktUtama = 0;
-               int? statusKeluasan = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && x.fld_KodJnsAktvt == tbl_KerjaData.fld_JnisAktvt).Select(x=>x.fld_DisabledFlag).FirstOrDefault();
-                
-                if (statusKeluasan == 3)
-                {
-                fld_LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == tbl_KerjaData.fld_KodPkt && x.fld_LadangID == tbl_KerjaData.fld_LadangID && x.fld_WilayahID == tbl_KerjaData.fld_WilayahID && x.fld_SyarikatID == tbl_KerjaData.fld_SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                }            
+                decimal? fld_LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == tbl_KerjaData.fld_KodPkt && x.fld_LadangID == tbl_KerjaData.fld_LadangID && x.fld_WilayahID == tbl_KerjaData.fld_WilayahID && x.fld_SyarikatID == tbl_KerjaData.fld_SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
                 CustMod_WorkerWorks.Add(new CustMod_WorkerWork() { fld_ID = tbl_KerjaData.fld_ID, fld_Nopkj = tbl_KerjaData.fld_Nopkj, fld_NamaPkj = namepkj, fld_Amount = tbl_KerjaData.fld_Amount, fld_JumlahHasil = tbl_KerjaData.fld_JumlahHasil, fld_KodAktvt = tbl_KerjaData.fld_KodAktvt, fld_KodGL = tbl_KerjaData.fld_KodGL, fld_KodPkt = tbl_KerjaData.fld_KodPkt, fld_Kum = tbl_KerjaData.fld_Kum, fld_Tarikh = tbl_KerjaData.fld_Tarikh, fld_Unit = tbl_KerjaData.fld_Unit, fld_JamOT = tbl_KerjaData.fld_JamOT, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_AmountOA = tbl_KerjaData.fld_OverallAmount, fld_LsPktUtama = fld_LsPktUtama });
 
             }

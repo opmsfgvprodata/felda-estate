@@ -29,7 +29,7 @@ namespace MVC_SYSTEM.Class
             var catalog = getConnection.InitialCatalog;
             var user = getConnection.userID;
             var pass = getConnection.Password;
-            var connectionString = String.Format("data source={0};initial catalog={1};user id={2};password={3};MultipleActiveResultSets=True;App=EntityFramework;Connection Timeout=60", host, catalog, user, pass);
+            var connectionString = String.Format("data source={0};initial catalog={1};user id={2};password={3};MultipleActiveResultSets=True;App=EntityFramework;Connection Timeout=300", host, catalog, user, pass);
             return connectionString;
         }
     }

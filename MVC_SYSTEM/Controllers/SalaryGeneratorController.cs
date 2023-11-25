@@ -11,6 +11,9 @@ using System.ServiceProcess;
 using System.Web;
 using System.Web.Mvc;
 using static MVC_SYSTEM.Class.GlobalFunction;
+using System.Data.SqlClient;
+using Dapper;
+using MVC_SYSTEM.ModelsDapper;
 
 namespace MVC_SYSTEM.Controllers
 {
@@ -277,7 +280,31 @@ namespace MVC_SYSTEM.Controllers
 
             var KumpulanName = KumpulanList.Select(s => s.fld_KodKumpulan).Take(1).FirstOrDefault();
 
-            var GetKerjaInfoDetailsList = dbsp.sp_KerjaInfoDetails(1, KumpulanName, yearcheck, monthcheck, NegaraID, SyarikatID, WilayahID, LadangID).ToList();
+            var GetKerjaInfoDetailsList = new List<KerjaInfoDetails_Result>();
+
+            string constr = Connection.GetConnectionString(WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            var con = new SqlConnection(constr);
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("KategoriPilih", 1);
+                parameters.Add("PilihanCari", KumpulanName);
+                parameters.Add("year", yearcheck);
+                parameters.Add("Month", monthcheck);
+                parameters.Add("NegaraID", NegaraID);
+                parameters.Add("SyarikatID", SyarikatID);
+                parameters.Add("WilayahID", WilayahID);
+                parameters.Add("LadangID", LadangID);
+                con.Open();
+                GetKerjaInfoDetailsList = SqlMapper.Query<KerjaInfoDetails_Result>(con, "sp_KerjaInfoDetails_V2", parameters).ToList();
+                con.Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            //var GetKerjaInfoDetailsList = dbsp.sp_KerjaInfoDetails(1, KumpulanName, yearcheck, monthcheck, NegaraID, SyarikatID, WilayahID, LadangID).ToList();
 
             var GetWorkerList = GetKerjaInfoDetailsList.Select(s => s.fld_Nopkj.Trim()).Distinct();
 
@@ -340,8 +367,32 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.YearList = yearlist;
 
             ViewBag.MonthList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc", MonthList);
-            
-            var GetKerjaInfoDetailsList = dbsp.sp_KerjaInfoDetails(SelectionCategory, SelectionData, YearList, MonthList, NegaraID, SyarikatID, WilayahID, LadangID).ToList();
+
+            var GetKerjaInfoDetailsList = new List<KerjaInfoDetails_Result>();
+
+            string constr = Connection.GetConnectionString(WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            var con = new SqlConnection(constr);
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("KategoriPilih", SelectionCategory);
+                parameters.Add("PilihanCari", SelectionData);
+                parameters.Add("year", YearList);
+                parameters.Add("Month", MonthList);
+                parameters.Add("NegaraID", NegaraID);
+                parameters.Add("SyarikatID", SyarikatID);
+                parameters.Add("WilayahID", WilayahID);
+                parameters.Add("LadangID", LadangID);
+                con.Open();
+                GetKerjaInfoDetailsList = SqlMapper.Query<KerjaInfoDetails_Result>(con, "sp_KerjaInfoDetails_V2", parameters).ToList();
+                con.Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+           // var GetKerjaInfoDetailsList = dbsp.sp_KerjaInfoDetails(SelectionCategory, SelectionData, YearList, MonthList, NegaraID, SyarikatID, WilayahID, LadangID).ToList();
 
             var GetWorkerList = GetKerjaInfoDetailsList.Select(s => s.fld_Nopkj.Trim()).Distinct();
 

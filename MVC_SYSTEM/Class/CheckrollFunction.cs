@@ -308,11 +308,11 @@ namespace MVC_SYSTEM.Class
                                 break;
                         }
 
-                        var PktData = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).Select(s => new { s.fld_StatusTnmn, s.fld_IOcode }).FirstOrDefault();
+                        var PktData = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).Select(s => new { s.fld_StatusTnmn, s.fld_IOcode, s.fld_JnsLot }).FirstOrDefault();
                         GetPaySheetID = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusTanaman" && x.fldOptConfValue == PktData.fld_StatusTnmn && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfFlag2).FirstOrDefault();
 
                         //get GL Code
-                        var GLMap = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == GetPaySheetID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
+                        var GLMap = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == GetPaySheetID && x.fld_JnsLot == PktData.fld_JnsLot && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
 
                         Result = GLMap != null ? true : false;
                         GLCode = GLMap != null ? GLMap.fld_KodGL : "";

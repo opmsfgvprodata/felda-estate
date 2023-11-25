@@ -1144,7 +1144,7 @@
                     $('#WorkCode').val(result.kodhdr);
                 }
                 for (const element of paidLeaveCodes) {
-                    if (element.leaveCode === result.kodhdr) {
+                    if (element.leaveCode === result.kodhdr || element.leaveCode === result.AttCodeType) {
                         $("#SAPChargeCode").empty();
                         for (var i = 0; i < estateLevels.length; i++) {
                             $("#SAPChargeCode").append("<option value='" + estateLevels[i].value + "'>" + estateLevels[i].text + "</option>");

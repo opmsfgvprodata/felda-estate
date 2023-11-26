@@ -296,6 +296,7 @@ namespace MVC_SYSTEM.Controllers
                 parameters.Add("WilayahID", WilayahID);
                 parameters.Add("LadangID", LadangID);
                 con.Open();
+                SqlMapper.Settings.CommandTimeout = 300;
                 GetKerjaInfoDetailsList = SqlMapper.Query<KerjaInfoDetails_Result>(con, "sp_KerjaInfoDetails_V2", parameters).ToList();
                 con.Close();
             }
@@ -384,6 +385,7 @@ namespace MVC_SYSTEM.Controllers
                 parameters.Add("WilayahID", WilayahID);
                 parameters.Add("LadangID", LadangID);
                 con.Open();
+                SqlMapper.Settings.CommandTimeout = 300;
                 GetKerjaInfoDetailsList = SqlMapper.Query<KerjaInfoDetails_Result>(con, "sp_KerjaInfoDetails_V2", parameters).ToList();
                 con.Close();
             }

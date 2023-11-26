@@ -6581,6 +6581,7 @@ namespace MVC_SYSTEM.Controllers
                     parameters.Add("Year", YearList);
                     parameters.Add("Workers", workersDT.AsTableValuedParameter("[dbo].[Workers]"));
                     con.Open();
+                    SqlMapper.Settings.CommandTimeout = 300;
                     payslipList = SqlMapper.Query<Payslip_Result>(con, "sp_Payslip_V2", parameters).ToList();
                     con.Close();
                 }

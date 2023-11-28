@@ -247,7 +247,7 @@
         return true;
     }
 
-    function UpdateStatus(gethis, id, flag, btnid, wlyhid, jmlhwang, jmlhcash, jmlhcheque, jmlhewallet, jmlhcdmas, jmlhm2u, jmlhm2e, NoAcc, NoGL, NoCIT, ldgName, skbno) {
+    function UpdateStatus(gethis, id, flag, btnid, wlyhid, jmlhwang, jmlhcash, jmlhcheque, jmlhewallet, jmlhcdmas, jmlhm2u, jmlhm2e, jmlhewallettng, NoAcc, NoGL, NoCIT, ldgName, skbno) {
         var value = gethis.parentNode.parentNode.children[1].innerHTML;
         //var totalkaedahbyran = 0;
         var NegaraID='@ViewBag.NegaraID';
@@ -268,10 +268,11 @@
                         { input: { type: "text", label: "Cash (RM)", name: "Cash", id: "Cash", value: jmlhcash.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
                         { input: { type: "text", label: "Cheque (RM)", name: "Cheque", id: "Cheque", value: jmlhcheque.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
                         { input: { type: "text", label: "CDMAS (RM)", name: "CDMAS", id: "CDMAS", value: jmlhcdmas.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
-                        { input: { type: "text", label: "EWallet (RM)", name: "EWallet", id: "EWallet", value: jmlhewallet.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
+                        { input: { type: "text", label: "EWallet MTA (RM)", name: "EWallet", id: "EWallet", value: jmlhewallet.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
                         /*Modified by Shazana 19/8/2023*/
                         { input: { type: "text", label: "M2E-E (RM)", name: "M2U", id: "M2U", value: jmlhm2u.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
                         { input: { type: "text", label: "M2E-HQ (RM)", name: "M2E", id: "M2E", value: jmlhm2e.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
+                        { input: { type: "text", label: "EWallet TnG (RM)", name: "EWalletTnG", id: "EWalletTnG", value: jmlhewallettng.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"), disabled: "TRUE" } },
 
 						],
                     cancel: function (data, array, event) { },

@@ -60,6 +60,8 @@ namespace MVC_SYSTEM.MasterModels
 
         [Column(TypeName = "numeric")]
         public decimal? fld_JumlahEwallet { get; set; }
+        [Column(TypeName = "numeric")]
+        public decimal? fld_JumlahEwalletTnG { get; set; }
 
         [Column(TypeName = "numeric")]
         public decimal? fld_JumlahCdmas { get; set; }

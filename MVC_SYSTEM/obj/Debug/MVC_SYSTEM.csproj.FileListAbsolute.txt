@@ -220,5 +220,8 @@ C:\Users\User\Documents\OPMS\FELDA\coding\FELDA-github\felda-estate\felda-estate
 C:\Users\User\Documents\OPMS\FELDA\coding\FELDA-github\felda-estate\felda-estate\MVC_SYSTEM\obj\Debug\MVC_SYSTEM.csproj.CopyComplete
 C:\Users\User\Documents\OPMS\FELDA\coding\FELDA-github\felda-estate\felda-estate\MVC_SYSTEM\obj\Debug\MVC_SYSTEM.dll
 C:\Users\User\Documents\OPMS\FELDA\coding\FELDA-github\felda-estate\felda-estate\MVC_SYSTEM\obj\Debug\MVC_SYSTEM.pdb
+<<<<<<< HEAD
 C:\Users\User\Documents\OPMS\FELDA\coding\FELDA-github\felda-estate\felda-estate\MVC_SYSTEM\bin\Dapper.dll
 C:\Users\User\Documents\OPMS\FELDA\coding\FELDA-github\felda-estate\felda-estate\MVC_SYSTEM\bin\Dapper.xml
+=======
+>>>>>>> feature/TnGo-Nana

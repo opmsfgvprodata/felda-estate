@@ -3522,4 +3522,7 @@
   <data name="msgSimilarAktivitiPeringkat" xml:space="preserve">
     <value>Activiti and Peringkat have been used. Please use different type of activities and peringkat</value>
   </data>
+  <data name="msgExistKadaran" xml:space="preserve">
+    <value>The system does not allow this activity to be inserted because kadaran activity already exists</value>
+  </data>
 </root>

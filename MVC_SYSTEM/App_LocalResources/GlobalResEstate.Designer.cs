@@ -9493,6 +9493,15 @@ namespace MVC_SYSTEM.App_LocalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sistem tidak membenarkan aktiviti ini dimasukkan kerana aktiviti kadaran telah wujud.
+        /// </summary>
+        public static string msgExistKadaran {
+            get {
+                return ResourceManager.GetString("msgExistKadaran", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sistem tidak membenarkan aktiviti ini dimasukkan kerana aktiviti kong telah wujud.
         /// </summary>
         public static string msgExistKong {

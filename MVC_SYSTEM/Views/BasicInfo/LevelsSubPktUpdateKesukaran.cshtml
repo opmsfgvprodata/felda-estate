@@ -20,7 +20,7 @@
 @*<div class="text-center">@grid.TotalRowCount @Html.Label(GlobalResEstate.lblTotalRecord)</div>*@
 <div>
 
-
+    @Html.Hidden("JnsPktq", null)
     @*Modified by Shazana 11/8/2023*@
     @if (ViewBag.rolename == "Super Power Admin" || ViewBag.rolename == "Super Admin" || ViewBag.rolename == "Admin 1" || ViewBag.rolename == "Admin 2")
     {
@@ -110,7 +110,8 @@
         event.preventDefault()
                 //btnClickPkt += 1;
                 var Kawasan = {};
-            var disableoption = "";
+        var disableoption = "";
+        $("#JnsPktq").val(3);
             Kawasan.url = "@Url.Action("RemoveKesukaran", "BasicInfo")";
             Kawasan.type = "POST";
         Kawasan.data = JSON.stringify({ fld_KodPkt: fld_KodPkt, KodHargaKesukaran: KodHargaKesukaran });

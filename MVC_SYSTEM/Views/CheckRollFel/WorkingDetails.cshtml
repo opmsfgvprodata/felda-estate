@@ -496,12 +496,13 @@
         var PilihanPkt = $("#PilihanPkt").val();
         var datano = $("#datano").val();
         var loopdatahdr = $("#loopdatahdr").val();
+        var TrnsfrLvl = $("#TrnsfrLvl").val()
         var splitdata = datano.split(',');
 
         var ajxfn = {};
         ajxfn.url = "@Url.Action("GetMenuaiRate", "CheckRollFel")";
         ajxfn.type = "POST";
-        ajxfn.data = JSON.stringify({ SelectDate: SelectDate, JnisPkt: JnisPkt, PilihanPkt: PilihanPkt, kdhmnuai: kdhmnuai1 });
+        ajxfn.data = JSON.stringify({ SelectDate: SelectDate, JnisPkt: JnisPkt, PilihanPkt: PilihanPkt, kdhmnuai: kdhmnuai1, TrnsfrLvl: TrnsfrLvl });
         ajxfn.datatype = "json";
         ajxfn.contentType = "application/json";
         ajxfn.success = function (result) {

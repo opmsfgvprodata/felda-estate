@@ -3149,7 +3149,7 @@ namespace MVC_SYSTEM.Controllers
             return Json(new { msg, statusmsg, GLCode });
         }
 
-        public JsonResult GetMenuaiRate(DateTime SelectDate, int JnisPkt, string PilihanPkt, string kdhmnuai)
+        public JsonResult GetMenuaiRate(DateTime SelectDate, int JnisPkt, string PilihanPkt, string kdhmnuai, byte TrnsfrLvl)
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = getidentity.ID(User.Identity.Name);
@@ -3163,6 +3163,21 @@ namespace MVC_SYSTEM.Controllers
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            if(TrnsfrLvl == 1)
+            {
+                var PilihanPktID = int.Parse(PilihanPkt);
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
+                if (pktTransfer != null)
+                {
+                    JnisPkt = byte.Parse(pktTransfer.fld_JenisPkt.ToString());
+                    NegaraID = pktTransfer.fld_NegaraIDAsal;
+                    SyarikatID = pktTransfer.fld_SyarikatIDAsal;
+                    WilayahID = pktTransfer.fld_WilayahIDAsal;
+                    LadangID = pktTransfer.fld_LadangIDAsal;
+                    PilihanPkt = dbr.tbl_PktUtama.Where(x => x.fld_ID == pktTransfer.fld_OriginPktID).Select(s => s.fld_PktUtama).FirstOrDefault();
+                }
+            }
 
             kadarharga = EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, kdhmnuai, dbr, NegaraID, SyarikatID, WilayahID, LadangID, out YieldBracketFullMonth);
             if (kadarharga != 0)

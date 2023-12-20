@@ -3336,7 +3336,7 @@ namespace MVC_SYSTEM.Controllers
                     if (tbl_JenisAktiviti.fld_DisabledFlag != 3)
                     {
                         if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
-                            kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                            kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbrpkt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
                         else
                         {
                             kadarharga = tbl_JenisAktiviti.fld_Harga;
@@ -3348,7 +3348,7 @@ namespace MVC_SYSTEM.Controllers
                         if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
                         {
                             //Modified line by kamalia 30/4/2021
-                            kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                            kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbrpkt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
                             //Modified line by kamalia 23/8/2021
                             var getgajiminima = db.tbl_GajiMinimaLdg.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
                             kadarharga = getgajiminima != null ? getgajiminima.fld_NilaiGajiMinima : kadarharga1;
@@ -3454,7 +3454,7 @@ namespace MVC_SYSTEM.Controllers
                 if (tbl_JenisAktiviti.fld_DisabledFlag != 3)
                 {
                     if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
-                        kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                        kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbrpkt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
                     else
                     {
                         kadarharga = tbl_JenisAktiviti.fld_Harga;
@@ -3466,7 +3466,7 @@ namespace MVC_SYSTEM.Controllers
                     if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
                     {
                         //Modified line by kamalia 30/4/2021
-                        kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbr, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                        kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbrpkt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
                         //Modified line by kamalia 23/8/2021
                         var getgajiminima = db.tbl_GajiMinimaLdg.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
                         kadarharga = getgajiminima != null ? getgajiminima.fld_NilaiGajiMinima : kadarharga1;

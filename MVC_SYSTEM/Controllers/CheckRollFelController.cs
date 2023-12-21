@@ -820,7 +820,7 @@ namespace MVC_SYSTEM.Controllers
                                         }
                                         dbr.tbl_KerjaHariTerabai.AddRange(tbl_KerjaHariTerabais);
                                         dbr.SaveChanges();
-                                        EstateFunction.SaveDataKerjaSAP(dbr, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, false, "");
+                                        EstateFunction.SaveDataKerjaSAP(dbr, dbr, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, false, "");
                                     }
                                 }
                                 else
@@ -979,7 +979,7 @@ namespace MVC_SYSTEM.Controllers
                                     }
                                     dbr.tbl_KerjaHariTerabai.AddRange(tbl_KerjaHariTerabais);
                                     dbr.SaveChanges();
-                                    EstateFunction.SaveDataKerjaSAPFPM(dbr, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, false, "");
+                                    EstateFunction.SaveDataKerjaSAPFPM(dbr, dbr, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, false, "");
                                 }
                             }
                             else
@@ -1371,7 +1371,7 @@ namespace MVC_SYSTEM.Controllers
                                 dbr.tbl_Kerja.AddRange(tbl_KerjaList);
                                 dbr.SaveChanges();
                                 EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
-                                EstateFunction.SaveDataKerjaSAP(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, TransferPkt, transferPktCode);
+                                EstateFunction.SaveDataKerjaSAP(dbr, dbrpkt, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, TransferPkt, transferPktCode);
                                 msg = GlobalResEstate.msgAdd;
                                 statusmsg = "success";
                             }
@@ -1436,7 +1436,7 @@ namespace MVC_SYSTEM.Controllers
 
                                     //Added by Shazana 9/11/2023
                                     EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
-                                    EstateFunction.SaveDataKerjaSAP(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, TransferPkt, transferPktCode);
+                                    EstateFunction.SaveDataKerjaSAP(dbr, dbrpkt, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, TransferPkt, transferPktCode);
 
                                 }
                                 else
@@ -1662,7 +1662,7 @@ namespace MVC_SYSTEM.Controllers
                             dbr.tbl_Kerja.AddRange(tbl_KerjaList);
                             dbr.SaveChanges();
                             EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
-                            EstateFunction.SaveDataKerjaSAPFPM(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode);
+                            EstateFunction.SaveDataKerjaSAPFPM(dbr, dbrpkt, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode);
 
                             //Added by Shazana 9/11/2023
                             var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
@@ -1810,7 +1810,7 @@ namespace MVC_SYSTEM.Controllers
                                 dbr.SaveChanges();
                                 //Added by Shazana 9/11/2023
                                 EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID);
-                                EstateFunction.SaveDataKerjaSAPFPM(dbr, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode);
+                                EstateFunction.SaveDataKerjaSAPFPM(dbr, dbrpkt, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode);
 
                             }
                             else

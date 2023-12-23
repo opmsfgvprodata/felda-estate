@@ -9340,6 +9340,15 @@ namespace MVC_SYSTEM.App_LocalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sistem tidak membenarkan aktiviti ini dimasukkan kerana jenis kong adalah berbeza.
+        /// </summary>
+        public static string msgDifferentKong {
+            get {
+                return ResourceManager.GetString("msgDifferentKong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email gagal dihantar.
         /// </summary>
         public static string msgEmailNsubmit {

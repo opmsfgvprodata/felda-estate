@@ -886,8 +886,9 @@ namespace MVC_SYSTEM.Controllers
                         var crmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == cdate.Month && x.fld_Year == cdate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
                         crmnthavgslry = crmnthavgslry == null ? 0m : crmnthavgslry;
 
-                        var lsmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == ldate.Month && x.fld_Year == ldate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
-                        lsmnthavgslry = lsmnthavgslry == null ? 0m : lsmnthavgslry;
+                        var avgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == ldate.Month && x.fld_Year == ldate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => new { s.fld_PurataGaji, s.fld_PurataGaji12Bln }).FirstOrDefault();
+                        var lsmnthavgslry = avgslry.fld_PurataGaji == null ? 0m : avgslry.fld_PurataGaji;
+                        var yearavgslry = avgslry.fld_PurataGaji12Bln == null || avgslry.fld_PurataGaji12Bln > 200 ? 0m : avgslry.fld_PurataGaji12Bln;
 
                         chunk = new Chunk("Jumlah Tawaran Hari Bekerja", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
@@ -1161,7 +1162,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk("Purata Gaji Setahun", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -1169,7 +1170,7 @@ namespace MVC_SYSTEM.Controllers
                         cell.BorderColor = BaseColor.BLACK;
                         table.AddCell(cell);
 
-                        chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk(yearavgslry.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;

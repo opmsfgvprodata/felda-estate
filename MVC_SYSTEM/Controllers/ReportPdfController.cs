@@ -22,6 +22,7 @@ using MVC_SYSTEM.Attributes;
 using Dapper;
 using MVC_SYSTEM.ModelsDapper;
 using System.Data.SqlClient;
+using Itenso.TimePeriod;
 
 namespace MVC_SYSTEM.Controllers
 {
@@ -123,7 +124,7 @@ namespace MVC_SYSTEM.Controllers
                 var attWorkDatas = dbr.tbl_Kerjahdr.Where(x => pkjNoList.Contains(x.fld_Nopkj) && x.fld_Tarikh.Value.Month == MonthList && x.fld_Tarikh.Value.Year == YearList && x.fld_LadangID == LadangID).ToList();
                 var hardWorkDataIDs = hardWorkDatas.Select(s => s.fld_ID).ToList();
                 var hardWorkDatasNew = dbr.tbl_KerjaKesukaran.Where(x => hardWorkDataIDs.Contains(x.fld_KerjaID.Value)).ToList();
-                
+
                 var tbl_KumpulanKerja = dbr.tbl_KumpulanKerja.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).ToList();
                 var NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
                 var NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).Select(s => s.fld_NoSyarikat).FirstOrDefault();
@@ -181,7 +182,7 @@ namespace MVC_SYSTEM.Controllers
                         var Kategori = webConfigList.Where(x => x.fldOptConfFlag1 == "designation" && x.fldOptConfValue == ktgrPkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfDesc).FirstOrDefault();
                         var Jantina = webConfigList.Where(x => x.fldOptConfFlag1 == "jantina" && x.fldOptConfValue == jntnaPkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfDesc).FirstOrDefault();
 
-                        
+
                         pdfDoc.NewPage();
                         //Header
                         pdfDoc = Header(pdfDoc, NamaSyarikat, "(" + NoSyarikat + ")\n" + nswl.fld_LdgCode + " - " + nswl.fld_NamaLadang, "Laporan Slip Gaji Pekerja Bagi Bulan " + MonthList + "/" + YearList + "");
@@ -886,9 +887,10 @@ namespace MVC_SYSTEM.Controllers
                         var crmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == cdate.Month && x.fld_Year == cdate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
                         crmnthavgslry = crmnthavgslry == null ? 0m : crmnthavgslry;
 
-                        var avgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == ldate.Month && x.fld_Year == ldate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => new { s.fld_PurataGaji, s.fld_PurataGaji12Bln }).FirstOrDefault();
-                        var lsmnthavgslry = avgslry.fld_PurataGaji == null ? 0m : avgslry.fld_PurataGaji;
-                        var yearavgslry = avgslry.fld_PurataGaji12Bln == null || avgslry.fld_PurataGaji12Bln > 200 ? 0m : avgslry.fld_PurataGaji12Bln;
+                        var lsmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == ldate.Month && x.fld_Year == ldate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
+                        lsmnthavgslry = lsmnthavgslry == null ? 0m : lsmnthavgslry;
+                        var yearavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == MonthList.Value && x.fld_Year == YearList.Value && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji12Bln).FirstOrDefault();
+                        yearavgslry = yearavgslry == null || yearavgslry > 200 ? 0m : yearavgslry;
 
                         chunk = new Chunk("Jumlah Tawaran Hari Bekerja", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));

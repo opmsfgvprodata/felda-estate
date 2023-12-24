@@ -6734,17 +6734,17 @@ namespace MVC_SYSTEM.Controllers
             //get avg slry
             DateTime cdate = new DateTime(year, month, 15);
             DateTime ldate = cdate.AddMonths(-1);
-            var crmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == cdate.Month && x.fld_Year == cdate.Year && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
-            crmnthavgslry = crmnthavgslry == null ? 0m : crmnthavgslry;
+            var cravgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == cdate.Month && x.fld_Year == cdate.Year && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => new { s.fld_PurataGaji, s.fld_PurataGaji12Bln }).FirstOrDefault();
+            var crmnthavgslry = cravgslry.fld_PurataGaji == null ? 0m : cravgslry.fld_PurataGaji;
             id += 1;
             FooterPayslipDetails.Add(new FooterPayslipDetails { id = id, flag = "crmnthavgslry", value = crmnthavgslry.Value });
+            
             var lsmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == ldate.Month && x.fld_Year == ldate.Year && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
             lsmnthavgslry= lsmnthavgslry == null ? 0m : lsmnthavgslry;
             id += 1;
             FooterPayslipDetails.Add(new FooterPayslipDetails { id = id, flag = "lsmnthavgslry", value = lsmnthavgslry.Value });
 
-            var yearavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == month && x.fld_Year == year && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji12Bln).FirstOrDefault();
-            yearavgslry = yearavgslry == null || yearavgslry > 200 ? 0m : yearavgslry;
+            var yearavgslry = cravgslry.fld_PurataGaji12Bln == null || cravgslry.fld_PurataGaji12Bln > 200 ? 0m : cravgslry.fld_PurataGaji12Bln;
             id += 1;
             FooterPayslipDetails.Add(new FooterPayslipDetails { id = id, flag = "yearavgslry", value = yearavgslry.Value });
             //shah

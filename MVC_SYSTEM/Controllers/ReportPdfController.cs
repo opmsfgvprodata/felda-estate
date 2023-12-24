@@ -884,13 +884,13 @@ namespace MVC_SYSTEM.Controllers
                         //get avg slry
                         DateTime cdate = new DateTime(YearList.Value, MonthList.Value, 15);
                         DateTime ldate = cdate.AddMonths(-1);
-                        var crmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == cdate.Month && x.fld_Year == cdate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
-                        crmnthavgslry = crmnthavgslry == null ? 0m : crmnthavgslry;
+                        var cravgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == cdate.Month && x.fld_Year == cdate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => new { s.fld_PurataGaji, s.fld_PurataGaji12Bln }).FirstOrDefault();
+                        var crmnthavgslry = cravgslry.fld_PurataGaji == null ? 0m : cravgslry.fld_PurataGaji;
 
                         var lsmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == ldate.Month && x.fld_Year == ldate.Year && x.fld_Nopkj == pkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
                         lsmnthavgslry = lsmnthavgslry == null ? 0m : lsmnthavgslry;
-                        var yearavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == MonthList.Value && x.fld_Year == YearList.Value && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji12Bln).FirstOrDefault();
-                        yearavgslry = yearavgslry == null || yearavgslry > 200 ? 0m : yearavgslry;
+                        
+                        var yearavgslry = cravgslry.fld_PurataGaji12Bln == null || cravgslry.fld_PurataGaji12Bln > 200 ? 0m : cravgslry.fld_PurataGaji12Bln;
 
                         chunk = new Chunk("Jumlah Tawaran Hari Bekerja", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));

@@ -21,7 +21,7 @@
     var lsmnthavgslry = Model.Where(x => x.flag == "lsmnthavgslry").Select(s => s.value).FirstOrDefault();
     var hdrhrch = Model.Where(x => x.flag == "hdrhrch").Select(s => s.count).FirstOrDefault();
     var hdrhrhujan = Model.Where(x => x.flag == "hdrhrhujan").Select(s => s.count).FirstOrDefault();
-    var yearavgslry = Model.Where(x => x.flag == "yearavgslry").Select(s => s.count).FirstOrDefault();
+    var yearavgslry = Model.Where(x => x.flag == "yearavgslry").Select(s => s.value).FirstOrDefault();
 }
 <tr>
     <td>Jumlah Tawaran Hari Bekerja</td>

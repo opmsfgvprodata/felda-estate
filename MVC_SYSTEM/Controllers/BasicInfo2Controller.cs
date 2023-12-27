@@ -1214,14 +1214,14 @@ namespace MVC_SYSTEM.Controllers
 
             JnsTnmn = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "jnsTanaman" && x.fldDeleted == false).OrderBy(o => o.fldOptConfID).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
             JnsTnmn.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
-            StatusTnmn = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "statusTanaman" && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
+            StatusTnmn = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "statusTanaman" && x.fldDeleted == false && x.fldOptConfFlag2 != "PA" && x.fldOptConfFlag2 != "PT").OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfValue + " - " + s.fldOptConfDesc }), "Value", "Text").ToList();
             StatusTnmn.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
 
             TahapKesukaranMenuai = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "KesukaranMenuai" && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc + " (RM" + s.fldOptConfFlag2 + ")" }), "Value", "Text").ToList();
             TahapKesukaranMembaja = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "KesukaranMembaja" && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc + " (RM" + s.fldOptConfFlag2 + ")" }), "Value", "Text").ToList();
            
             TahapKesukaranMemunggah = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "KesukaranMemunggah" && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc + " (RM" + s.fldOptConfFlag2 + ")" }), "Value", "Text").ToList();
-            IOlist = new SelectList(db.tbl_IOSAP.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false && x.fld_StatusUsed == null && x.fld_WBS != null), "fld_WBS", "fld_WBS").ToList();
+            IOlist = new SelectList(db.tbl_IOSAP.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false && x.fld_StatusUsed == null && !string.IsNullOrEmpty(x.fld_WBS)), "fld_WBS", "fld_WBS").ToList();
             IOlist.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
 
             JnsLotList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnsLot" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
@@ -2360,12 +2360,102 @@ namespace MVC_SYSTEM.Controllers
             luas = checkLuas.fld_LuasPkt.GetValueOrDefault();
             luasTnmn = checkLuas.fld_LuasKawTnmn.GetValueOrDefault();
             luasBerhasil = checkLuas.fld_LuasKawBerhasil.GetValueOrDefault();
-            fld_NamaPktUtama = checkLuas.fld_PktCode;//Added by Shazana 13/6/2023
+            fld_NamaPktUtama = WBS.Substring(10, 3);
+
             // return Json(new { luas = luas, luasTnmn = luasTnmn, luasBerhasil = luasBerhasil }); //Commented by Shazana 13/6/2023
-            return Json(new { luas = luas, luasTnmn = luasTnmn, luasBerhasil = luasBerhasil, fld_NamaPktUtama = fld_NamaPktUtama }); //Added by Shazana 13/6/2023
+            return Json(new { luas = luas, luasTnmn = luasTnmn, luasBerhasil = luasBerhasil, fld_NamaPktUtama = fld_NamaPktUtama}); //Added by Shazana 13/6/2023
         }
 
-        //end
+        public JsonResult GetLotInfo(string wbscode)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            //MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            List<SelectListItem> JnsLotList = new List<SelectListItem>();
+
+            char JnsLot = wbscode[0];
+
+            if (JnsLot == 'F')
+            {
+                JnsLotList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnsLot" && x.fldOptConfValue == "F" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
+
+            }
+            else if (JnsLot == 'P')
+            {
+                JnsLotList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnsLot" && x.fldOptConfValue == "P" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
+
+            }
+            else
+            {
+                return Json(new { success = false, msg = "Invalid Lot", status = "danger", checkingdata = "1" });
+            }
+
+            return Json(JnsLotList);
+        }
+
+        public JsonResult GetTnmnInfo(string wbscode)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+
+            List<SelectListItem> JnsTnmnList = new List<SelectListItem>();
+
+            char JnsTnmn = wbscode[1];
+
+            if (JnsTnmn == 'S')
+            {
+                JnsTnmnList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnsTanaman" && x.fldOptConfValue == "P" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
+
+            }
+            else if (JnsTnmn == 'G')
+            {
+                JnsTnmnList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnsTanaman" && x.fldOptConfValue == "R" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
+
+            }
+            else
+            {
+                JnsTnmnList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnsTanaman" && x.fldOptConfValue == "O" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
+            }
+
+            return Json(JnsTnmnList);
+        }
+
+        public JsonResult GetStaTnmnInfo(string wbscode)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+
+            List<SelectListItem> StatusTnmnList = new List<SelectListItem>();
+
+            string StatusTnmn = wbscode.Substring(8,2);
+
+            if (StatusTnmn == "PE")
+            {
+                StatusTnmnList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusTanaman" && x.fldOptConfFlag2 == "SH" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
+
+            }
+            else if (StatusTnmn == "MM")
+            {
+                StatusTnmnList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusTanaman" && x.fldOptConfFlag2 == "PH" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
+
+            }
+            else
+            {
+                StatusTnmnList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusTanaman" && x.fldOptConfFlag2 == "BH" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
+            }
+
+            return Json(StatusTnmnList);
+        }
 
     }
 }

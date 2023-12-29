@@ -334,7 +334,22 @@ namespace MVC_SYSTEM.Controllers
                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
                                x.fld_LadangID == LadangID).ToList();        //modified by kamalia 24/11/21
 
-          // add by kamalia 24/11/ 21 
+            //Added by Shazana 13/12/2023
+            //***totalewallettng
+            var amountEwalletTnG = vmModel.vw_PaySheetPekerja
+                   .Where(x => x.fld_Month == month && x.fld_Year == year &&
+                               x.fld_NegaraID == NegaraID &&
+                               x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                               x.fld_LadangID == LadangID && x.fld_PaymentMode == "7").ToList();
+
+            decimal TotalEwalletTnG = 0;
+            if (amountEwalletTnG.Count() > 0)
+            {
+                TotalEwalletTnG = amountEwalletTnG.Sum(s => s.fld_GajiBersih.Value);
+            }
+
+
+            // add by kamalia 24/11/ 21 
             decimal TotalKwsp = 0;
             if (amountLain.Count() > 0)
             {
@@ -377,6 +392,7 @@ namespace MVC_SYSTEM.Controllers
             tbl_SokPermhnWang.fld_JumlahSocso = TotalSocso; //added by kamalia 24/12/21
             tbl_SokPermhnWang.fld_JumlahSbkp = TotalSbkp;//added by kamalia 24/12/21
             tbl_SokPermhnWang.fld_JumlahSip = Totalsip;//added by kamalia 24/12/21
+            tbl_SokPermhnWang.fld_JumlahEwalletTnG = TotalEwalletTnG; //Added by Shazana 13/12/2023
             // tbl_SokPermhnWang.fld_JumlahLain = TotalLain;
             tbl_SokPermhnWang.fld_Year = year;
             tbl_SokPermhnWang.fld_Month = month;
@@ -543,7 +559,8 @@ namespace MVC_SYSTEM.Controllers
                         tbl_SokPermhnWang.fld_JumlahSocso = PermohonanWang.fld_JumlahSocso;//added by kamalia 24/12/21
                         tbl_SokPermhnWang.fld_JumlahSip = PermohonanWang.fld_JumlahSip;//added by kamalia 24/12/21
                         tbl_SokPermhnWang.fld_JumlahSbkp = PermohonanWang.fld_JumlahSbkp;//added by kamalia 24/12/21
-                          // tbl_SokPermhnWang.fld_JumlahLain = PermohonanWang.fld_JumlahLain;//comment by kamalia 24/12/21
+                        tbl_SokPermhnWang.fld_JumlahEwalletTnG = PermohonanWang.fld_JumlahEwalletTnG;//Added by Shazana 13/12/2023
+                        // tbl_SokPermhnWang.fld_JumlahLain = PermohonanWang.fld_JumlahLain;//comment by kamalia 24/12/21
                         tbl_SokPermhnWang.fld_StsTtpUrsNiaga = true;
                         tbl_SokPermhnWang.fld_NegaraID = NegaraID;
                         tbl_SokPermhnWang.fld_SyarikatID = SyarikatID;
@@ -586,6 +603,7 @@ namespace MVC_SYSTEM.Controllers
                         checkexsting.fld_JumlahCash = PermohonanWang.fld_JumlahCash;//added by faeza 30.09.2021
                         checkexsting.fld_JumlahCheque = PermohonanWang.fld_JumlahCheque;//added by faeza 30.09.2021
                         checkexsting.fld_JumlahEwallet = PermohonanWang.fld_JumlahEwallet;//added by faeza 30.09.2021
+                        checkexsting.fld_JumlahEwalletTnG = PermohonanWang.fld_JumlahEwalletTnG;//Added by Shazana 13/12/2023
                         checkexsting.fld_JumlahCdmas = PermohonanWang.fld_JumlahCdmas;//added by faeza 30.09.2021
                         checkexsting.fld_JumlahM2U = PermohonanWang.fld_JumlahM2U;//added by faeza 03.07.2023
                         checkexsting.fld_JumlahM2E = PermohonanWang.fld_JumlahM2E;//added by faeza 03.07.2023

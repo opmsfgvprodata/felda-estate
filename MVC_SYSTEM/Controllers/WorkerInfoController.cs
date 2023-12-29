@@ -29,6 +29,7 @@ using System.Transactions;
 using System.Data.Entity.Validation;
 using tbl_Produktiviti = MVC_SYSTEM.Models.tbl_Produktiviti;
 using System.Web.UI;
+using System.Drawing;
 
 
 namespace MVC_SYSTEM.Controllers
@@ -1091,7 +1092,10 @@ namespace MVC_SYSTEM.Controllers
                 NegaraID.Value);
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
             MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
-
+            //fatin added - 10/11/2023
+            int month = timezone.gettimezone().Month;
+            int year = timezone.gettimezone().Year;
+            int rangeyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
             var GroupList = new SelectList(
                 dbview.tbl_KumpulanKerja
                     .Where(x => x.fld_deleted == false && x.fld_NegaraID == NegaraID &&
@@ -1106,18 +1110,38 @@ namespace MVC_SYSTEM.Controllers
                 "Value", "Text").ToList();
             GroupList.Insert(0, (new SelectListItem {Text = GlobalResEstate.lblAll, Value = "0"}));
 
+            //fatin added - 10/11/2023
+            var yearlist = new List<SelectListItem>();
+            for (var i = rangeyear; i <= year; i++)
+            {
+                if (i == timezone.gettimezone().Year)
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                }
+            }
+
+            var MonthList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc", month);
+
             ViewBag.GroupList = GroupList;
 
             ViewBag.WorkerInfo = "class = active";
+            //fatin added - 10/11/2023
+            ViewBag.MonthList = MonthList;
+            ViewBag.YearList = yearlist;
+
 
             ViewBag.filter = filter;
 
             return View();
         }
 
-        public ViewResult _WorkerIncentiveSearch(string workerid, string filter = "", int page = 1,
+        public ViewResult _WorkerIncentiveSearch(string workerid, string filter = "", int YearList = 0, int MonthList = 0, int page = 1,
             string sort = "fld_Nama1",
-            string sortdir = "ASC")
+            string sortdir = "ASC") //fatin modified - 10/11/2023
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = getidentity.ID(User.Identity.Name);
@@ -1142,9 +1166,19 @@ namespace MVC_SYSTEM.Controllers
 
                 foreach (var i in workerData)
                 {
+                    //fatin comment - 10/11/2023
+                    //var insentiveData = dbview.vw_MaklumatInsentif
+                    //    .Where(a => a.fld_Nopkj == i.fld_Nopkj && a.fld_Month == DateTime.Now.Month &&
+                    //                a.fld_Year == DateTime.Now.Year && a.fld_NegaraID == NegaraID &&
+                    //                a.fld_SyarikatID == SyarikatID && a.fld_WilayahID == WilayahID &&
+                    //                a.fld_LadangID == LadangID && a.fld_Deleted == false)
+                    //    .OrderBy(x => x.fld_KodInsentif)
+                    //    .ToList();
+
+                    //fatin modified - 10/11/2023
                     var insentiveData = dbview.vw_MaklumatInsentif
-                        .Where(a => a.fld_Nopkj == i.fld_Nopkj && a.fld_Month == DateTime.Now.Month &&
-                                    a.fld_Year == DateTime.Now.Year && a.fld_NegaraID == NegaraID &&
+                        .Where(a => a.fld_Nopkj == i.fld_Nopkj && a.fld_Month == MonthList &&
+                                    a.fld_Year == YearList && a.fld_NegaraID == NegaraID &&
                                     a.fld_SyarikatID == SyarikatID && a.fld_WilayahID == WilayahID &&
                                     a.fld_LadangID == LadangID && a.fld_Deleted == false)
                         .OrderBy(x => x.fld_KodInsentif)
@@ -1162,9 +1196,19 @@ namespace MVC_SYSTEM.Controllers
 
                 foreach (var i in workerData)
                 {
+                    //fatin comment -10 / 11 / 2023
+                    //var insentiveData = dbview.vw_MaklumatInsentif
+                    //    .Where(a => a.fld_Nopkj == i.fld_Nopkj && a.fld_Month == DateTime.Now.Month &&
+                    //                a.fld_Year == DateTime.Now.Year && a.fld_NegaraID == NegaraID &&
+                    //                a.fld_SyarikatID == SyarikatID && a.fld_WilayahID == WilayahID &&
+                    //                a.fld_LadangID == LadangID && a.fld_Deleted == false)
+                    //    .OrderBy(x => x.fld_KodInsentif)
+                    //    .ToList();
+
+                    //fatin modified - 10/11/2023
                     var insentiveData = dbview.vw_MaklumatInsentif
-                        .Where(a => a.fld_Nopkj == i.fld_Nopkj && a.fld_Month == DateTime.Now.Month &&
-                                    a.fld_Year == DateTime.Now.Year && a.fld_NegaraID == NegaraID &&
+                        .Where(a => a.fld_Nopkj == i.fld_Nopkj && a.fld_Month == MonthList &&
+                                    a.fld_Year == YearList && a.fld_NegaraID == NegaraID &&
                                     a.fld_SyarikatID == SyarikatID && a.fld_WilayahID == WilayahID &&
                                     a.fld_LadangID == LadangID && a.fld_Deleted == false)
                         .OrderBy(x => x.fld_KodInsentif)
@@ -1184,7 +1228,10 @@ namespace MVC_SYSTEM.Controllers
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value,
                 NegaraID.Value);
-
+            //fatin added - 10/11/2023
+            int month = timezone.gettimezone().Month;
+            int year = timezone.gettimezone().Year;
+            int rangeyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
             List<SelectListItem> incentiveCategoryList = new List<SelectListItem>();
 
             incentiveCategoryList = new SelectList(
@@ -1202,7 +1249,27 @@ namespace MVC_SYSTEM.Controllers
             List<SelectListItem> incentiveList = new List<SelectListItem>();
             incentiveList.Insert(0, new SelectListItem {Text = GlobalResEstate.lblChoose, Value = ""});
 
+            //fatin added - 10/11/2023
+            var yearlist = new List<SelectListItem>();
+            for (var i = rangeyear; i <= year; i++)
+            {
+                if (i == timezone.gettimezone().Year)
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                }
+            }
+
+            var MonthList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID), "fldOptConfValue", "fldOptConfDesc", month);
+
+
             ViewBag.IncentiveList = incentiveList;
+            //fatin added - 10/11/2023
+            ViewBag.MonthList = MonthList;
+            ViewBag.YearList = yearlist;
 
             tbl_InsentifViewModelCreate insentif = new tbl_InsentifViewModelCreate();
 
@@ -1211,7 +1278,7 @@ namespace MVC_SYSTEM.Controllers
             return PartialView(insentif);
         }
 
-        public JsonResult checkIncentiveRecord(string incentiveCategoryType, string nopkj)
+        public JsonResult checkIncentiveRecord(string incentiveCategoryType, string nopkj, int MonthList, int YearList) //fatin modified - 10/11/2023
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = GetIdentity.ID(User.Identity.Name);
@@ -1285,13 +1352,21 @@ namespace MVC_SYSTEM.Controllers
 
                 var trueIncentiveEligibility = incentiveDataList.Intersect(incentiveEligibilityData);
 
+                //var workerIncentiveDataList = dbview.vw_MaklumatInsentif
+                //    .Where(x => x.fld_Nopkj == nopkj && x.fld_Month == DateTime.Now.Month &&
+                //                x.fld_Year == DateTime.Now.Year && x.fld_NegaraID == NegaraID &&
+                //                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                //                x.fld_LadangID == LadangID && x.fld_Deleted == false)
+                //    .Select(s => s.fld_KodInsentif)
+                //    .ToList();
+                //fatin modified - 10/11/2023
                 var workerIncentiveDataList = dbview.vw_MaklumatInsentif
-                    .Where(x => x.fld_Nopkj == nopkj && x.fld_Month == DateTime.Now.Month &&
-                                x.fld_Year == DateTime.Now.Year && x.fld_NegaraID == NegaraID &&
-                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
-                                x.fld_LadangID == LadangID && x.fld_Deleted == false)
-                    .Select(s => s.fld_KodInsentif)
-                    .ToList();
+                  .Where(x => x.fld_Nopkj == nopkj && x.fld_Month == MonthList &&
+                              x.fld_Year == YearList && x.fld_NegaraID == NegaraID &&
+                              x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                              x.fld_LadangID == LadangID && x.fld_Deleted == false)
+                  .Select(s => s.fld_KodInsentif)
+                  .ToList();
 
                 var trueIncentiveEligibilityMinusExistingIncentive =
                     trueIncentiveEligibility.Except(workerIncentiveDataList);
@@ -1437,7 +1512,7 @@ namespace MVC_SYSTEM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult _WorkerIncentiveAdd(Models.tbl_InsentifViewModelCreate insentifViewModelCreate)
+        public ActionResult _WorkerIncentiveAdd(Models.tbl_InsentifViewModelCreate insentifViewModelCreate, int MonthList, int YearList) //fatin modified - 10/11/2023
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = getidentity.ID(User.Identity.Name);
@@ -1459,15 +1534,18 @@ namespace MVC_SYSTEM.Controllers
                     {
                         domain = domain + appname;
                     }
-                    var ExistingIncentive = dbr.tbl_Insentif.Where(x => x.fld_Nopkj == insentifViewModelCreate.fld_Nopkj && x.fld_KodInsentif == insentifViewModelCreate.fld_KodInsentif && x.fld_Month == DateTime.Now.Month && x.fld_Year == DateTime.Now.Year && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Count();
+                    //fatin modified - 10/11/2023
+                    //var ExistingIncentive = dbr.tbl_Insentif.Where(x => x.fld_Nopkj == insentifViewModelCreate.fld_Nopkj && x.fld_KodInsentif == insentifViewModelCreate.fld_KodInsentif && x.fld_Month == DateTime.Now.Month && x.fld_Year == DateTime.Now.Year && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Count();
+                    var ExistingIncentive = dbr.tbl_Insentif.Where(x => x.fld_Nopkj == insentifViewModelCreate.fld_Nopkj && x.fld_KodInsentif == insentifViewModelCreate.fld_KodInsentif && x.fld_Month == MonthList && x.fld_Year == YearList && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Count();
+
                     if (ExistingIncentive == 0)
                     {
                         tbl_Insentif insentif = new tbl_Insentif();
 
                         insentif.fld_Nopkj = insentifViewModelCreate.fld_Nopkj;
                         insentif.fld_KodInsentif = insentifViewModelCreate.fld_KodInsentif;
-                        insentif.fld_Month = DateTime.Now.Month;
-                        insentif.fld_Year = DateTime.Now.Year;
+                        insentif.fld_Month = MonthList; //fatin modified - 10/11/2023
+                        insentif.fld_Year = YearList; //fatin modified - 10/11/2023
                         insentif.fld_NegaraID = NegaraID;
                         insentif.fld_SyarikatID = SyarikatID;
                         insentif.fld_WilayahID = WilayahID;

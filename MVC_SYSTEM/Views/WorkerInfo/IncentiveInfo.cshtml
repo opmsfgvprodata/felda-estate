@@ -23,9 +23,18 @@
 
             {
                 <div class="row">
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                         @Html.Label(GlobalResEstate.lblSearch)
                         @Html.TextBox("filter", null, htmlAttributes: new { @class = "form-control", placeholder = GlobalResEstate.lblSearchPkj, @id = "txtfilter", @value = "" })
+                    </div>
+                    @*fatin added - 10/11/2023*@
+                    <div class="col-sm-1" id="divlist">
+                        @Html.Label(GlobalResEstate.lblMonth)
+                        @Html.DropDownList("MonthList", null, htmlAttributes: new { @class = "form-control" })
+                    </div>
+                    <div class="col-sm-1" id="divlist">
+                        @Html.Label(GlobalResEstate.lblYear)
+                        @Html.DropDownList("YearList", null, htmlAttributes: new { @class = "form-control" })
                     </div>
                     <div class="col-sm-6 btn-group" style="padding-top:24px;">
                         <input class="btn btn-primary col-sm-3" type="submit" id="btnCari" name="Lihat" value=@GlobalResEstate.btnView />

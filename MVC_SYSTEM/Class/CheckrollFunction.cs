@@ -422,6 +422,7 @@ namespace MVC_SYSTEM.Class
                 var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID).FirstOrDefault();
                 PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal && x.fld_Deleted == false).FirstOrDefault();
                 sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
+                PktData.fld_IOcode = transferPktDetail.fld_SAPCode;
             }
 
             //get GL Code
@@ -475,6 +476,7 @@ namespace MVC_SYSTEM.Class
                 var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID).FirstOrDefault();
                 PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal).FirstOrDefault();
                 sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
+                PktData.fld_IOcode = transferPktDetail.fld_SAPCode;
             }
 
 

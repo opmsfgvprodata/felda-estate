@@ -385,7 +385,7 @@ namespace MVC_SYSTEM.Class
             return Result;
         }
 
-        public void SaveDataKerjaSAP(MVC_SYSTEM_Models dbr, MVC_SYSTEM_Models dbrpkt, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, string GLCode, bool TransferPkt, string transferPktCode)
+        public void SaveDataKerjaSAP(MVC_SYSTEM_Models dbr, MVC_SYSTEM_Models dbrpkt, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, string GLCode, bool TransferPkt, string transferPktCode, int PilihanPktID)
         {
             //get PaysheetID
             var sapType = "";
@@ -419,7 +419,7 @@ namespace MVC_SYSTEM.Class
             }
             else
             {
-                var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == transferPktCode && x.fld_LadangID == LadangID).FirstOrDefault();
+                var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID).FirstOrDefault();
                 PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal && x.fld_Deleted == false).FirstOrDefault();
                 sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
             }
@@ -440,7 +440,7 @@ namespace MVC_SYSTEM.Class
 
         }
 
-        public void SaveDataKerjaSAPFPM(MVC_SYSTEM_Models dbr, MVC_SYSTEM_Models dbrpkt, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, List<CustMod_Work> HadirData, bool TransferPkt, string transferPktCode)
+        public void SaveDataKerjaSAPFPM(MVC_SYSTEM_Models dbr, MVC_SYSTEM_Models dbrpkt, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, List<CustMod_Work> HadirData, bool TransferPkt, string transferPktCode, int PilihanPktID)
         {
             //get PaysheetID
             var sapType = "";
@@ -472,7 +472,7 @@ namespace MVC_SYSTEM.Class
             }
             else
             {
-                var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == transferPktCode && x.fld_LadangID == LadangID).FirstOrDefault();
+                var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID).FirstOrDefault();
                 PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal).FirstOrDefault();
                 sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
             }

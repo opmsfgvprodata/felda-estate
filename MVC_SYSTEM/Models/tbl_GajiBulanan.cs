@@ -97,5 +97,8 @@ namespace MVC_SYSTEM.Models
         public int? fld_CreatedBy { get; set; }
 
         public DateTime? fld_DTCreated { get; set; }
+
+        [Column(TypeName = "numeric")]
+        public decimal? fld_BakiCutiTahunan { get; set; }
     }
 }

@@ -138,5 +138,8 @@ namespace MVC_SYSTEM.ViewingModels
         //[StringLength(5)]
         //public string fld_Kdrkyt { get; set; }
 
+        [Column(TypeName = "numeric")]
+        public decimal? fld_BakiCutiTahunan { get; set; }
+
     }
 }

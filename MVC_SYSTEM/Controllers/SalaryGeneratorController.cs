@@ -56,7 +56,8 @@ namespace MVC_SYSTEM.Controllers
             int? getuserid = getidentity.ID(User.Identity.Name);
             string host, catalog, user, pass = "";
 
-            DateTime Minus1month = timezone.gettimezone().AddMonths(-1);
+            //DateTime Minus1month = timezone.gettimezone().AddMonths(-1);
+            DateTime Minus1month = timezone.gettimezone(); //fatin modified - 15/12/2023
             int year = Minus1month.Year;
             int month = Minus1month.Month;
             int drpyear = 0;

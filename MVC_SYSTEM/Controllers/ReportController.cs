@@ -3346,7 +3346,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.MonthList = new SelectList(
                 db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false &&
                                                    x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID),
-                "fldOptConfValue", "fldOptConfDesc");
+                "fldOptConfValue", "fldOptConfDesc", month); //fatin modified - 15/12/2023
 
             ViewBag.YearList = yearlist;
             ViewBag.UserID = getuserid;
@@ -6421,7 +6421,8 @@ namespace MVC_SYSTEM.Controllers
         public ActionResult PaySlipRpt()
         {
             ViewBag.Report = "class = active";
-            int month = timezone.gettimezone().AddMonths(-1).Month;
+            //int month = timezone.gettimezone().AddMonths(-1).Month;
+            int month = timezone.gettimezone().Month; //fatin modified - 15/12/2023
             int year = timezone.gettimezone().Year;
             int rangeyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
 

@@ -47,7 +47,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-2">@GlobalResEstate.lblPlantType</label>
                         <div class="col-md-9">
-                            @Html.DropDownList("fld_JnsTnmn", null, htmlAttributes: new { @class = "form-control required" })
+                            @Html.DropDownList("fld_JnsTnmn", null, htmlAttributes: new { @class = "form-control required", @readonly = "readonly"})
                             @Html.ValidationMessageFor(model => model.fld_JnsTnmn, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-2">@GlobalResEstate.lblLotType</label>
                         <div class="col-md-9">
-                            @Html.DropDownList("fld_JnsLot", null, htmlAttributes: new { @class = "form-control required" })
+                            @Html.DropDownList("fld_JnsLot", null, htmlAttributes: new { @class = "form-control required", @readonly = "readonly" })
                             @Html.ValidationMessageFor(model => model.fld_JnsLot, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -777,6 +777,161 @@
 
         });
         //end
+
+        //fatin added - 20/12/2023
+
+        var statusTnmnValue;
+        var jenisTnmnValue;
+        var jenisLotValue;
+
+        function handlejenisTnmnChange() {;
+            console.log("status: " + jenisTnmnValue);
+
+            var Stspkt = {};
+            var disableoption = "";
+            Stspkt.url = "@Url.Action("GetWBSPktUtama", "BasicInfo")";
+            Stspkt.type = "POST";
+            Stspkt.data = JSON.stringify({ JnsTnmn: jenisTnmnValue, StatusTnmn: $("#fld_StatusTnmn").val(), LotPeneroka: $("#fld_JnsLot").val()  });
+            Stspkt.datatype = "json";
+            Stspkt.contentType = "application/json";
+            Stspkt.success = function (newpkt) {
+                $("#fld_PktUtama").empty();
+                $("#fld_PktUtama").val(newpkt);
+            };
+
+            Stspkt.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+            $.ajax(Stspkt);
+        }
+
+        function handleStatusTnmnChange() {
+            console.log("status2 " + statusTnmnValue);
+
+            var Stspkt = {};
+            var disableoption = "";
+            Stspkt.url = "@Url.Action("GetWBSPktUtama", "BasicInfo")";
+            Stspkt.type = "POST";
+            Stspkt.data = JSON.stringify({ JnsTnmn: $("#fld_JnsTnmn").val(), StatusTnmn: statusTnmnValue, LotPeneroka: $("#fld_JnsLot").val()  });
+            Stspkt.datatype = "json";
+            Stspkt.contentType = "application/json";
+            Stspkt.success = function (newpkt) {
+                $("#fld_PktUtama").empty();
+                $("#fld_PktUtama").val(newpkt);
+            };
+
+            Stspkt.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+            $.ajax(Stspkt);
+        }
+
+
+        function handleJnsLotChange() {
+            console.log("status3: " + jenisLotValue);
+
+            var Stspkt = {};
+            var disableoption = "";
+            Stspkt.url = "@Url.Action("GetWBSPktUtama", "BasicInfo")";
+            Stspkt.type = "POST";
+            Stspkt.data = JSON.stringify({ JnsTnmn: $("#fld_JnsTnmn").val(), StatusTnmn: $("#fld_StatusTnmn").val(), LotPeneroka: jenisLotValue });
+            Stspkt.datatype = "json";
+            Stspkt.contentType = "application/json";
+            Stspkt.success = function (newpkt) {
+                $("#fld_PktUtama").empty();
+                $("#fld_PktUtama").val(newpkt);
+            };
+
+            Stspkt.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+            $.ajax(Stspkt);
+        }
+
+        $("#fld_IOcode").change(function () {
+            var GetJnsLot = {};
+            var disableoption = "";
+            GetJnsLot.url = "@Url.Action("GetLotInfo", "BasicInfo")";
+            GetJnsLot.type = "POST";
+            GetJnsLot.data = JSON.stringify({ wbscode: $("#fld_IOcode").val()  });
+            GetJnsLot.datatype = "json";
+            GetJnsLot.contentType = "application/json";
+            GetJnsLot.success = function (JnsLotList) {
+                $("#fld_JnsLot").empty();
+
+                for (var i = 0; i < JnsLotList.length; i++) {
+                    $("#fld_JnsLot").append("<option value=" + JnsLotList[i].Value + " " + disableoption + ">" + JnsLotList[i].Text + "</option>");
+                    //console.log("lot" + " " + $("#fld_JnsLot").val());
+                }
+
+                jenisLotValue = $("#fld_JnsLot").val();
+
+                handleJnsLotChange();
+            };
+            GetJnsLot.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+            $.ajax(GetJnsLot);
+
+        });
+
+         $("#fld_IOcode").change(function () {
+            var GetJnsTnmn = {};
+            var disableoption = "";
+            GetJnsTnmn.url = "@Url.Action("GetTnmnInfo", "BasicInfo")";
+            GetJnsTnmn.type = "POST";
+            GetJnsTnmn.data = JSON.stringify({ wbscode: $("#fld_IOcode").val()  });
+            GetJnsTnmn.datatype = "json";
+            GetJnsTnmn.contentType = "application/json";
+            GetJnsTnmn.success = function (JnsTnmnList) {
+                 $("#fld_JnsTnmn").empty();
+
+                for (var i = 0; i < JnsTnmnList.length; i++) {
+                    $("#fld_JnsTnmn").append("<option value=" + JnsTnmnList[i].Value + " " + disableoption + ">" + JnsTnmnList[i].Text + "</option>");
+
+                }
+
+                jenisTnmnValue = $("#fld_JnsTnmn").val();
+
+                handlejenisTnmnChange();
+            };
+             GetJnsTnmn.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+             $.ajax(GetJnsTnmn);
+
+         });
+
+
+          $("#fld_IOcode").change(function () {
+            var GetStaTnmn = {};
+            var disableoption = "";
+            GetStaTnmn.url = "@Url.Action("GetStaTnmnInfo", "BasicInfo")";
+            GetStaTnmn.type = "POST";
+            GetStaTnmn.data = JSON.stringify({ wbscode: $("#fld_IOcode").val()  });
+            GetStaTnmn.datatype = "json";
+            GetStaTnmn.contentType = "application/json";
+            GetStaTnmn.success = function (StatusTnmnList) {
+                $("#fld_StatusTnmn").empty();
+
+                  for (var i = 0; i < StatusTnmnList.length; i++) {
+                      $("#fld_StatusTnmn").append("<option value=" + StatusTnmnList[i].Value + " " + disableoption + ">" + StatusTnmnList[i].Text + "</option>");
+                }
+                statusTnmnValue = $("#fld_StatusTnmn").val();
+
+                handleStatusTnmnChange();
+
+            };
+              GetStaTnmn.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+              $.ajax(GetStaTnmn);
+
+          });
+
+        $("#fld_IOcode").change(function () {
+
+            if (statusTnmnValue) {
+                handleStatusTnmnChange();
+            }
+
+            if (jenisTnmnValue) {
+                handlejenisTnmnChange();
+            }
+
+            if (jenisLotValue) {
+                handleJnsLotChange();
+            }
+
+        });
 
     });
 </script>

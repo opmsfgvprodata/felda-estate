@@ -3363,6 +3363,7 @@
     <Content Include="Views\TableInfo\ProduktivitiGetah.cshtml" />
     <Content Include="Views\TableInfo\ProduktivitiGetahDetail.cshtml" />
     <Content Include="Views\BizTransac\_EditSAPDataDetail.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsPktCreate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Asset\Upload\120\" />

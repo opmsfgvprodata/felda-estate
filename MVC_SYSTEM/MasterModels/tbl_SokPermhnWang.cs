@@ -155,5 +155,9 @@ namespace MVC_SYSTEM.MasterModels
         [Column(TypeName = "numeric")]
         public decimal? fld_JumlahM2E { get; set; }
 
+        //Added by Shazana 13/12/2023
+        [Column(TypeName = "numeric")]
+        public decimal? fld_JumlahEwalletTnG { get; set; }
+        
     }
 }

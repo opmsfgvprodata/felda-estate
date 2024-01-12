@@ -440,8 +440,8 @@ namespace MVC_SYSTEM.Controllers
 
             var GetWorkerList = GetKerjaInfoDetailsList.Select(s => s.fld_Nopkj.Trim()).Distinct();
 
-            //fatin added - 20/06/2023
-            var companycode = db.tbl_Ladang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).Select(s => s.fld_CostCentre).FirstOrDefault();
+            //fatin modified - 18/09/2023
+            var companycode = db.tbl_Ladang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WlyhID == WilayahID && x.fld_ID == LadangID && x.fld_Deleted == false).Select(s => s.fld_CostCentre).FirstOrDefault();
             //end
             List<SelectListItem> PilihanAktvt = new List<SelectListItem>();
             PilihanAktvt = new SelectList(db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_compcode == companycode).OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt + " - " + s.fld_Desc }), "Value", "Text").ToList(); // fatin modified - 20/06/2023
@@ -3346,7 +3346,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.MonthList = new SelectList(
                 db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false &&
                                                    x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID),
-                "fldOptConfValue", "fldOptConfDesc");
+                "fldOptConfValue", "fldOptConfDesc", month); //fatin modified - 15/12/2023
 
             ViewBag.YearList = yearlist;
             ViewBag.UserID = getuserid;
@@ -6421,7 +6421,8 @@ namespace MVC_SYSTEM.Controllers
         public ActionResult PaySlipRpt()
         {
             ViewBag.Report = "class = active";
-            int month = timezone.gettimezone().AddMonths(-1).Month;
+            //int month = timezone.gettimezone().AddMonths(-1).Month;
+            int month = timezone.gettimezone().Month; //fatin modified - 15/12/2023
             int year = timezone.gettimezone().Year;
             int rangeyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
 
@@ -6734,14 +6735,19 @@ namespace MVC_SYSTEM.Controllers
             //get avg slry
             DateTime cdate = new DateTime(year, month, 15);
             DateTime ldate = cdate.AddMonths(-1);
-            var crmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == cdate.Month && x.fld_Year == cdate.Year && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
-            crmnthavgslry = crmnthavgslry == null ? 0m : crmnthavgslry;
+            var cravgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == cdate.Month && x.fld_Year == cdate.Year && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => new { s.fld_PurataGaji, s.fld_PurataGaji12Bln }).FirstOrDefault();
+            var crmnthavgslry = cravgslry == null ? 0m : cravgslry.fld_PurataGaji;
             id += 1;
             FooterPayslipDetails.Add(new FooterPayslipDetails { id = id, flag = "crmnthavgslry", value = crmnthavgslry.Value });
+            
             var lsmnthavgslry = dbr.tbl_GajiBulanan.Where(x => x.fld_Month == ldate.Month && x.fld_Year == ldate.Year && x.fld_Nopkj == nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_PurataGaji).FirstOrDefault();
-            lsmnthavgslry = lsmnthavgslry == null ? 0m : lsmnthavgslry;
+            lsmnthavgslry= lsmnthavgslry == null ? 0m : lsmnthavgslry;
             id += 1;
             FooterPayslipDetails.Add(new FooterPayslipDetails { id = id, flag = "lsmnthavgslry", value = lsmnthavgslry.Value });
+
+            var yearavgslry = cravgslry == null || cravgslry.fld_PurataGaji12Bln > 200 ? 0m : cravgslry.fld_PurataGaji12Bln;
+            id += 1;
+            FooterPayslipDetails.Add(new FooterPayslipDetails { id = id, flag = "yearavgslry", value = yearavgslry.Value });
             //shah
             return View(FooterPayslipDetails);
         }
@@ -8484,6 +8490,7 @@ namespace MVC_SYSTEM.Controllers
             decimal? TotalInsentifEfected = 0;
             decimal? TotalSalaryForKWSP = 0;
             decimal? TotalSalaryForPerkeso = 0;
+            decimal? BakiCutiTahunan = 0;
             decimal? KWSPEmplyee = 0;
             decimal? KWSPEmplyer = 0;
             decimal? SocsoEmplyee = 0;
@@ -8539,8 +8546,13 @@ namespace MVC_SYSTEM.Controllers
                 TotalInsentifEfected = tbl_InsentifList.Where(x => x.fld_Nopkj == GajiBulananDetail.fld_Nopkj).Sum(s => s.fld_NilaiInsentif);
                 TotalInsentifEfected = TotalInsentifEfected == null ? 0 : TotalInsentifEfected;
 
-                TotalSalaryForKWSP = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_BonusHarian + TotalInsentifEfected + GajiBulananDetail.fld_AIPS;
-                TotalSalaryForPerkeso = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_OT + TotalInsentifEfected + GajiBulananDetail.fld_AIPS;
+                //added by faeza 04.01.2024
+                BakiCutiTahunan = GajiBulananDetail.fld_BakiCutiTahunan == null ? 0 : GajiBulananDetail.fld_BakiCutiTahunan;
+                TotalSalaryForKWSP = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_BonusHarian + TotalInsentifEfected + GajiBulananDetail.fld_AIPS + GajiBulananDetail.fld_BakiCutiTahunan;
+                TotalSalaryForPerkeso = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_OT + TotalInsentifEfected + GajiBulananDetail.fld_AIPS + GajiBulananDetail.fld_BakiCutiTahunan;
+                //commented by faeza 04.01.2024
+                //TotalSalaryForKWSP = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_BonusHarian + TotalInsentifEfected + GajiBulananDetail.fld_AIPS;
+                //TotalSalaryForPerkeso = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_OT + TotalInsentifEfected + GajiBulananDetail.fld_AIPS;
 
                 KWSPEmplyee = GajiBulananDetail.fld_KWSPPkj;
                 KWSPEmplyer = GajiBulananDetail.fld_KWSPMjk;

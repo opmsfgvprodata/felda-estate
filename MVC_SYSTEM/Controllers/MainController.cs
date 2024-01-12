@@ -49,8 +49,15 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.Main = "class = active";
             ViewBag.Dropdown = "dropdown";
 
-            int currentMonth = DateTime.Now.Month - 1;
-            int currentYear = DateTime.Now.Year;
+            //original code
+            //int currentMonth = DateTime.Now.Month - 1;
+            //int currentYear = DateTime.Now.Year;
+
+            //fatin modified - 03/01/2024
+            DateTime currentDate = DateTime.Now;
+            DateTime previousMonthDate = currentDate.AddMonths(-1);
+            int currentMonth = previousMonthDate.Month;
+            int currentYear = (currentDate.Month == 1) ? currentDate.Year - 1 : currentDate.Year;
 
             ViewBag.month = currentMonth;
             ViewBag.year = currentYear;

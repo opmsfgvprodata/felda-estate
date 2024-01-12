@@ -180,7 +180,8 @@
 
                     decimal? totalIncome = 0;
                     decimal? totalDeduction = 0;
-                    totalIncome = item.PaySheetPekerja.fld_LainInsentif + item.PaySheetPekerja.fld_OT + item.PaySheetPekerja.fld_ByrCuti + item.PaySheetPekerja.fld_BonusHarian + item.PaySheetPekerja.fld_AIPS;
+                    //modified by faeza 04.01.2024
+                    totalIncome = item.PaySheetPekerja.fld_LainInsentif + item.PaySheetPekerja.fld_OT + item.PaySheetPekerja.fld_ByrCuti + item.PaySheetPekerja.fld_BonusHarian + item.PaySheetPekerja.fld_AIPS + item.PaySheetPekerja.fld_BakiCutiTahunan;
                     totalDeduction = item.PaySheetPekerja.fld_LainPotongan + item.PaySheetPekerja.fld_KWSPPkj + item.PaySheetPekerja.fld_SocsoPkj + totalSIPPkj;
                     totalBayarKerja += item.PaySheetPekerja.fld_ByrKerja;
                     totalOtherIncome += totalIncome;

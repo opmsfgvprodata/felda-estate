@@ -5389,13 +5389,14 @@ namespace MVC_SYSTEM.Controllers
 
             int pageSize = int.Parse(GetConfig.GetData("paging"));
             var records = new PagedList<Models.tbl_PktHargaKesukaran>();
-            records.Content = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_PktUtama == Kodpkt && x.fld_LadangID == LadangID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID)
+            //Modified by Shazana 27/12/2023
+            records.Content = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_PktUtama == Kodpkt && x.fld_LadangID == LadangID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_Deleted==false)
                    .OrderBy(sort + " " + sortdir)
                    .Skip((page - 1) * pageSize)
                    .Take(pageSize)
                    .ToList();
-
-            records.TotalRecords = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_PktUtama == Kodpkt && x.fld_LadangID == LadangID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID).Count();
+            //Modified by Shazana 27/12/2023
+            records.TotalRecords = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_PktUtama == Kodpkt && x.fld_LadangID == LadangID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_Deleted == false).Count();
             records.CurrentPage = page;
             records.PageSize = pageSize;
             //Added by Shazana 22/7/2023
@@ -5413,12 +5414,23 @@ namespace MVC_SYSTEM.Controllers
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
             int flag = 0;
 
-            tbl_PktHargaKesukaran PktHargaKesukaran = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_PktUtama == fld_KodPkt && x.fld_KodHargaKesukaran == KodHargaKesukaran && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
-            dbr.tbl_PktHargaKesukaran.Remove(PktHargaKesukaran);
+            //Commented by Shazana 27/12/2023
+            //tbl_PktHargaKesukaran PktHargaKesukaran = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_PktUtama == fld_KodPkt && x.fld_KodHargaKesukaran == KodHargaKesukaran && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+            //dbr.tbl_PktHargaKesukaran.Remove(PktHargaKesukaran);
+            //dbr.SaveChanges();
+            //flag = 1;
+            //Added by Shazana 27/12/2023
+            var checkdeleted = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_PktUtama == fld_KodPkt && x.fld_KodHargaKesukaran == KodHargaKesukaran && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+            checkdeleted.fld_Deleted = true;
+            checkdeleted.fld_ModifiedBy = getuserid.ToString();
+            checkdeleted.fld_ModifiedDate = DateTime.Now;
+            dbr.Entry(checkdeleted).State = EntityState.Modified;
             dbr.SaveChanges();
+            dbr.Dispose();
             flag = 1;
-            //return Json(flag);
-            return RedirectToAction("LevelsInfo");
+
+           //return Json(flag);
+           return RedirectToAction("LevelsInfo");
         }
         //Modified by Shazana 21/9/2023
         public ActionResult SaveKesukaran(string fld_JenisHargaKesukaran, string fld_TahapHargaKesukaran, string fld_PktUtama)

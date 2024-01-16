@@ -3525,4 +3525,7 @@
   <data name="msgExistKadaran" xml:space="preserve">
     <value>The system does not allow this activity to be inserted because kadaran activity already exists</value>
   </data>
+  <data name="msgDifferentKong" xml:space="preserve">
+    <value>The system does not allow this activity to be inserted because different type of kong already exists</value>
+  </data>
 </root>

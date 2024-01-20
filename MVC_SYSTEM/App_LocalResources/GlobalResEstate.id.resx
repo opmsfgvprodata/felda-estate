@@ -2262,4 +2262,7 @@
   <data name="msgExistKadaran" xml:space="preserve">
     <value>Sistem tidak membenarkan aktiviti ini dimasukkan kerana aktiviti kadaran telah wujud</value>
   </data>
+  <data name="msgDifferentKong" xml:space="preserve">
+    <value>Sistem tidak membenarkan aktiviti ini dimasukkan kerana jenis kong adalah berbeza</value>
+  </data>
 </root>

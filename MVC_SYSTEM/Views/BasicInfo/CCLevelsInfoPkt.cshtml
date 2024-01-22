@@ -32,13 +32,13 @@ ajaxUpdateContainerId: "grid");
                                     grid.Column("fld_PktUtama", "Kod Peringkat", style: "kod"),
                                     grid.Column("fld_NamaPktUtama", "Nama Peringkat", style: "desc"),
                                     grid.Column("fld_LsPktUtama", "Luas", style: "luas"),
-                                  // fatin added 10/04/2023
-                                    grid.Column("Tahun Tanaman", format: (item) =>
-                                    {
-                                        var tahun = String.Format("{0:yyyy}", item.fld_CreateDate);
-                                        return @Html.Raw(tahun);
+                                    // fatin added 10/04/2023
+                                    //grid.Column("Tahun Tanaman", format: (item) =>
+                                    //{
+                                    //    var tahun = String.Format("{0:yyyy}", item.fld_CreateDate);
+                                    //    return @Html.Raw(tahun);
 
-                                    }, style: "luas"),
+                                    //}, style: "luas"),
                                     grid.Column(GlobalResEstate.hdrAction, format: (item) =>
                                     {
                                         var kerjaPktCount = getConfig.GetKerjaPktCount(item.fld_PktUtama, item.fld_NegaraID, item.fld_SyarikatID, item.fld_WilayahID, item.fld_LadangID);
@@ -68,21 +68,21 @@ ajaxUpdateContainerId: "grid");
                                         }
 
                                     }, canSort: false, style: "tindakan")
-                                    //end
+               //end
 
-                                //comment by fatin - 10/04/2023
-                               /*grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "tindakan",
-                                   format: @<text>
-                                           @Html.Raw("<a data-modal='' href='" + @Url.Action("CCLevelsPktUpdate", "BasicInfo") + "/?id=" + item.fld_PktUtama + "' class='btn btn-success' title='Kemaskini Peringkat' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-lg'></i></a>")
-                                           @if (item.fld_Deleted == true)
-                                           {
-                                               @Html.Raw("<a data-modal='' href='" + @Url.Action("CCLevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=false' class='btn btn-warning' title='Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-unlock fa-lg'></i></a>")
-                                           }
-                                           else
-                                           {
-                                               @Html.Raw("<a data-modal='' href='" + @Url.Action("CCLevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=true' class='btn btn-warning' title='Nyah Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-trash fa-lg'></i></a>")
-                                           }
-                                   </text>)*/
+               //comment by fatin - 10/04/2023
+               /*grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "tindakan",
+                   format: @<text>
+                           @Html.Raw("<a data-modal='' href='" + @Url.Action("CCLevelsPktUpdate", "BasicInfo") + "/?id=" + item.fld_PktUtama + "' class='btn btn-success' title='Kemaskini Peringkat' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-lg'></i></a>")
+                           @if (item.fld_Deleted == true)
+                           {
+                               @Html.Raw("<a data-modal='' href='" + @Url.Action("CCLevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=false' class='btn btn-warning' title='Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-unlock fa-lg'></i></a>")
+                           }
+                           else
+                           {
+                               @Html.Raw("<a data-modal='' href='" + @Url.Action("CCLevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=true' class='btn btn-warning' title='Nyah Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-trash fa-lg'></i></a>")
+                           }
+                   </text>)*/
                ))
     }
 </div>

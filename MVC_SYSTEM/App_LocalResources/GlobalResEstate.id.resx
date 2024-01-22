@@ -2265,4 +2265,7 @@
   <data name="msgDifferentKong" xml:space="preserve">
     <value>Sistem tidak membenarkan aktiviti ini dimasukkan kerana jenis kong adalah berbeza</value>
   </data>
+  <data name="lblCodeWBS" xml:space="preserve">
+    <value>Kod WBS</value>
+  </data>
 </root>

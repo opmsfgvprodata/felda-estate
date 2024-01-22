@@ -3364,6 +3364,18 @@
     <Content Include="Views\TableInfo\ProduktivitiGetahDetail.cshtml" />
     <Content Include="Views\BizTransac\_EditSAPDataDetail.cshtml" />
     <Content Include="Views\BasicInfo\WBSLevelsPktCreate.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsBlokCreate.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsBlokDelete.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsBlokUpdate.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsInfo.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsInfoBlok.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsInfoPkt.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsInfoSubPkt.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsPktDelete.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsPktUpdate.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsSubPktCreate.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsSubPktDelete.cshtml" />
+    <Content Include="Views\BasicInfo\WBSLevelsSubPktUpdate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Asset\Upload\120\" />

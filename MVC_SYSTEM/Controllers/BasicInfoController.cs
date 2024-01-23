@@ -789,7 +789,7 @@ namespace MVC_SYSTEM.Controllers
             TahapKesukaranMembaja = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "KesukaranMembaja" && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc + " (RM" + s.fldOptConfFlag2 + ")" }), "Value", "Text").ToList();
             //added by faeza 18.08.2021
             TahapKesukaranMemunggah = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "KesukaranMemunggah" && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc + " (RM" + s.fldOptConfFlag2 + ")" }), "Value", "Text").ToList();
-            IOlist = new SelectList(db.tbl_IOSAP.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false && x.fld_StatusUsed == null), "fld_IOcode", "fld_IOcode").ToList();
+            IOlist = new SelectList(db.tbl_IOSAP.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false && x.fld_StatusUsed == null && !string.IsNullOrEmpty(x.fld_IOcode)), "fld_IOcode", "fld_IOcode").ToList();
             IOlist.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
 
             JnsLotList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnsLot" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc").ToList();
@@ -5420,6 +5420,33 @@ namespace MVC_SYSTEM.Controllers
             //dbr.SaveChanges();
             //flag = 1;
             //Added by Shazana 27/12/2023
+
+            //fatin added - 23/01/2024
+            string SAPType = "";
+            var SapTypePktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == fld_KodPkt).FirstOrDefault();
+            if (SapTypePktUtama != null)
+            {
+                SAPType = SapTypePktUtama.fld_SAPType;
+            }
+            else
+            {
+                var SapTypeSubPkt= dbr.tbl_SubPkt.Where(x => x.fld_Pkt == fld_KodPkt).FirstOrDefault();
+                if (SapTypeSubPkt != null)
+                {
+                    SAPType = SapTypeSubPkt.fld_SAPType;
+                }
+                else
+                {
+                    var SapTypeBlok = dbr.tbl_Blok.Where(x => x.fld_Blok == fld_KodPkt).FirstOrDefault();
+                    if (SapTypeBlok != null)
+                    {
+                        SAPType = SapTypeBlok.fld_SAPType;
+                    }
+                }
+
+            }
+            //end
+
             var checkdeleted = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_PktUtama == fld_KodPkt && x.fld_KodHargaKesukaran == KodHargaKesukaran && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
             checkdeleted.fld_Deleted = true;
             checkdeleted.fld_ModifiedBy = getuserid.ToString();
@@ -5429,8 +5456,16 @@ namespace MVC_SYSTEM.Controllers
             dbr.Dispose();
             flag = 1;
 
-           //return Json(flag);
-           return RedirectToAction("LevelsInfo");
+            //return Json(flag);
+            //fatin modified - 23/01/2024
+            if (SAPType == "WBS")
+            {
+                return RedirectToAction("WBSLevelsInfo");
+            }
+            else
+            {
+                return RedirectToAction("LevelsInfo");
+            }
         }
         //Modified by Shazana 21/9/2023
         public ActionResult SaveKesukaran(string fld_JenisHargaKesukaran, string fld_TahapHargaKesukaran, string fld_PktUtama)

@@ -1323,26 +1323,36 @@ namespace MVC_SYSTEM.Controllers
 
                                         if (JenisKesukaran != "0" || TahapKesukaran != "0")
                                         {
-                                            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && x.fldOptConfFlag2.Contains("HargaKesukaran") && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
-                                            var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
+                                            //Modified by Shazana 21/9/2023
+                                            var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && (x.fldOptConfFlag2.Contains("HargaKesukaran") || x.fldOptConfFlag2.Contains("HargaTambahan")) && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+                                            //Commented by Shazana 18/7/2023
+                                            // var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
+                                            //Added by Shazana 18/7/2023
+                                            var TahapKesukaranDetails = db.tbl_HargaKesukaran.Where(x => x.fld_JenisAktiviti == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_KodHargaKesukaran == TahapKesukaran && x.fld_SyarikatId == SyarikatID && x.fld_NegaraId == NegaraID && x.fld_Deleted == false).FirstOrDefault();
 
+                                            //Commented by Shazana 22/7/2023
+                                            //var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_JenisHargaKesukaran == JenisKesukaran && x.fld_PktUtama == tbl_PktUtama.fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                                            //Added by Shazana 22/7/2023
                                             var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_PktUtama == tbl_PktUtama.fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                                            //Added by Shazana 21/9/2023
+                                            var checkdeleted = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == TahapKesukaran && x.fld_PktUtama == tbl_PktUtama.fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
 
-                                            if (checkKwsn == null && JenisKesukaranDetails != null && TahapKesukaranDetails != null)
+                                            if (checkdeleted == null && JenisKesukaranDetails != null)
                                             {
                                                 Models.tbl_PktHargaKesukaran PktHargaKesukaran = new Models.tbl_PktHargaKesukaran();
                                                 PktHargaKesukaran.fld_PktUtama = tbl_PktUtama.fld_PktUtama;
                                                 PktHargaKesukaran.fld_KodJenisHargaKesukaran = JenisKesukaranDetails.fldOptConfFlag3;
                                                 PktHargaKesukaran.fld_JenisHargaKesukaran = JenisKesukaran;
                                                 PktHargaKesukaran.fld_KodHargaKesukaran = TahapKesukaran;
-                                                PktHargaKesukaran.fld_KeteranganHargaKesukaran = TahapKesukaranDetails == null ? "" : TahapKesukaranDetails.fldOptConfDesc;
-                                                PktHargaKesukaran.fld_HargaKesukaran = TahapKesukaranDetails == null ? 0 : Convert.ToDecimal(TahapKesukaranDetails.fldOptConfFlag2);
+                                                PktHargaKesukaran.fld_KeteranganHargaKesukaran = TahapKesukaranDetails == null ? "" : TahapKesukaranDetails.fld_Keterangan; //Modified by Shazana 18/7/2023
+                                                PktHargaKesukaran.fld_HargaKesukaran = TahapKesukaranDetails == null ? 0 : Convert.ToDecimal(TahapKesukaranDetails.fld_HargaKesukaran);//Modified by Shazana 18/7/2023
                                                 PktHargaKesukaran.fld_NegaraID = NegaraID;
                                                 PktHargaKesukaran.fld_SyarikatID = SyarikatID;
                                                 PktHargaKesukaran.fld_WilayahID = WilayahID;
                                                 PktHargaKesukaran.fld_LadangID = LadangID;
                                                 PktHargaKesukaran.fld_CreatedBy = getuserid.ToString();
                                                 PktHargaKesukaran.fld_CreatedDate = DateTime.Now;
+                                                PktHargaKesukaran.fld_Deleted = false; //Added by Shazana 18/7/2023
 
                                                 dbr.tbl_PktHargaKesukaran.Add(PktHargaKesukaran);
                                                 dbr.SaveChanges();
@@ -1672,7 +1682,6 @@ namespace MVC_SYSTEM.Controllers
                             }
                         }
 
-
                         string RequestFormKesukaran = Request.Form["listCount_Kesukaran"];
                         if (RequestFormKesukaran != null && RequestFormKesukaran != "")
                         {
@@ -1688,26 +1697,37 @@ namespace MVC_SYSTEM.Controllers
 
                                     if (JenisKesukaran != "0" || TahapKesukaran != "0")
                                     {
-                                        var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && x.fldOptConfFlag2.Contains("HargaKesukaran") && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
-                                        var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
+                                        //Modified by Shazana 21/9/2023
+                                        var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && (x.fldOptConfFlag2.Contains("HargaKesukaran") || x.fldOptConfFlag2.Contains("HargaTambahan")) && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+                                        //Commented by Shazana 18/7/2023
+                                        // var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
+                                        //Added by Shazana 18/7/2023
+                                        var TahapKesukaranDetails = db.tbl_HargaKesukaran.Where(x => x.fld_JenisAktiviti == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_KodHargaKesukaran == TahapKesukaran && x.fld_SyarikatId == SyarikatID && x.fld_NegaraId == NegaraID && x.fld_Deleted == false).FirstOrDefault();
 
+                                        //Commented by Shazana 22/7/2023
+                                        //var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_JenisHargaKesukaran == JenisKesukaran && x.fld_PktUtama == tbl_PktUtama.fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                                        //Added by Shazana 22/7/2023
                                         var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_PktUtama == kodpkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                                        //Added by Shazana 21/9/2023
+                                        var checkdeleted = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == TahapKesukaran && x.fld_PktUtama == kodpkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
 
-                                        if (checkKwsn == null && JenisKesukaranDetails != null && TahapKesukaranDetails != null)
+                                        //Modified by Shazana 21/9/2023
+                                        if (checkdeleted == null && JenisKesukaranDetails != null)
                                         {
                                             Models.tbl_PktHargaKesukaran PktHargaKesukaran = new Models.tbl_PktHargaKesukaran();
                                             PktHargaKesukaran.fld_PktUtama = kodpkt;
                                             PktHargaKesukaran.fld_KodJenisHargaKesukaran = JenisKesukaranDetails.fldOptConfFlag3;
                                             PktHargaKesukaran.fld_JenisHargaKesukaran = JenisKesukaran;
                                             PktHargaKesukaran.fld_KodHargaKesukaran = TahapKesukaran;
-                                            PktHargaKesukaran.fld_KeteranganHargaKesukaran = TahapKesukaranDetails == null ? "" : TahapKesukaranDetails.fldOptConfDesc;
-                                            PktHargaKesukaran.fld_HargaKesukaran = TahapKesukaranDetails == null ? 0 : Convert.ToDecimal(TahapKesukaranDetails.fldOptConfFlag2);
+                                            PktHargaKesukaran.fld_KeteranganHargaKesukaran = TahapKesukaranDetails == null ? "" : TahapKesukaranDetails.fld_Keterangan; //Modified by Shazana 18/7/2023
+                                            PktHargaKesukaran.fld_HargaKesukaran = TahapKesukaranDetails == null ? 0 : Convert.ToDecimal(TahapKesukaranDetails.fld_HargaKesukaran);//Modified by Shazana 18/7/2023
                                             PktHargaKesukaran.fld_NegaraID = NegaraID;
                                             PktHargaKesukaran.fld_SyarikatID = SyarikatID;
                                             PktHargaKesukaran.fld_WilayahID = WilayahID;
                                             PktHargaKesukaran.fld_LadangID = LadangID;
                                             PktHargaKesukaran.fld_CreatedBy = getuserid.ToString();
                                             PktHargaKesukaran.fld_CreatedDate = DateTime.Now;
+                                            PktHargaKesukaran.fld_Deleted = false; //Added by Shazana 18/7/2023
 
                                             dbr.tbl_PktHargaKesukaran.Add(PktHargaKesukaran);
                                             dbr.SaveChanges();
@@ -2050,7 +2070,6 @@ namespace MVC_SYSTEM.Controllers
                                 }
                             }
                         }
-
                         string RequestFormKesukaran = Request.Form["listCount_Kesukaran"];
                         if (RequestFormKesukaran != null && RequestFormKesukaran != "")
                         {
@@ -2066,26 +2085,37 @@ namespace MVC_SYSTEM.Controllers
 
                                     if (JenisKesukaran != "0" || TahapKesukaran != "0")
                                     {
-                                        var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && x.fldOptConfFlag2.Contains("HargaKesukaran") && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
-                                        var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
+                                        //Modified by Shazana 21/9/2023
+                                        var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && (x.fldOptConfFlag2.Contains("HargaKesukaran") || x.fldOptConfFlag2.Contains("HargaTambahan")) && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+                                        //Commented by Shazana 18/7/2023
+                                        // var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
+                                        //Added by Shazana 18/7/2023
+                                        var TahapKesukaranDetails = db.tbl_HargaKesukaran.Where(x => x.fld_JenisAktiviti == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_KodHargaKesukaran == TahapKesukaran && x.fld_SyarikatId == SyarikatID && x.fld_NegaraId == NegaraID && x.fld_Deleted == false).FirstOrDefault();
 
+                                        //Commented by Shazana 22/7/2023
+                                        //var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_JenisHargaKesukaran == JenisKesukaran && x.fld_PktUtama == tbl_PktUtama.fld_PktUtama && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                                        //Added by Shazana 22/7/2023
                                         var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_PktUtama == tbl_Blok.fld_Blok && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                                        //Added by Shazana 21/9/2023
+                                        var checkdeleted = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == TahapKesukaran && x.fld_PktUtama == tbl_Blok.fld_Blok && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
 
-                                        if (checkKwsn == null && JenisKesukaranDetails != null && TahapKesukaranDetails != null)
+                                        //Modified by Shazana 21/9/2023
+                                        if (checkdeleted == null && JenisKesukaranDetails != null)
                                         {
                                             Models.tbl_PktHargaKesukaran PktHargaKesukaran = new Models.tbl_PktHargaKesukaran();
                                             PktHargaKesukaran.fld_PktUtama = tbl_Blok.fld_Blok;
                                             PktHargaKesukaran.fld_KodJenisHargaKesukaran = JenisKesukaranDetails.fldOptConfFlag3;
                                             PktHargaKesukaran.fld_JenisHargaKesukaran = JenisKesukaran;
                                             PktHargaKesukaran.fld_KodHargaKesukaran = TahapKesukaran;
-                                            PktHargaKesukaran.fld_KeteranganHargaKesukaran = TahapKesukaranDetails == null ? "" : TahapKesukaranDetails.fldOptConfDesc;
-                                            PktHargaKesukaran.fld_HargaKesukaran = TahapKesukaranDetails == null ? 0 : Convert.ToDecimal(TahapKesukaranDetails.fldOptConfFlag2);
+                                            PktHargaKesukaran.fld_KeteranganHargaKesukaran = TahapKesukaranDetails == null ? "" : TahapKesukaranDetails.fld_Keterangan; //Modified by Shazana 18/7/2023
+                                            PktHargaKesukaran.fld_HargaKesukaran = TahapKesukaranDetails == null ? 0 : Convert.ToDecimal(TahapKesukaranDetails.fld_HargaKesukaran);//Modified by Shazana 18/7/2023
                                             PktHargaKesukaran.fld_NegaraID = NegaraID;
                                             PktHargaKesukaran.fld_SyarikatID = SyarikatID;
                                             PktHargaKesukaran.fld_WilayahID = WilayahID;
                                             PktHargaKesukaran.fld_LadangID = LadangID;
                                             PktHargaKesukaran.fld_CreatedBy = getuserid.ToString();
                                             PktHargaKesukaran.fld_CreatedDate = DateTime.Now;
+                                            PktHargaKesukaran.fld_Deleted = false; //Added by Shazana 18/7/2023
 
                                             dbr.tbl_PktHargaKesukaran.Add(PktHargaKesukaran);
                                             dbr.SaveChanges();
@@ -2094,6 +2124,49 @@ namespace MVC_SYSTEM.Controllers
                                 }
                             }
                         }
+                        //string RequestFormKesukaran = Request.Form["listCount_Kesukaran"];
+                        //if (RequestFormKesukaran != null && RequestFormKesukaran != "")
+                        //{
+                        //    int listCount_Kesukaran = Convert.ToInt32(Request.Form["listCount_Kesukaran"]);
+                        //    if (listCount_Kesukaran > 0)
+                        //    {
+                        //        for (int i = 1; i <= listCount_Kesukaran; i++)
+                        //        {
+                        //            string idJenisKesukaran = "dd1" + i;
+                        //            string idTahapKesukaran = "dd2" + i;
+                        //            string JenisKesukaran = Request.Form[idJenisKesukaran];
+                        //            string TahapKesukaran = Request.Form[idTahapKesukaran];
+
+                        //            if (JenisKesukaran != "0" || TahapKesukaran != "0")
+                        //            {
+                        //                var JenisKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == JenisKesukaran && x.fldOptConfFlag2.Contains("HargaKesukaran") && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+                        //                var TahapKesukaranDetails = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 != "HargaKesukaran" && x.fldOptConfFlag1 == JenisKesukaranDetails.fldOptConfFlag1 && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfValue == TahapKesukaran).FirstOrDefault();
+
+                        //                var checkKwsn = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_KodJenisHargaKesukaran == JenisKesukaranDetails.fldOptConfFlag3 && x.fld_PktUtama == tbl_Blok.fld_Blok && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+
+                        //                if (checkKwsn == null && JenisKesukaranDetails != null && TahapKesukaranDetails != null)
+                        //                {
+                        //                    Models.tbl_PktHargaKesukaran PktHargaKesukaran = new Models.tbl_PktHargaKesukaran();
+                        //                    PktHargaKesukaran.fld_PktUtama = tbl_Blok.fld_Blok;
+                        //                    PktHargaKesukaran.fld_KodJenisHargaKesukaran = JenisKesukaranDetails.fldOptConfFlag3;
+                        //                    PktHargaKesukaran.fld_JenisHargaKesukaran = JenisKesukaran;
+                        //                    PktHargaKesukaran.fld_KodHargaKesukaran = TahapKesukaran;
+                        //                    PktHargaKesukaran.fld_KeteranganHargaKesukaran = TahapKesukaranDetails == null ? "" : TahapKesukaranDetails.fldOptConfDesc;
+                        //                    PktHargaKesukaran.fld_HargaKesukaran = TahapKesukaranDetails == null ? 0 : Convert.ToDecimal(TahapKesukaranDetails.fldOptConfFlag2);
+                        //                    PktHargaKesukaran.fld_NegaraID = NegaraID;
+                        //                    PktHargaKesukaran.fld_SyarikatID = SyarikatID;
+                        //                    PktHargaKesukaran.fld_WilayahID = WilayahID;
+                        //                    PktHargaKesukaran.fld_LadangID = LadangID;
+                        //                    PktHargaKesukaran.fld_CreatedBy = getuserid.ToString();
+                        //                    PktHargaKesukaran.fld_CreatedDate = DateTime.Now;
+
+                        //                    dbr.tbl_PktHargaKesukaran.Add(PktHargaKesukaran);
+                        //                    dbr.SaveChanges();
+                        //                }
+                        //            }
+                        //        }
+                        //    }
+                        //}
 
 
                         return Json(new { success = true, msg = GlobalResEstate.msgAdd, status = "success", checkingdata = "0", method = "2", btn = "btnSrch" });

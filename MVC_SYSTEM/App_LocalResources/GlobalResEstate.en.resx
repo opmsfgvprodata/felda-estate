@@ -3528,4 +3528,7 @@
   <data name="msgDifferentKong" xml:space="preserve">
     <value>The system does not allow this activity to be inserted because different type of kong already exists</value>
   </data>
+  <data name="lblCodeWBS" xml:space="preserve">
+    <value>WBS Code</value>
+  </data>
 </root>

@@ -104,58 +104,59 @@ namespace MVC_SYSTEM.Controllers
             {
                 monthstring = "0" + monthstring;
             }
-            var ClosingTransaction = dbr.tbl_TutupUrusNiaga.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Month == Month && x.fld_Year == Year).FirstOrDefault();
-            var CheckScTransSalary = dbr.tbl_Sctran.Where(x => x.fld_Month == Month && x.fld_Year == Year && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodAktvt == "4000").Select(s => s.fld_Amt).FirstOrDefault();
-            var CheckSkbReg = dbr.tbl_Skb.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Bulan == monthstring && x.fld_Tahun == Year).FirstOrDefault();
-            if (ClosingTransaction != null)
+            var estateClosingChecking_Result = new List<EstateClosingChecking_Result>();
+            decimal? jumgl2gl = 0m;
+            decimal? jumgl2vdDt = 0m;
+            decimal? jumgl2vdCt = 0m;
+            decimal? TL_Credit = 0m;
+            decimal? TL_Debit = 0m;
+            if (CloseOpen)
             {
-                if (CheckSkbReg.fld_NoSkb != null)
+                string constr = Connection.GetConnectionString(WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                var con = new SqlConnection(constr);
+                try
                 {
-                    if (CheckSkbReg.fld_GajiBersih == CheckScTransSalary)
+                    DynamicParameters parameters = new DynamicParameters();
+                    parameters.Add("LadangID", LadangID);
+                    parameters.Add("Month", Month);
+                    parameters.Add("Year", Year);
+                    con.Open();
+                    estateClosingChecking_Result = SqlMapper.Query<EstateClosingChecking_Result>(con, "sp_EstateClosingChecking", parameters).ToList();
+                    con.Close();
+                    jumgl2gl = estateClosingChecking_Result.Where(x => x.fld_purpose == 1).Select(s => s.jumgl2gl).FirstOrDefault();
+                    jumgl2vdDt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdDt).FirstOrDefault();
+                    jumgl2vdCt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdCt).FirstOrDefault();
+                    TL_Credit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Credit).FirstOrDefault();
+                    TL_Debit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Debit).FirstOrDefault();
+
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+
+            if (jumgl2gl == 0 && jumgl2vdDt + jumgl2vdCt == 0 && TL_Credit - TL_Debit == 0)
+            {
+                var ClosingTransaction = dbr.tbl_TutupUrusNiaga.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Month == Month && x.fld_Year == Year).FirstOrDefault();
+                var CheckScTransSalary = dbr.tbl_Sctran.Where(x => x.fld_Month == Month && x.fld_Year == Year && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodAktvt == "4000").Select(s => s.fld_Amt).FirstOrDefault();
+                var CheckSkbReg = dbr.tbl_Skb.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Bulan == monthstring && x.fld_Tahun == Year).FirstOrDefault();
+                if (ClosingTransaction != null)
+                {
+                    if (CheckSkbReg.fld_NoSkb != null)
                     {
-                        if (ClosingTransaction.fld_Credit == ClosingTransaction.fld_Debit)
+                        if (CheckSkbReg.fld_GajiBersih == CheckScTransSalary)
                         {
-                            if (CloseOpen == true && ClosingTransaction.fld_StsTtpUrsNiaga == true)
+                            if (ClosingTransaction.fld_Credit == ClosingTransaction.fld_Debit)
                             {
-                                msg = GlobalResEstate.msgUrusNiagaClose;
-                                statusmsg = "warning";
-                            }
-                            else
-                            {
-                                var estateClosingChecking_Result = new List<EstateClosingChecking_Result>();
-                                decimal? jumgl2gl = 0m;
-                                decimal? jumgl2vdDt = 0m;
-                                decimal? jumgl2vdCt = 0m;
-                                decimal? TL_Credit = 0m;
-                                decimal? TL_Debit = 0m;
-                                if (CloseOpen)
+                                if (CloseOpen == true && ClosingTransaction.fld_StsTtpUrsNiaga == true)
                                 {
-                                    string constr = Connection.GetConnectionString(WilayahID.Value, SyarikatID.Value, NegaraID.Value);
-                                    var con = new SqlConnection(constr);
-                                    try
-                                    {
-                                        DynamicParameters parameters = new DynamicParameters();
-                                        parameters.Add("LadangID", LadangID);
-                                        parameters.Add("Month", Month);
-                                        parameters.Add("Year", Year);
-                                        con.Open();
-                                        estateClosingChecking_Result = SqlMapper.Query<EstateClosingChecking_Result>(con, "sp_EstateClosingChecking", parameters).ToList();
-                                        con.Close();
-                                        jumgl2gl = estateClosingChecking_Result.Where(x => x.fld_purpose == 1).Select(s => s.jumgl2gl).FirstOrDefault();
-                                        jumgl2vdDt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdDt).FirstOrDefault();
-                                        jumgl2vdCt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdCt).FirstOrDefault();
-                                        TL_Credit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Credit).FirstOrDefault();
-                                        TL_Debit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Debit).FirstOrDefault();
-
-                                    }
-                                    catch (Exception)
-                                    {
-                                        throw;
-                                    }
+                                    msg = GlobalResEstate.msgUrusNiagaClose;
+                                    statusmsg = "warning";
                                 }
-
-                                if (jumgl2gl == 0 && jumgl2vdDt + jumgl2vdCt == 0 && TL_Credit - TL_Debit == 0)
+                                else
                                 {
+
                                     AuditTrailStatus = CloseOpen == true ? 1 : 0;
                                     ClosingTransaction.fld_StsTtpUrsNiaga = CloseOpen;
                                     ClosingTransaction.fld_ModifiedDT = timezone.gettimezone();
@@ -167,40 +168,40 @@ namespace MVC_SYSTEM.Controllers
                                     //  FinanceApplication(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, CloseOpen, CheckSkbReg.fld_GajiBersih, CheckSkbReg.fld_NoSkb, getuserid);
                                     msg = GlobalResEstate.msgUpdate;
                                     statusmsg = "success";
-                                }
-                                else
-                                {
-                                    msg = "PERHATIAN!!!<br/>Urusniaga tidak boleh ditutup!<br/>Transaction Listing (Debit) = RM" + TL_Debit + "<br/>Transaction Listing (Kredit)= RM" + TL_Credit + "<br/>Posting to SAP, GL to GL = RM" + jumgl2gl + "<br/>Posing to SAP, GL to Vendor (Debit) = RM" + jumgl2vdDt + "<br/>Posing to SAP, GL to Vendor (Kredit) = RM" + jumgl2vdCt;
-                                    statusmsg = "warning";
-                                }
-                            }
 
+                                }
+
+                            }
+                            else
+                            {
+                                msg = GlobalResEstate.msgBalance;
+                                statusmsg = "warning";
+                            }
                         }
                         else
                         {
-                            msg = GlobalResEstate.msgBalance;
+                            msg = GlobalResEstate.msgNoSKBClose;
                             statusmsg = "warning";
                         }
+
                     }
                     else
                     {
-                        msg = GlobalResEstate.msgNoSKBClose;
+                        msg = GlobalResEstate.msgNoSKBReg;
                         statusmsg = "warning";
                     }
-
                 }
                 else
                 {
-                    msg = GlobalResEstate.msgNoSKBReg;
+                    msg = GlobalResEstate.msgGenSalary;
                     statusmsg = "warning";
                 }
             }
             else
             {
-                msg = GlobalResEstate.msgGenSalary;
+                msg = "PERHATIAN!!!<br/>Urusniaga tidak boleh ditutup!<br/>Transaction Listing (Debit) = RM" + TL_Debit + "<br/>Transaction Listing (Kredit)= RM" + TL_Credit + "<br/>Posting to SAP, GL to GL = RM" + jumgl2gl + "<br/>Posing to SAP, GL to Vendor (Debit) = RM" + jumgl2vdDt + "<br/>Posing to SAP, GL to Vendor (Kredit) = RM" + jumgl2vdCt;
                 statusmsg = "warning";
             }
-
             dbr.Dispose();
             return Json(new { msg, statusmsg });
         }

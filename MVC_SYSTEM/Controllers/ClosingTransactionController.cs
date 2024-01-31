@@ -10,6 +10,9 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Dapper;
+using MVC_SYSTEM.ModelsDapper;
+using System.Data.SqlClient;
 
 namespace MVC_SYSTEM.Controllers
 {
@@ -72,7 +75,7 @@ namespace MVC_SYSTEM.Controllers
             {
                 CloseOpen.Insert(1, (new SelectListItem { Text = "Buka Urus Niaga", Value = "false" }));
             }
-            
+
             ViewBag.CloseOpen = CloseOpen;
 
             //ViewBag.ProcessList = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "gensalary" && x.fldDeleted == false), "fldOptConfValue", "fldOptConfDesc");
@@ -119,19 +122,59 @@ namespace MVC_SYSTEM.Controllers
                             }
                             else
                             {
-                                AuditTrailStatus = CloseOpen == true ? 1 : 0;
-                                ClosingTransaction.fld_StsTtpUrsNiaga = CloseOpen;
-                                ClosingTransaction.fld_ModifiedDT = timezone.gettimezone();
-                                ClosingTransaction.fld_ModifiedBy = getuserid;
-                                dbr.Entry(ClosingTransaction).State = EntityState.Modified;
-                                dbr.SaveChanges();
-                                UpdateAuditTrail(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, AuditTrailStatus);
+                                var estateClosingChecking_Result = new List<EstateClosingChecking_Result>();
+                                decimal? jumgl2gl = 0m;
+                                decimal? jumgl2vdDt = 0m;
+                                decimal? jumgl2vdCt = 0m;
+                                decimal? TL_Credit = 0m;
+                                decimal? TL_Debit = 0m;
+                                if (CloseOpen)
+                                {
+                                    string constr = Connection.GetConnectionString(WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                                    var con = new SqlConnection(constr);
+                                    try
+                                    {
+                                        DynamicParameters parameters = new DynamicParameters();
+                                        parameters.Add("LadangID", LadangID);
+                                        parameters.Add("Month", Month);
+                                        parameters.Add("Year", Year);
+                                        con.Open();
+                                        estateClosingChecking_Result = SqlMapper.Query<EstateClosingChecking_Result>(con, "sp_EstateClosingChecking", parameters).ToList();
+                                        con.Close();
+                                        jumgl2gl = estateClosingChecking_Result.Where(x => x.fld_purpose == 1).Select(s => s.jumgl2gl).FirstOrDefault();
+                                        jumgl2vdDt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdDt).FirstOrDefault();
+                                        jumgl2vdCt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdCt).FirstOrDefault();
+                                        TL_Credit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Credit).FirstOrDefault();
+                                        TL_Debit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Debit).FirstOrDefault();
 
-                             //  FinanceApplication(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, CloseOpen, CheckSkbReg.fld_GajiBersih, CheckSkbReg.fld_NoSkb, getuserid);
-                                msg = GlobalResEstate.msgUpdate;
-                                statusmsg = "success";
+                                    }
+                                    catch (Exception)
+                                    {
+                                        throw;
+                                    }
+                                }
+
+                                if (jumgl2gl == 0 && jumgl2vdDt + jumgl2vdCt == 0 && TL_Credit - TL_Debit == 0)
+                                {
+                                    AuditTrailStatus = CloseOpen == true ? 1 : 0;
+                                    ClosingTransaction.fld_StsTtpUrsNiaga = CloseOpen;
+                                    ClosingTransaction.fld_ModifiedDT = timezone.gettimezone();
+                                    ClosingTransaction.fld_ModifiedBy = getuserid;
+                                    dbr.Entry(ClosingTransaction).State = EntityState.Modified;
+                                    dbr.SaveChanges();
+                                    UpdateAuditTrail(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, AuditTrailStatus);
+
+                                    //  FinanceApplication(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, CloseOpen, CheckSkbReg.fld_GajiBersih, CheckSkbReg.fld_NoSkb, getuserid);
+                                    msg = GlobalResEstate.msgUpdate;
+                                    statusmsg = "success";
+                                }
+                                else
+                                {
+                                    msg = "PERHATIAN!!!<br/>Urusniaga tidak boleh ditutup!<br/>Transaction Listing (Debit) = RM" + TL_Debit + "<br/>Transaction Listing (Kredit)= RM" + TL_Credit + "<br/>Posting to SAP, GL to GL = RM" + jumgl2gl + "<br/>Posing to SAP, GL to Vendor (Debit) = RM" + jumgl2vdDt + "<br/>Posing to SAP, GL to Vendor (Kredit) = RM" + jumgl2vdCt;
+                                    statusmsg = "warning";
+                                }
                             }
-                            
+
                         }
                         else
                         {
@@ -144,7 +187,7 @@ namespace MVC_SYSTEM.Controllers
                         msg = GlobalResEstate.msgNoSKBClose;
                         statusmsg = "warning";
                     }
-                    
+
                 }
                 else
                 {
@@ -159,7 +202,7 @@ namespace MVC_SYSTEM.Controllers
             }
 
             dbr.Dispose();
-            return Json(new { msg , statusmsg });
+            return Json(new { msg, statusmsg });
         }
 
         [HttpPost]
@@ -207,8 +250,8 @@ namespace MVC_SYSTEM.Controllers
                                 dbr.Entry(ClosingTransaction).State = EntityState.Modified;
                                 dbr.SaveChanges();
                                 UpdateAuditTrail(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, AuditTrailStatus);
-                               
-                            //    FinanceApplication(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, CloseOpen, CheckSkbReg.fld_GajiBersih, CheckSkbReg.fld_NoSkb, getuserid);
+
+                                //    FinanceApplication(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, CloseOpen, CheckSkbReg.fld_GajiBersih, CheckSkbReg.fld_NoSkb, getuserid);
                                 msg = GlobalResEstate.msgUpdate;
                                 statusmsg = "success";
                             }
@@ -254,7 +297,7 @@ namespace MVC_SYSTEM.Controllers
             int drpyear = 0;
             int drprangeyear = 0;
             //List<SelectListItem> SelectionData = new List<SelectListItem>();
-            
+
             drpyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
             drprangeyear = timezone.gettimezone().Year;
 

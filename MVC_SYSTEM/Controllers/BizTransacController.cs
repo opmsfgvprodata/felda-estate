@@ -818,30 +818,30 @@ namespace MVC_SYSTEM.Controllers
                 {
                     if (compCode == "1000")
                     {
-                        var ireq = new SAPPosting.ZfmDocpostOpmsRequest();
-                        var iresponse = new SAPPosting.ZfmDocpostOpmsResponse();
-                        var ICred = new SAPPosting.ZWS_OPMS_DOCPOSTClient();
+                        var ireq = new SAPPosting_FLP.ZfmDocpostOpmsRequest();
+                        var iresponse = new SAPPosting_FLP.ZfmDocpostOpmsResponse();
+                        var ICred = new SAPPosting_FLP.ZWS_OPMS_DOCPOSTClient();
 
                         ICred.ClientCredentials.UserName.UserName = userName;
                         ICred.ClientCredentials.UserName.Password = password;
 
-                        var docPost = new SAPPosting.ZfmDocpostOpms();
+                        var docPost = new SAPPosting_FLP.ZfmDocpostOpms();
 
                         //account payable
-                        SAPPosting.Bapiacap09[] bapiacap09 = null;
-                        SAPPosting.Bapiacap09 bapiacap09_details = new SAPPosting.Bapiacap09();
+                        SAPPosting_FLP.Bapiacap09[] bapiacap09 = null;
+                        SAPPosting_FLP.Bapiacap09 bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
 
                         //accountGL
-                        SAPPosting.Bapiacgl09[] bapiacgl09 = null;
-                        SAPPosting.Bapiacgl09 bapiacgl09_details = new SAPPosting.Bapiacgl09();
+                        SAPPosting_FLP.Bapiacgl09[] bapiacgl09 = null;
+                        SAPPosting_FLP.Bapiacgl09 bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
 
                         //currency
-                        SAPPosting.Bapiaccr09[] bapiaccr09 = null;
-                        SAPPosting.Bapiaccr09 bapiaccr09_details = new SAPPosting.Bapiaccr09();
+                        SAPPosting_FLP.Bapiaccr09[] bapiaccr09 = null;
+                        SAPPosting_FLP.Bapiaccr09 bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
 
-                        SAPPosting.Bapiacpa09 bapiacpa09 = new SAPPosting.Bapiacpa09(); //customer cpd
-                        SAPPosting.Bapiache09 bapiache09 = new SAPPosting.Bapiache09(); //documentHeader
-                        SAPPosting.Bapiret2[] BAPIRET2 = new SAPPosting.Bapiret2[1]; //return structure
+                        SAPPosting_FLP.Bapiacpa09 bapiacpa09 = new SAPPosting_FLP.Bapiacpa09(); //customer cpd
+                        SAPPosting_FLP.Bapiache09 bapiache09 = new SAPPosting_FLP.Bapiache09(); //documentHeader
+                        SAPPosting_FLP.Bapiret2[] BAPIRET2 = new SAPPosting_FLP.Bapiret2[1]; //return structure
 
                         ICred.Open();
 
@@ -881,14 +881,14 @@ namespace MVC_SYSTEM.Controllers
 
                                         //GL to GL - ACCOUNTGL
 
-                                        bapiacgl09 = new SAPPosting.Bapiacgl09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                        bapiaccr09 = new SAPPosting.Bapiaccr09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                        bapiacgl09 = new SAPPosting_FLP.Bapiacgl09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                        bapiaccr09 = new SAPPosting_FLP.Bapiaccr09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
 
                                         foreach (var GLtoGLItem in GLToGLPostingData.DistinctBy(x => x.fld_ItemNo))
                                         {
-                                            bapiacgl09_details = new SAPPosting.Bapiacgl09();
-                                            bapiaccr09_details = new SAPPosting.Bapiaccr09();
-                                            bapiacap09_details = new SAPPosting.Bapiacap09();
+                                            bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
+                                            bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
+                                            bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
 
                                             if (!String.IsNullOrEmpty(GLtoGLItem.fld_GL))
                                             {
@@ -951,7 +951,7 @@ namespace MVC_SYSTEM.Controllers
                                         };
 
 
-                                        docPost = new SAPPosting.ZfmDocpostOpms
+                                        docPost = new SAPPosting_FLP.ZfmDocpostOpms
                                         {
                                             Accountgl = bapiacgl09,
                                             Documentheader = bapiache09,
@@ -1098,15 +1098,15 @@ namespace MVC_SYSTEM.Controllers
                                             }
 
                                             //GL to Vendor Line Item Details
-                                            bapiacgl09 = new SAPPosting.Bapiacgl09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                            bapiacap09 = new SAPPosting.Bapiacap09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                            bapiaccr09 = new SAPPosting.Bapiaccr09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiacgl09 = new SAPPosting_FLP.Bapiacgl09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiacap09 = new SAPPosting_FLP.Bapiacap09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            bapiaccr09 = new SAPPosting_FLP.Bapiaccr09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
 
                                             i = 0;
                                             foreach (var GLtoVendorItem in GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo))
                                             {
                                                 //GLAccount
-                                                bapiacgl09_details = new SAPPosting.Bapiacgl09();
+                                                bapiacgl09_details = new SAPPosting_FLP.Bapiacgl09();
                                                 if (GLtoVendorItem.fld_GL != null)
                                                 {
                                                     bapiacgl09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
@@ -1156,7 +1156,7 @@ namespace MVC_SYSTEM.Controllers
                                                 if (GLtoVendorItem.fld_VendorCode != null)
                                                 {
                                                     //Acc Payable
-                                                    bapiacap09_details = new SAPPosting.Bapiacap09();
+                                                    bapiacap09_details = new SAPPosting_FLP.Bapiacap09();
                                                     bapiacap09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                     bapiacap09_details.VendorNo = GLtoVendorItem.fld_VendorCode.ToString().PadLeft(10, '0');
                                                     bapiacap09_details.ItemText = GLtoVendorItem.fld_Desc.ToString();
@@ -1166,7 +1166,7 @@ namespace MVC_SYSTEM.Controllers
                                                 }
 
                                                 //Currency Amt
-                                                bapiaccr09_details = new SAPPosting.Bapiaccr09();
+                                                bapiaccr09_details = new SAPPosting_FLP.Bapiaccr09();
                                                 bapiaccr09_details.ItemnoAcc = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                 bapiaccr09_details.Currency = GLtoVendorItem.fld_Currency;
                                                 //modified by kamalia 24/11/21
@@ -1195,7 +1195,7 @@ namespace MVC_SYSTEM.Controllers
                                                 SYSTEM = null
                                             };
 
-                                            docPost = new SAPPosting.ZfmDocpostOpms
+                                            docPost = new SAPPosting_FLP.ZfmDocpostOpms
                                             {
                                                 Accountgl = bapiacgl09,
                                                 Documentheader = bapiache09,

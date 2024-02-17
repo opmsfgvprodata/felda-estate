@@ -29,13 +29,14 @@
                                 @Html.TextBoxFor(model => model.fld_GL, htmlAttributes: new { @class = "form-control" })
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">IO No:</label>
-                            <div class="col-sm-4">
-                                @Html.TextBoxFor(model => model.fld_IO, htmlAttributes: new { @class = "form-control" })
-                            </div>
-                        </div>
                         <fieldset disabled>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">IO No:</label>
+                                <div class="col-sm-4">
+                                    @Html.TextBoxFor(model => model.fld_IO, htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="control-label col-sm-3">Description:</label>
                                 <div class="col-sm-8">

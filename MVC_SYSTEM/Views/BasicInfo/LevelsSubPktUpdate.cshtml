@@ -45,37 +45,6 @@
                             @Html.ValidationMessageFor(model => model.fld_NamaPkt, "", new { @class = "text-danger" })
                         </div>
                     </div>
-                    @*<div class="form-group">
-            <label class="control-label col-md-2">Jenis Kesukaran</label>
-            <div class="col-md-9">
-                @Html.DropDownList("fld_jnsKesukaranPkt", null, htmlAttributes: new { @class = "form-control required" })
-            </div>
-        </div>*@
-                    @if (GetIdentity.SuperPowerAdmin(User.Identity.Name) || GetIdentity.SuperAdmin(User.Identity.Name) || GetIdentity.Admin1(User.Identity.Name) || GetIdentity.Admin2(User.Identity.Name))
-                    {
-                        <div class="form-group">
-                            <label class="control-label col-md-2">@GlobalResEstate.lblHarvestDifficulty</label>
-                            <div class="col-md-9">
-                                @Html.DropDownList("fld_KesukaranMenuaiPkt", null, htmlAttributes: new { @class = "form-control required" })
-                                @Html.ValidationMessageFor(model => model.fld_KesukaranMenuaiPkt, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-2">@GlobalResEstate.lblFertilizeDifficulty</label>
-                            <div class="col-md-9">
-                                @Html.DropDownList("fld_KesukaranMembajaPkt", null, htmlAttributes: new { @class = "form-control required" })
-                                @Html.ValidationMessageFor(model => model.fld_KesukaranMembajaPkt, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        //added by faeza 18.08.2021
-                        <div class="form-group">
-                            <label class="control-label col-md-2">@GlobalResEstate.lblLoaderDifficulty</label>
-                            <div class="col-md-9">
-                                @Html.DropDownList("fld_KesukaranMemunggahPkt", null, htmlAttributes: new { @class = "form-control required" })
-                                @Html.ValidationMessageFor(model => model.fld_KesukaranMembajaPkt, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                    }
                     <div class="form-group">
                         <label class="control-label col-md-2">@GlobalResEstate.lblLevelArea</label>
                         <div class="col-md-9">
@@ -85,6 +54,79 @@
                         </div>
                     </div>
                 </div>
+                @*<div class="form-group">
+            <label class="control-label col-md-2">Jenis Kesukaran</label>
+            <div class="col-md-9">
+                @Html.DropDownList("fld_jnsKesukaranPkt", null, htmlAttributes: new { @class = "form-control required" })
+            </div>
+        </div>*@
+                @*//Commented by Shazana 24/11/2023*@
+                @* @if (GetIdentity.SuperPowerAdmin(User.Identity.Name) || GetIdentity.SuperAdmin(User.Identity.Name) || GetIdentity.Admin1(User.Identity.Name) || GetIdentity.Admin2(User.Identity.Name))
+                {
+                   <div class="form-group">
+            <label class="control-label col-md-2">@GlobalResEstate.lblHarvestDifficulty</label>
+            <div class="col-md-9">
+                @Html.DropDownList("fld_KesukaranMenuaiPkt", null, htmlAttributes: new { @class = "form-control required" })
+                @Html.ValidationMessageFor(model => model.fld_KesukaranMenuaiPkt, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">@GlobalResEstate.lblFertilizeDifficulty</label>
+            <div class="col-md-9">
+                @Html.DropDownList("fld_KesukaranMembajaPkt", null, htmlAttributes: new { @class = "form-control required" })
+                @Html.ValidationMessageFor(model => model.fld_KesukaranMembajaPkt, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        //added by faeza 18.08.2021
+        <div class="form-group">
+            <label class="control-label col-md-2">@GlobalResEstate.lblLoaderDifficulty</label>
+            <div class="col-md-9">
+                @Html.DropDownList("fld_KesukaranMemunggahPkt", null, htmlAttributes: new { @class = "form-control required" })
+                @Html.ValidationMessageFor(model => model.fld_KesukaranMembajaPkt, "", new { @class = "text-danger" })
+            </div>
+        </div>   } *@
+            </div>
+                    @*//Added by Shazana 24/10/2023*@
+                    <div class="col-md-12" style="padding-left:0;padding-right:0;">
+                        <div class="panel panel-primary">
+                            @*Added by Shazana 13/6/2023*@
+                            <div class="panel-heading">Maklumat Tahap Harga Kesukaran</div>
+
+                            <div class="panel-body">
+                                <div id="dynamicInput" class="form-group">
+                                    @*Added by Shazana 22/7/2023*@
+                                    @if (ViewBag.rolename == "Super Power Admin" || ViewBag.rolename == "Super Admin" || ViewBag.rolename == "Admin 1" || ViewBag.rolename == "Admin 2")
+                                    {
+                                        <div class="col-sm-5">
+                                            <label>Jenis Kesukaran</label>
+                                            @Html.DropDownList("fld_JenisHargaKesukaran", null, htmlAttributes: new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <label>Tahap Kesukaran</label>
+                                            @Html.DropDownList("fld_TahapHargaKesukaran", null, htmlAttributes: new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @*Modify by Shazana 15/6/2023*@
+                                            <label style="color:white">Butang simpan tahap kesukaran </label>
+
+                                            <input type="submit" class="btn btn-primary" id="btnAddTextKesukaran" name="btnAddTextKesukaran" value="Simpan" />
+
+                                        </div>
+                                    }@*Added by Shazana 22/7/2023*@
+                                </div>
+
+                                <div id="tblviewKesukaran" class="form-group">
+                                    @*Modified by Shazana 22/7/2023*@
+                                    @Html.Action("LevelsSubPktUpdateKesukaran", "BasicInfo", new { Kodpkt = Model.fld_Pkt, rolename = ViewBag.rolename })
+                                </div>
+                                @Html.Hidden("listCountKesukaran", null)
+                            </div>
+                        </div>
+                    </div>
+
+
+
+              
                 <div class="col-md-6" style="padding-left:0;padding-right:0;">
                     <div class="panel panel-primary">
                         <div class="panel-heading">@GlobalResEstate.lblPlantAreaInfo</div>
@@ -167,7 +209,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+        
         </div>
     </div>
     <div class="modal-footer">
@@ -371,6 +413,50 @@
             jnsKesukaran.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
             $.ajax(jnsKesukaran);
             }
+        });
+
+    /* Added by Shazana 24/11/2023*/
+         $("#btnAddTextKesukaran").click(function (e) {
+                    e.preventDefault();
+                    debugger
+                    var JenisHargaKesukaran = {};
+                    JenisHargaKesukaran.url = "@Url.Action("SaveKesukaran", "BasicInfo")";
+                    JenisHargaKesukaran.type = "POST";
+             JenisHargaKesukaran.data = JSON.stringify({ fld_JenisHargaKesukaran: $("#fld_JenisHargaKesukaran").val(), fld_TahapHargaKesukaran: $("#fld_TahapHargaKesukaran").val(), fld_PktUtama: $("#fld_Pkt").val()});
+                    JenisHargaKesukaran.datatype = "json";
+                    JenisHargaKesukaran.contentType = "application/json";
+                    JenisHargaKesukaran.success = function (result) {
+                if (result == 1) {
+                    $.simplyToast('Data berjaya disimpan', 'success');
+                }
+                else if (result == 2) {
+                    $.simplyToast('Data telah wujud', 'danger');
+                }
+                    };
+                    JenisHargaKesukaran.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+                    $.ajax(JenisHargaKesukaran);
+                    return false;
+                });
+
+               $("#fld_JenisHargaKesukaran").change(function () {
+            var fld_JenisHargaKesukaran = {};
+            var disableoption = "";
+            fld_JenisHargaKesukaran.url = "@Url.Action("GetTahapKesukaranlist", "BasicInfo")";
+            fld_JenisHargaKesukaran.type = "POST";
+            fld_JenisHargaKesukaran.data = JSON.stringify({ JenisKesukaran: $("#fld_JenisHargaKesukaran").val() });
+            fld_JenisHargaKesukaran.datatype = "json";
+            fld_JenisHargaKesukaran.contentType = "application/json";
+            fld_JenisHargaKesukaran.success = function (TahapKesukaranlist) {
+                $("#fld_TahapHargaKesukaran").empty();
+                $("#fld_TahapHargaKesukaran").append("<option value=0>@GlobalResEstate.lblChoose</option>");
+
+                for (var i = 0; i < TahapKesukaranlist.length; i++) {
+                    $("#fld_TahapHargaKesukaran").append("<option value=" + TahapKesukaranlist[i].Value + " " + disableoption + ">" + TahapKesukaranlist[i].Text + "</option>");
+                }
+            };
+            fld_JenisHargaKesukaran.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+            $.ajax(fld_JenisHargaKesukaran);
+
         });
     });
 </script>

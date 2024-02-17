@@ -4053,18 +4053,9 @@ namespace MVC_SYSTEM.Controllers
             tbl_SAPPostDataDetails tbl_SAPPostDataDetails = new tbl_SAPPostDataDetails();
             tbl_SAPPostDataDetails = SapModel.tbl_SAPPostDataDetails.Find(fld_ID);
 
-            if (tbl_SAPPostDataDetails.fld_IO != null && tbl_SAPPostDataDetails.fld_GL != null)
+            if (tbl_SAPPostDataDetails.fld_GL != null)
             {
                 tbl_SAPPostDataDetails.fld_GL = fld_GL.PadLeft(10, '0');
-                tbl_SAPPostDataDetails.fld_IO = fld_IO.PadLeft(10, '0');
-            }
-            else if (tbl_SAPPostDataDetails.fld_IO == null && tbl_SAPPostDataDetails.fld_GL != null)
-            {
-                tbl_SAPPostDataDetails.fld_GL = fld_GL.PadLeft(10, '0');
-            }
-            else if (tbl_SAPPostDataDetails.fld_IO != null && tbl_SAPPostDataDetails.fld_GL == null)
-            {
-                tbl_SAPPostDataDetails.fld_IO = fld_IO.PadLeft(10, '0');
             }
             try
             {
@@ -4083,7 +4074,6 @@ namespace MVC_SYSTEM.Controllers
                 {
                     domain = domain + appname;
                 }
-
 
             }
             catch (Exception ex)

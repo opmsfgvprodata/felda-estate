@@ -3267,7 +3267,8 @@ namespace MVC_SYSTEM.Controllers
                 cell.BorderColor = BaseColor.BLACK;
                 table.AddCell(cell);
 
-                chunk = new Chunk("IO", FontFactory.GetFont("Arial", 9, Font.BOLD, BaseColor.BLACK)); ;
+                //chunk = new Chunk("IO", FontFactory.GetFont("Arial", 9, Font.BOLD, BaseColor.BLACK)); ;
+                chunk = new Chunk("IO / CC / WBS", FontFactory.GetFont("Arial", 9, Font.BOLD, BaseColor.BLACK)); ;
                 cell = new PdfPCell(new Phrase(chunk));
                 cell.HorizontalAlignment = Element.ALIGN_CENTER;
                 cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -3793,7 +3794,8 @@ namespace MVC_SYSTEM.Controllers
             gv.AutoGenerateColumns = false;
             gv.Columns.Add(new BoundField { HeaderText = "Item No.", DataField = "j" });
             gv.Columns.Add(new BoundField { HeaderText = "GL", DataField = "fld_GL" });
-            gv.Columns.Add(new BoundField { HeaderText = "IO", DataField = "fld_IO" });
+            //gv.Columns.Add(new BoundField { HeaderText = "IO", DataField = "fld_IO" });
+            gv.Columns.Add(new BoundField { HeaderText = "IO / CC / WBS", DataField = "fld_IO" });
             gv.Columns.Add(new BoundField { HeaderText = "Activity Code", DataField = "fld_SAPActivityCode" });
             gv.Columns.Add(new BoundField { HeaderText = "Description", DataField = "fld_Desc" });
             gv.Columns.Add(new BoundField { HeaderText = "Amount", DataField = "fld_Amount" });

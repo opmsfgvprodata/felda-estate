@@ -34,6 +34,16 @@ namespace MVC_SYSTEM.log
             }
         }
 
+        public void dataentryerrorlog(string identity, long? userid)
+        {
+            string path = HttpContext.Current.Server.MapPath("~/DataEntryErrorLog/DataEntryErrorLog-" + userid + "-" + timezone.gettimezone().ToString("dd-MM-yyyy") + ".txt");
+            using (StreamWriter writer = new StreamWriter(path, true))
+            {
+                writer.WriteLine("Identity Data 1 : " + identity + ", DateTime : " + timezone.gettimezone());
+                writer.Close();
+            }
+        }
+
         public void testlog(string data1, string data2, string data3)
         {
             string path = HttpContext.Current.Server.MapPath("~/TestLog/testlog-" + timezone.gettimezone().ToString("dd-MM-yyyy") + ".txt");

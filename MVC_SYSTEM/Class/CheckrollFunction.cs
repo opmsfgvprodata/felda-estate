@@ -448,6 +448,7 @@ namespace MVC_SYSTEM.Class
             {
                 var identityData = "NegaraID - " + NegaraID + ", SyarikatID - " + SyarikatID + ", WilayahID - " + WilayahID + ", LadangID - " + LadangID + ", UserID - " + UserID;
                 geterror.dataentryerrorlog(identityData, UserID);
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
                 return 0;
             }
         }
@@ -510,6 +511,7 @@ namespace MVC_SYSTEM.Class
             {
                 var identityData = "NegaraID - " + NegaraID + ", SyarikatID - " + SyarikatID + ", WilayahID - " + WilayahID + ", LadangID - " + LadangID + ", UserID - " + UserID;
                 geterror.dataentryerrorlog(identityData, UserID);
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
                 return 0;
             }
         }
@@ -558,6 +560,7 @@ namespace MVC_SYSTEM.Class
                 {
                     var identityData = "NegaraID - " + NegaraID + ", SyarikatID - " + SyarikatID + ", LadangID - " + LadangID + ", UserID - " + UserID;
                     geterror.dataentryerrorlog(identityData, UserID);
+                    geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
                     return 0;
                 }
 

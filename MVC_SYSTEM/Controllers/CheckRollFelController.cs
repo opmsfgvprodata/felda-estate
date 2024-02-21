@@ -2923,8 +2923,8 @@ namespace MVC_SYSTEM.Controllers
             bodyview = RenderRazorViewToString("WorkerListDetailsCheck", CustMod_Kerjahdrs, NegaraID, SyarikatID, CutOfDateStatus);
             bodyview2 = RenderRazorViewToString("WorkRecordList", CustMod_WorkerWorks, CutOfDateStatus);
 
-            geterror.testservedoing(bodyview);
-            geterror.testlog(SelectionCategory.ToString(), SelectionData, SelectDate.ToString());
+            //geterror.testservedoing(bodyview);
+            //geterror.testlog(SelectionCategory.ToString(), SelectionData, SelectDate.ToString());
 
             string dayname = "";
             int getday = (int)SelectDate.DayOfWeek;

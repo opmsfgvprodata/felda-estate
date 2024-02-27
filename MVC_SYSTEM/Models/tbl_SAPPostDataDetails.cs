@@ -16,7 +16,7 @@ namespace MVC_SYSTEM.Models
         [StringLength(12)]
         public string fld_GL { get; set; }
 
-        [StringLength(12)]
+        [StringLength(25)]
         public string fld_IO { get; set; }
 
         [StringLength(12)]

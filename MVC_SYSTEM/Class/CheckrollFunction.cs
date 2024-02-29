@@ -1,4 +1,5 @@
 ﻿using MVC_SYSTEM.CustomModels;
+using MVC_SYSTEM.log;
 using MVC_SYSTEM.MasterModels;
 using MVC_SYSTEM.Models;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ namespace MVC_SYSTEM.Class
         private ChangeTimeZone timezone = new ChangeTimeZone();
         private GetConfig GetConfig = new GetConfig();
         private Connection Connection = new Connection();
+        errorlog geterror = new errorlog();
 
         public bool LeaveCalBal(MVC_SYSTEM_Models dbr, int year, string NoPkj, string KodKatCuti, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID)
         {
@@ -429,148 +431,187 @@ namespace MVC_SYSTEM.Class
             return Result;
         }
 
-        public void SaveDataKerjaSAP(MVC_SYSTEM_Models dbr, MVC_SYSTEM_Models dbrpkt, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, string GLCode, bool TransferPkt, string transferPktCode, int PilihanPktID)
+        public int SaveDataKerjaSAP(MVC_SYSTEM_Models dbr, MVC_SYSTEM_Models dbrpkt, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, string GLCode, bool TransferPkt, string transferPktCode, int PilihanPktID, long? UserID)
         {
             //get PaysheetID
             var sapType = "";
             var GetPkt = "";
             string GetPaySheetID = "";
             var PktData = new tbl_PktUtama();
-            if (!TransferPkt)
+            try
             {
-                int? JenisPkt = DataKerja.Select(s => s.fld_JnsPkt).Take(1).FirstOrDefault();
-                GetPkt = DataKerja.Select(s => s.fld_KodPkt).Take(1).FirstOrDefault();
-                switch (JenisPkt)
+                if (!TransferPkt)
                 {
-                    case 1:
-                        //Take GetPkt Direct
-                        var tbl_PktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
-                        sapType = string.IsNullOrEmpty(tbl_PktUtama.fld_SAPType) ? "IO" : tbl_PktUtama.fld_SAPType;
-                        break;
-                    case 2:
-                        var tbl_SubPkt = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
-                        sapType = string.IsNullOrEmpty(tbl_SubPkt.fld_SAPType) ? "IO" : tbl_SubPkt.fld_SAPType;
-                        GetPkt = tbl_SubPkt.fld_KodPktUtama;
-                        break;
-                    case 3:
-                        var tbl_Blok = dbrpkt.tbl_Blok.Where(x => x.fld_Blok == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
-                        sapType = string.IsNullOrEmpty(tbl_Blok.fld_SAPType) ? "IO" : tbl_Blok.fld_SAPType;
-                        GetPkt = tbl_Blok.fld_KodPktutama;
-                        break;
+                    int? JenisPkt = DataKerja.Select(s => s.fld_JnsPkt).Take(1).FirstOrDefault();
+                    GetPkt = DataKerja.Select(s => s.fld_KodPkt).Take(1).FirstOrDefault();
+                    switch (JenisPkt)
+                    {
+                        case 1:
+                            //Take GetPkt Direct
+                            var tbl_PktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
+                            sapType = string.IsNullOrEmpty(tbl_PktUtama.fld_SAPType) ? "IO" : tbl_PktUtama.fld_SAPType;
+                            break;
+                        case 2:
+                            var tbl_SubPkt = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
+                            sapType = string.IsNullOrEmpty(tbl_SubPkt.fld_SAPType) ? "IO" : tbl_SubPkt.fld_SAPType;
+                            GetPkt = tbl_SubPkt.fld_KodPktUtama;
+                            break;
+                        case 3:
+                            var tbl_Blok = dbrpkt.tbl_Blok.Where(x => x.fld_Blok == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
+                            sapType = string.IsNullOrEmpty(tbl_Blok.fld_SAPType) ? "IO" : tbl_Blok.fld_SAPType;
+                            GetPkt = tbl_Blok.fld_KodPktutama;
+                            break;
+                    }
+                    PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt && x.fld_Deleted == false).FirstOrDefault();
+                    GetPaySheetID = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusTanaman" && x.fldOptConfValue == PktData.fld_StatusTnmn && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfFlag2).FirstOrDefault();
                 }
-                PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt && x.fld_Deleted == false).FirstOrDefault();
-                GetPaySheetID = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusTanaman" && x.fldOptConfValue == PktData.fld_StatusTnmn && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfFlag2).FirstOrDefault();
+                else
+                {
+                    var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID).FirstOrDefault();
+                    PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal && x.fld_Deleted == false).FirstOrDefault();
+                    sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
+                    PktData.fld_IOcode = transferPktDetail.fld_SAPCode;
+                }
+
+                //get GL Code
+                //string AktvtCd = DataKerja.Select(s => s.fld_KodAktvt).Take(1).FirstOrDefault();
+                string GLCd = GLCode;//db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == GetPaySheetID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(s => s.fld_KodGL).FirstOrDefault();
+
+                List<tbl_KerjaSAPData> KerjaSAPDatas = new List<tbl_KerjaSAPData>();
+
+                foreach (var EachDataKerja in DataKerja)
+                {
+                    KerjaSAPDatas.Add(new tbl_KerjaSAPData { fld_GLKod = GLCd, fld_IOKod = PktData.fld_IOcode, fld_KerjaID = EachDataKerja.fld_ID, fld_PaySheetID = GetPaySheetID, fld_NegaraID = EachDataKerja.fld_NegaraID, fld_SyarikatID = EachDataKerja.fld_SyarikatID, fld_WilayahID = EachDataKerja.fld_WilayahID, fld_LadangID = EachDataKerja.fld_LadangID, fld_SAPType = sapType });
+                }
+
+                dbr.tbl_KerjaSAPData.AddRange(KerjaSAPDatas);
+                dbr.SaveChanges();
+                return 1;
             }
-            else
+            catch(Exception ex)
             {
-                var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID).FirstOrDefault();
-                PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal && x.fld_Deleted == false).FirstOrDefault();
-                sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
-                PktData.fld_IOcode = transferPktDetail.fld_SAPCode;
+                var identityData = "NegaraID - " + NegaraID + ", SyarikatID - " + SyarikatID + ", WilayahID - " + WilayahID + ", LadangID - " + LadangID + ", UserID - " + UserID;
+                geterror.dataentryerrorlog(identityData, UserID);
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                return 0;
             }
-
-            //get GL Code
-            //string AktvtCd = DataKerja.Select(s => s.fld_KodAktvt).Take(1).FirstOrDefault();
-            string GLCd = GLCode;//db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == GetPaySheetID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(s => s.fld_KodGL).FirstOrDefault();
-
-            List<tbl_KerjaSAPData> KerjaSAPDatas = new List<tbl_KerjaSAPData>();
-
-            foreach (var EachDataKerja in DataKerja)
-            {
-                KerjaSAPDatas.Add(new tbl_KerjaSAPData { fld_GLKod = GLCd, fld_IOKod = PktData.fld_IOcode, fld_KerjaID = EachDataKerja.fld_ID, fld_PaySheetID = GetPaySheetID, fld_NegaraID = EachDataKerja.fld_NegaraID, fld_SyarikatID = EachDataKerja.fld_SyarikatID, fld_WilayahID = EachDataKerja.fld_WilayahID, fld_LadangID = EachDataKerja.fld_LadangID, fld_SAPType = sapType });
-            }
-
-            dbr.tbl_KerjaSAPData.AddRange(KerjaSAPDatas);
-            dbr.SaveChanges();
-
         }
 
-        public void SaveDataKerjaSAPFPM(MVC_SYSTEM_Models dbr, MVC_SYSTEM_Models dbrpkt, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, List<CustMod_Work> HadirData, bool TransferPkt, string transferPktCode, int PilihanPktID)
+        public int SaveDataKerjaSAPFPM(MVC_SYSTEM_Models dbr, MVC_SYSTEM_Models dbrpkt, List<tbl_Kerja> DataKerja, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, List<CustMod_Work> HadirData, bool TransferPkt, string transferPktCode, int PilihanPktID, long? UserID)
         {
             //get PaysheetID
             var sapType = "";
             var GetPkt = "";
             var PktData = new tbl_PktUtama();
-            if (!TransferPkt)
+            try
             {
-                int? JenisPkt = DataKerja.Select(s => s.fld_JnsPkt).Take(1).FirstOrDefault();
-                GetPkt = DataKerja.Select(s => s.fld_KodPkt).Take(1).FirstOrDefault();
-                switch (JenisPkt)
+                if (!TransferPkt)
                 {
-                    case 1:
-                        //Take GetPkt Direct
-                        var tbl_PktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
-                        sapType = string.IsNullOrEmpty(tbl_PktUtama.fld_SAPType) ? "IO" : tbl_PktUtama.fld_SAPType;
-                        break;
-                    case 2:
-                        var tbl_SubPkt = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
-                        sapType = string.IsNullOrEmpty(tbl_SubPkt.fld_SAPType) ? "IO" : tbl_SubPkt.fld_SAPType;
-                        GetPkt = tbl_SubPkt.fld_KodPktUtama;
-                        break;
-                    case 3:
-                        var tbl_Blok = dbrpkt.tbl_Blok.Where(x => x.fld_Blok == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
-                        sapType = string.IsNullOrEmpty(tbl_Blok.fld_SAPType) ? "IO" : tbl_Blok.fld_SAPType;
-                        GetPkt = tbl_Blok.fld_KodPktutama;
-                        break;
+                    int? JenisPkt = DataKerja.Select(s => s.fld_JnsPkt).Take(1).FirstOrDefault();
+                    GetPkt = DataKerja.Select(s => s.fld_KodPkt).Take(1).FirstOrDefault();
+                    switch (JenisPkt)
+                    {
+                        case 1:
+                            //Take GetPkt Direct
+                            var tbl_PktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                            sapType = string.IsNullOrEmpty(tbl_PktUtama.fld_SAPType) ? "IO" : tbl_PktUtama.fld_SAPType;
+                            break;
+                        case 2:
+                            var tbl_SubPkt = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                            sapType = string.IsNullOrEmpty(tbl_SubPkt.fld_SAPType) ? "IO" : tbl_SubPkt.fld_SAPType;
+                            GetPkt = tbl_SubPkt.fld_KodPktUtama;
+                            break;
+                        case 3:
+                            var tbl_Blok = dbrpkt.tbl_Blok.Where(x => x.fld_Blok == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                            sapType = string.IsNullOrEmpty(tbl_Blok.fld_SAPType) ? "IO" : tbl_Blok.fld_SAPType;
+                            GetPkt = tbl_Blok.fld_KodPktutama;
+                            break;
+                    }
+                    PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).FirstOrDefault();
                 }
-                PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).FirstOrDefault();
+                else
+                {
+                    var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID).FirstOrDefault();
+                    PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal).FirstOrDefault();
+                    sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
+                    PktData.fld_IOcode = transferPktDetail.fld_SAPCode;
+                }
+
+
+                List<tbl_KerjaSAPData> KerjaSAPDatas = new List<tbl_KerjaSAPData>();
+
+                foreach (var EachDataKerja in DataKerja)
+                {
+                    string GLCd = HadirData.Where(x => x.nopkj == EachDataKerja.fld_Nopkj).Select(s => s.GLCode).FirstOrDefault();
+                    string GetPaySheetID = HadirData.Where(x => x.nopkj == EachDataKerja.fld_Nopkj).Select(s => s.PaysheetID).FirstOrDefault();
+                    KerjaSAPDatas.Add(new tbl_KerjaSAPData { fld_GLKod = GLCd, fld_IOKod = PktData.fld_IOcode, fld_KerjaID = EachDataKerja.fld_ID, fld_PaySheetID = GetPaySheetID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_SAPType = sapType });
+                }
+
+                dbr.tbl_KerjaSAPData.AddRange(KerjaSAPDatas);
+                dbr.SaveChanges();
+                return 1;
             }
-            else
+            catch (Exception ex)
             {
-                var transferPktDetail = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID).FirstOrDefault();
-                PktData = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == transferPktDetail.fld_OriginPktID && x.fld_LadangID == transferPktDetail.fld_LadangIDAsal).FirstOrDefault();
-                sapType = string.IsNullOrEmpty(PktData.fld_SAPType) ? "IO" : PktData.fld_SAPType;
-                PktData.fld_IOcode = transferPktDetail.fld_SAPCode;
+                var identityData = "NegaraID - " + NegaraID + ", SyarikatID - " + SyarikatID + ", WilayahID - " + WilayahID + ", LadangID - " + LadangID + ", UserID - " + UserID;
+                geterror.dataentryerrorlog(identityData, UserID);
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                return 0;
             }
-
-
-            List<tbl_KerjaSAPData> KerjaSAPDatas = new List<tbl_KerjaSAPData>();
-
-            foreach (var EachDataKerja in DataKerja)
-            {
-                string GLCd = HadirData.Where(x => x.nopkj == EachDataKerja.fld_Nopkj).Select(s => s.GLCode).FirstOrDefault();
-                string GetPaySheetID = HadirData.Where(x => x.nopkj == EachDataKerja.fld_Nopkj).Select(s => s.PaysheetID).FirstOrDefault();
-                KerjaSAPDatas.Add(new tbl_KerjaSAPData { fld_GLKod = GLCd, fld_IOKod = PktData.fld_IOcode, fld_KerjaID = EachDataKerja.fld_ID, fld_PaySheetID = GetPaySheetID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_SAPType = sapType });
-            }
-
-            dbr.tbl_KerjaSAPData.AddRange(KerjaSAPDatas);
-            dbr.SaveChanges();
-
         }
 
-        public void SaveDataKerjaKesukaran(MVC_SYSTEM_Models dbr, List<tbl_Kerja> DataKerja, List<Kesukaran> kesukaran, int? NegaraID, int? SyarikatID)
+        public int SaveDataKerjaKesukaran(MVC_SYSTEM_Models dbr, List<tbl_Kerja> DataKerja, List<Kesukaran> kesukaran, int? NegaraID, int? SyarikatID, long? UserID)
         {
             List<tbl_KerjaKesukaran> KerjaKesukaran = new List<tbl_KerjaKesukaran>();
             var keteranganhdr = "";
             var statushdr = "";
             short Gandaan = 0;
             short gandaanSave = 0;
+            int? LadangID = 0;
 
-            if ( kesukaran != null)
+            if (kesukaran != null)
             {
-                var oneDataKerja = DataKerja.FirstOrDefault();
-
-                var kodKehadiran = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == oneDataKerja.fld_Nopkj && x.fld_LadangID == oneDataKerja.fld_LadangID && x.fld_Tarikh == oneDataKerja.fld_Tarikh).Select(s => s.fld_Kdhdct).FirstOrDefault();
-
-                GetConfig.GetCutiDesc(kodKehadiran, "cuti", out keteranganhdr, out statushdr, out Gandaan, NegaraID, SyarikatID);
-
-                foreach (var EachDataKerja in DataKerja)
+                try
                 {
-                    decimal? jumlahKeseluruhan = 0m;
-                    foreach (var item in kesukaran)
+                    var oneDataKerja = DataKerja.FirstOrDefault();
+
+                    LadangID = oneDataKerja.fld_LadangID;
+
+                    var kodKehadiran = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == oneDataKerja.fld_Nopkj && x.fld_LadangID == oneDataKerja.fld_LadangID && x.fld_Tarikh == oneDataKerja.fld_Tarikh).Select(s => s.fld_Kdhdct).FirstOrDefault();
+
+                    GetConfig.GetCutiDesc(kodKehadiran, "cuti", out keteranganhdr, out statushdr, out Gandaan, NegaraID, SyarikatID);
+
+                    foreach (var EachDataKerja in DataKerja)
                     {
-                        gandaanSave = item.fldOptConfFlag2 == "HargaTambahan" ? Gandaan : (short)1;
-                        var jumlah = EachDataKerja.fld_JumlahHasil * item.fld_HargaKesukaran * gandaanSave;
-                        jumlah = Math.Round(jumlah.Value, 2);
-                        jumlahKeseluruhan += jumlah;
-                        KerjaKesukaran.Add(new tbl_KerjaKesukaran { fld_KerjaID = EachDataKerja.fld_ID, fld_Kadar = item.fld_HargaKesukaran, fld_KodKesukaran = item.fld_KodHargaKesukaran, fld_Gandaan = gandaanSave, fld_Nopkj = EachDataKerja.fld_Nopkj, fld_Kuantiti = EachDataKerja.fld_JumlahHasil, fld_Kum = EachDataKerja.fld_Kum, fld_Tarikh = EachDataKerja.fld_Tarikh, fld_Jumlah = jumlah, fld_NegaraID = EachDataKerja.fld_NegaraID, fld_SyarikatID = EachDataKerja.fld_SyarikatID, fld_WilayahID = EachDataKerja.fld_WilayahID, fld_LadangID = EachDataKerja.fld_LadangID });
+                        decimal? jumlahKeseluruhan = 0m;
+                        foreach (var item in kesukaran)
+                        {
+                            gandaanSave = item.fldOptConfFlag2 == "HargaTambahan" ? Gandaan : (short)1;
+                            var jumlah = EachDataKerja.fld_JumlahHasil * item.fld_HargaKesukaran * gandaanSave;
+                            jumlah = Math.Round(jumlah.Value, 2);
+                            jumlahKeseluruhan += jumlah;
+                            KerjaKesukaran.Add(new tbl_KerjaKesukaran { fld_KerjaID = EachDataKerja.fld_ID, fld_Kadar = item.fld_HargaKesukaran, fld_KodKesukaran = item.fld_KodHargaKesukaran, fld_Gandaan = gandaanSave, fld_Nopkj = EachDataKerja.fld_Nopkj, fld_Kuantiti = EachDataKerja.fld_JumlahHasil, fld_Kum = EachDataKerja.fld_Kum, fld_Tarikh = EachDataKerja.fld_Tarikh, fld_Jumlah = jumlah, fld_NegaraID = EachDataKerja.fld_NegaraID, fld_SyarikatID = EachDataKerja.fld_SyarikatID, fld_WilayahID = EachDataKerja.fld_WilayahID, fld_LadangID = EachDataKerja.fld_LadangID });
+                        }
+                        EachDataKerja.fld_HrgaKwsnSkar = jumlahKeseluruhan;
+                        EachDataKerja.fld_KodKwsnSkar = "**";
                     }
-                    EachDataKerja.fld_HrgaKwsnSkar = jumlahKeseluruhan;
-                    EachDataKerja.fld_KodKwsnSkar = "**";
+
+                    dbr.tbl_KerjaKesukaran.AddRange(KerjaKesukaran);
+                    dbr.SaveChanges();
+                    return 1;
+                }
+                catch (Exception ex)
+                {
+                    var identityData = "NegaraID - " + NegaraID + ", SyarikatID - " + SyarikatID + ", LadangID - " + LadangID + ", UserID - " + UserID;
+                    geterror.dataentryerrorlog(identityData, UserID);
+                    geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                    return 0;
                 }
 
-                dbr.tbl_KerjaKesukaran.AddRange(KerjaKesukaran);
-                dbr.SaveChanges();
+            }
+            else
+            {
+                return 1;
             }
         }
 

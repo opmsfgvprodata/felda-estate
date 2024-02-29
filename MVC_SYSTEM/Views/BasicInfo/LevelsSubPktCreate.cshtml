@@ -52,37 +52,56 @@
         </div>*@
                     @if (GetIdentity.SuperPowerAdmin(User.Identity.Name) || GetIdentity.SuperAdmin(User.Identity.Name) || GetIdentity.Admin1(User.Identity.Name) || GetIdentity.Admin2(User.Identity.Name))
                     {
+                        //Commented by Shazana 24/11/2023
+                        @*<div class="form-group">
+                <label class="control-label col-md-2">@GlobalResEstate.lblHarvestDifficulty</label>
+                <div class="col-md-9">
+                    @Html.DropDownList("fld_KesukaranMenuaiPkt", null, htmlAttributes: new { @class = "form-control required" })
+                    @Html.ValidationMessageFor(model => model.fld_KesukaranMenuaiPkt, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">@GlobalResEstate.lblFertilizeDifficulty</label>
+                <div class="col-md-9">
+                    @Html.DropDownList("fld_KesukaranMembajaPkt", null, htmlAttributes: new { @class = "form-control required" })
+                    @Html.ValidationMessageFor(model => model.fld_KesukaranMembajaPkt, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            //added by faeza 18.08.2021
+            <div class="form-group">
+                <label class="control-label col-md-2">@GlobalResEstate.lblLoaderDifficulty</label>
+                <div class="col-md-9">
+                    @Html.DropDownList("fld_KesukaranMemunggahPkt", null, htmlAttributes: new { @class = "form-control required" })
+                    @Html.ValidationMessageFor(model => model.fld_KesukaranMemunggahPkt, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
                         <div class="form-group">
-                            <label class="control-label col-md-2">@GlobalResEstate.lblHarvestDifficulty</label>
+                            <label class="control-label col-md-2">@GlobalResEstate.lblLevelArea</label>
                             <div class="col-md-9">
-                                @Html.DropDownList("fld_KesukaranMenuaiPkt", null, htmlAttributes: new { @class = "form-control required" })
-                                @Html.ValidationMessageFor(model => model.fld_KesukaranMenuaiPkt, "", new { @class = "text-danger" })
+                                @Html.EditorFor(model => model.fld_LsPkt, new { htmlAttributes = new { @Value = "0.000", @class = "form-control required" } })
+                                @Html.ValidationMessageFor(model => model.fld_LsPkt, "", new { @class = "text-danger" })
+                                <div id="qouta" style="color:red;"></div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-2">@GlobalResEstate.lblFertilizeDifficulty</label>
-                            <div class="col-md-9">
-                                @Html.DropDownList("fld_KesukaranMembajaPkt", null, htmlAttributes: new { @class = "form-control required" })
-                                @Html.ValidationMessageFor(model => model.fld_KesukaranMembajaPkt, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        //added by faeza 18.08.2021
-                        <div class="form-group">
-                            <label class="control-label col-md-2">@GlobalResEstate.lblLoaderDifficulty</label>
-                            <div class="col-md-9">
-                                @Html.DropDownList("fld_KesukaranMemunggahPkt", null, htmlAttributes: new { @class = "form-control required" })
-                                @Html.ValidationMessageFor(model => model.fld_KesukaranMemunggahPkt, "", new { @class = "text-danger" })
+                        //Added by Shazana 24/11/2023
+                        <div class="col-md-12" style="padding-left:0;padding-right:0;">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Maklumat Tahap Harga Kesukaran</div>
+
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="col-sm-6" style="padding-top:3.8%">
+                                            <button class="btn btn-primary" id="btnAddText_Kesukaran">Tambah Tahap Kesukaran</button>
+                                        </div>
+                                    </div>
+                                    <div id="dynamicInput_Kesukaran" class="form-group">
+                                    </div>
+                                    @Html.Hidden("listCount_Kesukaran", null)
+                                </div>
                             </div>
                         </div>
                     }
-                    <div class="form-group">
-                        <label class="control-label col-md-2">@GlobalResEstate.lblLevelArea</label>
-                        <div class="col-md-9">
-                            @Html.EditorFor(model => model.fld_LsPkt, new { htmlAttributes = new { @Value = "0.000", @class = "form-control required" } })
-                            @Html.ValidationMessageFor(model => model.fld_LsPkt, "", new { @class = "text-danger" })
-                            <div id="qouta" style="color:red;"></div>
-                        </div>
-                    </div>
+
                 </div>
                 <div class="col-md-6" style="padding-left:0;padding-right:0;">
                     <div class="panel panel-primary">
@@ -167,6 +186,7 @@
 
 <script>
     $(document).ready(function () {
+        var btnClick_Kesukaran = 0; //Added by Shazana 24/11/2023
         var btnClickPkt = 0;
         if ($("#fld_KodPktUtama").val() == 0) {
             var PktUtama = {};
@@ -180,7 +200,6 @@
                 $("#fld_Pkt").empty();
                 $("#fld_Pkt").val(result.newpkt);
                 $("#qouta").empty();
-                //$("#qouta").append("*Sila masukkan luas peringkat sama atau tidak melebihi " + result.luas);
             };
             PktUtama.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
             $.ajax(PktUtama);
@@ -382,5 +401,159 @@
             $.ajax(jnsKesukaran);
             }
         });
+
+
+
+                      /*  Added by Shazana 13/6/2023*/
+              $("#btnAddText_Kesukaran").click(function (e) {
+            event.preventDefault()
+                 btnClick_Kesukaran += 1;
+
+            var Kesukaran = {};
+            var disableoption = "";
+                 Kesukaran.url = "@Url.Action("GetHargaKesukaranlist", "BasicInfo")";
+                 Kesukaran.type = "POST";
+                 Kesukaran.data = JSON.stringify({});
+                 Kesukaran.datatype = "json";
+                 Kesukaran.contentType = "application/json";
+                 Kesukaran.success = function (HargaKesukaranlist) {
+
+                     console.log(btnClick_Kesukaran);
+                     console.log(HargaKesukaranlist.length);
+                     if (HargaKesukaranlist.length > 0) {
+                         var addlist_Kesukaran = document.createElement('div');
+                         var addlist_TahapKesukaran = document.createElement('div');
+                         var addtextbox_Kesukaran = document.createElement('div');
+                         var addremovebtn_Kesukaran = document.createElement('div');
+                         var list_Kesukaran = document.createElement('select');
+                         var list_TahapKesukaran = document.createElement('select');
+                         addremovebtn_Kesukaran.style = 'padding-top:3.8%';
+                         addlist_Kesukaran.className = 'col-sm-5';
+                         addlist_TahapKesukaran.className = 'col-sm-5';
+
+                         list_Kesukaran.className = 'form-control chng';
+                         list_Kesukaran.id = "dd1" + btnClick_Kesukaran;
+                         list_Kesukaran.name = "dd1" + btnClick_Kesukaran;
+                         list_Kesukaran.title = "list_Kesukaran";
+
+                         list_TahapKesukaran.className = 'form-control chng2';
+                         list_TahapKesukaran.id = "dd2" + btnClick_Kesukaran;
+                         list_TahapKesukaran.name = "dd2" + btnClick_Kesukaran;
+                         list_TahapKesukaran.title = "list_TahapKesukaran";
+
+                         addlist_Kesukaran.innerHTML = '<label>Jenis Kesukaran</label>'
+                         var opt3 = document.createElement('option');
+                         opt3.value = "0";
+                         opt3.text = "Sila pilih";
+                         list_Kesukaran.appendChild(opt3);
+
+                         for (var i = 0; i < HargaKesukaranlist.length; i++) {
+                             var opt1 = document.createElement('option');
+                             opt1.value = HargaKesukaranlist[i].Value;
+                             opt1.text = HargaKesukaranlist[i].Text;
+                             list_Kesukaran.appendChild(opt1);
+                         }
+                         addlist_Kesukaran.appendChild(list_Kesukaran);
+
+                         var opt2 = document.createElement('option');
+                         opt2.value = "0";
+                         opt2.text = "Sila pilih";
+                         list_TahapKesukaran.appendChild(opt2);
+
+                         addlist_TahapKesukaran.innerHTML = '<label>Tahap Kesukaran</label>'
+                         addlist_TahapKesukaran.appendChild(list_TahapKesukaran);
+                         addremovebtn_Kesukaran.innerHTML = '<button style="visibility:hidden" type="button" class="btn btn-primary remove" id="' + btnClick_Kesukaran + '" onclick="removeList(this);">Hapus</button>';
+                         document.getElementById('dynamicInput_Kesukaran').appendChild(addlist_Kesukaran);
+                         document.getElementById('dynamicInput_Kesukaran').appendChild(addlist_TahapKesukaran);
+                         document.getElementById('dynamicInput_Kesukaran').appendChild(addremovebtn_Kesukaran);
+                         $("#listCount_Kesukaran").empty();
+                         $("#listCount_Kesukaran").val(btnClick_Kesukaran);
+                }
+                else {
+                    $.simplyToast('@GlobalResEstate.msgError', 'danger');
+                }
+                 };
+                 Kesukaran.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+                 $.ajax(Kesukaran);
+             });
+
+
+
+        // print dropdown values on console
+        $(document).on('change', '.chng', function () {
+            event.preventDefault()
+            var request = { valuekesukaran: $(this).val() };
+            var valuekesukaran = $(this).val();
+            var dd1Length = $(this).attr('id').length;
+            var dd2Value = $(this).attr('id').substring(3, dd1Length);
+            var Kesukaran = {};
+            debugger
+            var disableoption = "";
+            Kesukaran.url = "@Url.Action("GetTahapKesukaranlist", "BasicInfo")";
+            Kesukaran.type = "POST";
+            Kesukaran.data = JSON.stringify({ JenisKesukaran: valuekesukaran});
+            Kesukaran.datatype = "json";
+            Kesukaran.contentType = "application/json";
+            Kesukaran.success = function (TahapKesukaranlist) {
+
+                var list_TahapKesukaran = document.createElement('select');
+                list_TahapKesukaran.className = 'form-control chng2';
+                var opt1 = document.createElement('option');
+                var options = '<option value="0"><strong>Sila piih</strong></option>'; //create your "title" option
+
+                if (TahapKesukaranlist.length > 0) {
+                    for (var i = 0; i < TahapKesukaranlist.length; i++) {
+
+
+                        opt1.value = TahapKesukaranlist[i].Value;
+                        opt1.text = TahapKesukaranlist[i].Text;
+                        list_TahapKesukaran.appendChild(opt1);
+
+                        options += '<option value="' + opt1.value + '">' + opt1.text + '</option>'; //add the option element as a string
+
+                        debugger
+                    }
+                }
+
+                var dd2Name = "#dd2" + dd2Value;
+                $(dd2Name).html(options);
+
+            debugger
+
+            }
+            Kesukaran.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+                 $.ajax(Kesukaran);
+                debugger
+        });
+       /* Close Added by Shazana 13/6/2023*/
+
+        $("#fld_jnsKesukaran").change(function () {
+            if ($("#fld_jnsKesukaran").val() == 0) {
+                $("#fld_KesukaranPktUtama").empty();
+                $("#fld_KesukaranPktUtama").append("<option value=0>@GlobalResEstate.lblChoose</option>");
+            }
+            else {
+                var jnsKesukaran = {};
+            var disableoption = "";
+            jnsKesukaran.url = "@Url.Action("GetKesukaran", "BasicInfo")";
+            jnsKesukaran.type = "POST";
+            jnsKesukaran.data = JSON.stringify({ jnsKesukaran: $("#fld_jnsKesukaran").val() });
+            jnsKesukaran.datatype = "json";
+            jnsKesukaran.contentType = "application/json";
+            jnsKesukaran.success = function (TahapKesukaranlist) {
+                $("#fld_KesukaranPktUtama").empty();
+                $("#fld_KesukaranPktUtama").append("<option value=0>@GlobalResEstate.lblChoose</option>");
+
+                for (var i = 0; i < TahapKesukaranlist.length; i++) {
+                    $("#fld_KesukaranPktUtama").append("<option value=" + TahapKesukaranlist[i].Value + " " + disableoption + ">" + TahapKesukaranlist[i].Text + "</option>");
+                }
+            };
+            jnsKesukaran.error = function () { $.simplyToast('@GlobalResEstate.msgError', 'danger'); };
+            $.ajax(jnsKesukaran);
+            }
+        });
+
+
+
     });
 </script>

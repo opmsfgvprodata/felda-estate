@@ -7,8 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-using SysXml = System.Xml;
-
+using SysXML = System.Xml;
 namespace MVC_SYSTEM.SAPPosting_FLP {
     
     
@@ -26,7 +25,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -310,7 +309,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -2162,7 +2161,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -2306,7 +2305,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -2342,7 +2341,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         private string systemField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=0)]
         public string Type {
             get {
                 return this.typeField;
@@ -2354,7 +2353,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=1)]
         public string Id {
             get {
                 return this.idField;
@@ -2366,7 +2365,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=2)]
         public string Number {
             get {
                 return this.numberField;
@@ -2378,7 +2377,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=3)]
         public string Message {
             get {
                 return this.messageField;
@@ -2390,7 +2389,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=4)]
         public string LogNo {
             get {
                 return this.logNoField;
@@ -2402,7 +2401,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=5)]
         public string LogMsgNo {
             get {
                 return this.logMsgNoField;
@@ -2414,7 +2413,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=6)]
         public string MessageV1 {
             get {
                 return this.messageV1Field;
@@ -2426,7 +2425,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=7)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=7)]
         public string MessageV2 {
             get {
                 return this.messageV2Field;
@@ -2438,7 +2437,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=8)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=8)]
         public string MessageV3 {
             get {
                 return this.messageV3Field;
@@ -2450,7 +2449,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=9)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=9)]
         public string MessageV4 {
             get {
                 return this.messageV4Field;
@@ -2462,7 +2461,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=10)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=10)]
         public string Parameter {
             get {
                 return this.parameterField;
@@ -2474,7 +2473,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=11)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=11)]
         public int Row {
             get {
                 return this.rowField;
@@ -2486,7 +2485,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=12)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=12)]
         public string Field {
             get {
                 return this.fieldField;
@@ -2498,7 +2497,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form= SysXml.Schema.XmlSchemaForm.Unqualified, Order=13)]
+        [System.Xml.Serialization.XmlElementAttribute(Form= SysXML.Schema.XmlSchemaForm.Unqualified, Order=13)]
         public string System {
             get {
                 return this.systemField;
@@ -2520,7 +2519,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -2706,7 +2705,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -3004,7 +3003,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -3092,7 +3091,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -3166,7 +3165,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -3576,7 +3575,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4028,7 +4027,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4200,7 +4199,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4260,7 +4259,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4530,7 +4529,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4618,7 +4617,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4874,7 +4873,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5060,7 +5059,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5904,7 +5903,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6706,7 +6705,7 @@ namespace MVC_SYSTEM.SAPPosting_FLP {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]

@@ -3882,7 +3882,7 @@ namespace MVC_SYSTEM.Controllers
             PilihanAktvtHT.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
             //Modified by SHazana 10/11/2023
             //var AktivitiToolTip = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
-            var AktivitiToolTip = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && getJenisActvtDetails.Contains(x.fld_KodJenisAktvt) && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
+            var AktivitiToolTip = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Unit == "KONG" && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
 
             db.Dispose();
             return Json(new { PilihanAktvtHT, AktivitiToolTip });

@@ -81,6 +81,14 @@ namespace MVC_SYSTEM.MasterModels
         public int? fld_bilKwsnUtama { get; set; }
         public int? fld_bilKwsnRezab { get; set; }
 
+        //fatin added - 14/02/2024
+        [StringLength(50)]
+        public string fld_ZIOFLD { get; set; }
+
+        [StringLength(50)]
+        public string fld_ZIOFPM { get; set; }
+        //end
+
         //fatin added - 01/09/2023
         [StringLength(15)]
         public string fld_WBS { get; set; }

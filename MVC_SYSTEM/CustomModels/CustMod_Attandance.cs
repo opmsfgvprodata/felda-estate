@@ -23,5 +23,6 @@ namespace MVC_SYSTEM.CustomModels
 
         public short atteditstatus { get; set; }
         public string SAPChargeCode { get; set; }
+        public string SAPGLCode { get; set; }
     }
 }

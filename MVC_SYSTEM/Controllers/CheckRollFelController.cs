@@ -123,7 +123,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.PaidLeaveCodes = paidLeaveCodes;
             var getEstateLevels = dbr.tbl_PktUtama.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(s => new { value = s.fld_IOcode, text = s.fld_IOcode }).ToList();
             var estateLevels = JsonConvert.SerializeObject(getEstateLevels);
-            var getEstateGLs = FPMGL.Select(s => new { value = s.fld_sapcode, text = s.fld_sapcode }).ToList();
+            var getEstateGLs = FPMGL.Select(s => new { value = s.fld_sapcode, text = s.fld_Desc }).ToList();
             var estateGLs = JsonConvert.SerializeObject(getEstateGLs);
             ViewBag.EstateLevels = estateLevels;
             ViewBag.EstateGLs = estateGLs;

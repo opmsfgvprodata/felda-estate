@@ -482,6 +482,7 @@
     <Compile Include="MasterModels\vw_UserIDDetail.cs" />
     <Compile Include="ModelsDapper\DataSetFunction.cs" />
     <Compile Include="ModelsDapper\EstateClosingChecking_Result.cs" />
+    <Compile Include="ModelsDapper\FPMGL.cs" />
     <Compile Include="ModelsDapper\KerjaInfoDetails_Result.cs" />
     <Compile Include="ModelsDapper\Payslip_Result.cs" />
     <Compile Include="ModelsDapper\Worker.cs" />

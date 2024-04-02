@@ -8549,7 +8549,7 @@ namespace MVC_SYSTEM.Controllers
                 //added by faeza 04.01.2024
                 BakiCutiTahunan = GajiBulananDetail.fld_BakiCutiTahunan == null ? 0 : GajiBulananDetail.fld_BakiCutiTahunan;
                 TotalSalaryForKWSP = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_BonusHarian + TotalInsentifEfected + GajiBulananDetail.fld_AIPS + BakiCutiTahunan/*GajiBulananDetail.fld_BakiCutiTahunan*/; //fatin modified - 26/02/2024
-                TotalSalaryForPerkeso = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_OT + TotalInsentifEfected + GajiBulananDetail.fld_AIPS + BakiCutiTahunan /*GajiBulananDetail.fld_BakiCutiTahunan*/; //fatin modified - 26/02/2024
+                TotalSalaryForPerkeso = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_BonusHarian + GajiBulananDetail.fld_OT + TotalInsentifEfected + GajiBulananDetail.fld_AIPS + BakiCutiTahunan; //modified faeza 02.04.2024 - add bonus harian
                 //commented by faeza 04.01.2024
                 //TotalSalaryForKWSP = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_BonusHarian + TotalInsentifEfected + GajiBulananDetail.fld_AIPS;
                 //TotalSalaryForPerkeso = GajiBulananDetail.fld_ByrKerja + GajiBulananDetail.fld_ByrCuti + GajiBulananDetail.fld_OT + TotalInsentifEfected + GajiBulananDetail.fld_AIPS;

@@ -143,6 +143,8 @@
     paidLeaveCodes = @Html.Raw(ViewBag.PaidLeaveCodes);
     var estateLevels = [];
     estateLevels = @Html.Raw(ViewBag.EstateLevels);
+    var estateGLs = [];
+    estateGLs = @Html.Raw(ViewBag.EstateGLs);
     var estateSapCode = '@Html.Raw(ViewBag.EstateSapCode)';
     for (const element of paidLeaveCodes) {
         if (element.leaveCode === $("#WorkCode").val()) {
@@ -150,11 +152,22 @@
             for (var i = 0; i < estateLevels.length; i++) {
                 $("#SAPChargeCode").append("<option value='" + estateLevels[i].value + "'>" + estateLevels[i].text + "</option>");
             }
+            $("#SAPGLCode").empty();
+            if (estateSapCode == '8800') {
+                for (var i = 0; i < estateGLs.length; i++) {
+                    $("#SAPGLCode").append("<option value='" + estateGLs[i].value + "'>" + estateGLs[i].text + "</option>");
+                }
+            }
+            else {
+                $("#SAPGLCode").append("<option value=''>Tidak Perlu</option>");
+            }
             break;
         }
         else {
             $("#SAPChargeCode").empty();
             $("#SAPChargeCode").append("<option value=''>Tidak Perlu</option>");
+            $("#SAPGLCode").empty();
+            $("#SAPGLCode").append("<option value=''>Tidak Perlu</option>");
         }
     }
     function ClearInput() {
@@ -1150,11 +1163,23 @@
                         for (var i = 0; i < estateLevels.length; i++) {
                             $("#SAPChargeCode").append("<option value='" + estateLevels[i].value + "'>" + estateLevels[i].text + "</option>");
                         }
+
+                        $("#SAPGLCode").empty();
+                        if (estateSapCode == '8800') {
+                            for (var i = 0; i < estateGLs.length; i++) {
+                                $("#SAPGLCode").append("<option value='" + estateGLs[i].value + "'>" + estateGLs[i].text + "</option>");
+                            }
+                        }
+                        else {
+                            $("#SAPGLCode").append("<option value=''>Tidak Perlu</option>");
+                        }
                         break;
                     }
                     else {
                         $("#SAPChargeCode").empty();
                         $("#SAPChargeCode").append("<option value=''>Tidak Perlu</option>");
+                        $("#SAPGLCode").empty();
+                        $("#SAPGLCode").append("<option value=''>Tidak Perlu</option>");
                     }
                 }
                 if (result.kodhjn != '') {
@@ -1309,11 +1334,23 @@
                 for (var i = 0; i < estateLevels.length; i++) {
                     $("#SAPChargeCode").append("<option value='" + estateLevels[i].value + "'>" + estateLevels[i].text + "</option>");
                 }
+
+                $("#SAPGLCode").empty();
+                if (estateSapCode == '8800') {
+                    for (var i = 0; i < estateGLs.length; i++) {
+                        $("#SAPGLCode").append("<option value='" + estateGLs[i].value + "'>" + estateGLs[i].text + "</option>");
+                    }
+                }
+                else {
+                    $("#SAPGLCode").append("<option value=''>Tidak Perlu</option>");
+                }
                 break;
             }
             else {
                 $("#SAPChargeCode").empty();
                 $("#SAPChargeCode").append("<option value=''>Tidak Perlu</option>");
+                $("#SAPGLCode").empty();
+                $("#SAPGLCode").append("<option value=''>Tidak Perlu</option>");
             }
         }
         //paidLeaveCodes.forEach((item) => {

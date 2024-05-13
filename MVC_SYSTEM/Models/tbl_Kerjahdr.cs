@@ -43,5 +43,8 @@ namespace MVC_SYSTEM.Models
 
         [StringLength(20)]
         public string fld_SAPChargeCode { get; set; }
+
+        [StringLength(10)]
+        public string fld_SAPGLCode { get; set; }
     }
 }

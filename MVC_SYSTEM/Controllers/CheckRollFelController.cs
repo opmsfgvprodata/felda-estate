@@ -14,6 +14,10 @@ using MVC_SYSTEM.Security;
 using System.Data.Entity;
 using Newtonsoft.Json;
 using System.Dynamic;
+using Dapper;
+using MVC_SYSTEM.ModelsDapper;
+using System.Data.SqlClient;
+using System.Configuration;
 
 namespace MVC_SYSTEM.Controllers
 {
@@ -76,7 +80,22 @@ namespace MVC_SYSTEM.Controllers
 
             //added by faeza 16.08.2022 - change tbl_Kerjahdr to tbl_Kerja AND add .OrderByDescending(o => o.fld_Tarikh)
             var CheckLastDataKeyIn = dbr.tbl_Kerja.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Tarikh.Value.Year == date.Value.Year && x.fld_Tarikh.Value.Month == date.Value.Month).OrderByDescending(o => o.fld_Tarikh).Select(s => s.fld_Tarikh).FirstOrDefault();
-            ViewBag.EstateSapCode = GetLadang.GetLadangCostCenter(LadangID);
+            var EstateSapCode = GetLadang.GetLadangCostCenter(LadangID);
+            ViewBag.EstateSapCode = EstateSapCode;
+
+            var FPMGL = new List<FPMGL>();
+            var con = new SqlConnection(ConfigurationManager.ConnectionStrings["MVC_SYSTEM_HQ_CONN"].ConnectionString);
+            try
+            {
+                con.Open();
+                SqlMapper.Settings.CommandTimeout = 300;
+                FPMGL = SqlMapper.Query<FPMGL>(con, "sp_GetGLForFPM").ToList();
+                con.Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
             ////fitri 06-08-2020
             //var CheckLastDataKeyIn = dbr.tbl_Kerjahdr.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Tarikh.Value.Year == date.Value.Year && x.fld_Tarikh.Value.Month == date.Value.Month).Select(s => s.fld_Tarikh).FirstOrDefault();
             //faeza 29.12.2020
@@ -104,7 +123,10 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.PaidLeaveCodes = paidLeaveCodes;
             var getEstateLevels = dbr.tbl_PktUtama.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(s => new { value = s.fld_IOcode, text = s.fld_IOcode }).ToList();
             var estateLevels = JsonConvert.SerializeObject(getEstateLevels);
+            var getEstateGLs = FPMGL.Select(s => new { value = s.fld_sapcode, text = s.fld_Desc }).ToList();
+            var estateGLs = JsonConvert.SerializeObject(getEstateGLs);
             ViewBag.EstateLevels = estateLevels;
+            ViewBag.EstateGLs = estateGLs;
 
             if (TotalDayLastKeyIn >= TotalDayLastNeedKeyIn && CheckBlockStatus != null && GetClosingDataBlock)
             {
@@ -329,7 +351,7 @@ namespace MVC_SYSTEM.Controllers
                                     {
                                         if (EstateFunction.LeaveCalBal(dbr, CustMod_Attandance.dateseleted.Year, pkjid, CustMod_Attandance.WorkCode, NegaraID, SyarikatID, WilayahID, LadangID))
                                         {
-                                            tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_Attandance.SelectionData, fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode });
+                                            tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_Attandance.SelectionData, fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode, fld_SAPGLCode = CustMod_Attandance.SAPGLCode });
                                             EstateFunction.LeaveDeduct(dbr, CustMod_Attandance.dateseleted.Year, pkjid, CustMod_Attandance.WorkCode, NegaraID, SyarikatID, WilayahID, LadangID);
                                         }
                                         else
@@ -341,7 +363,7 @@ namespace MVC_SYSTEM.Controllers
                                     }
                                     else
                                     {
-                                        tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_Attandance.SelectionData, fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode });
+                                        tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_Attandance.SelectionData, fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode, fld_SAPGLCode = CustMod_Attandance.SAPGLCode });
                                     }
                                 }
 
@@ -358,7 +380,7 @@ namespace MVC_SYSTEM.Controllers
                                         {
                                             if (EstateFunction.LeaveCalBal(dbr, CustMod_Attandance.dateseleted.Year, pkjid, CustMod_Attandance.WorkCode, NegaraID, SyarikatID, WilayahID, LadangID))
                                             {
-                                                tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_Attandance.SelectionData, fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode });
+                                                tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_Attandance.SelectionData, fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode, fld_SAPGLCode = CustMod_Attandance.SAPGLCode });
                                                 EstateFunction.LeaveDeduct(dbr, CustMod_Attandance.dateseleted.Year, pkjid, CustMod_Attandance.WorkCode, NegaraID, SyarikatID, WilayahID, LadangID);
                                             }
                                             else
@@ -373,7 +395,7 @@ namespace MVC_SYSTEM.Controllers
                                     {
                                         foreach (var pkjid in needtoadds)
                                         {
-                                            tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_Attandance.SelectionData, fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode });
+                                            tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_Attandance.SelectionData, fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode, fld_SAPGLCode = CustMod_Attandance.SAPGLCode });
                                         }
                                     }
                                     msg = GlobalResEstate.msgUpdate;
@@ -401,7 +423,7 @@ namespace MVC_SYSTEM.Controllers
                                     {
                                         var pkjdata = dbr.tbl_Pkjmast.Where(x => x.fld_Nopkj == CustMod_Attandance.SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Kdaktf == "1").Select(s => new { s.fld_Nopkj, s.fld_KumpulanID }).FirstOrDefault();
                                         KumpulanKod = dbr.tbl_KumpulanKerja.Where(x => x.fld_KumpulanID == pkjdata.fld_KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KodKumpulan).FirstOrDefault();
-                                        tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Kum = KumpulanKod.Trim(), fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode });
+                                        tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Kum = KumpulanKod.Trim(), fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode, fld_SAPGLCode = CustMod_Attandance.SAPGLCode });
                                         disablesavebtn = true;
                                         EstateFunction.LeaveDeduct(dbr, CustMod_Attandance.dateseleted.Year, CustMod_Attandance.SelectionData, CustMod_Attandance.WorkCode, NegaraID, SyarikatID, WilayahID, LadangID);
                                     }
@@ -416,7 +438,7 @@ namespace MVC_SYSTEM.Controllers
                                 {
                                     var pkjdata = dbr.tbl_Pkjmast.Where(x => x.fld_Nopkj == CustMod_Attandance.SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Kdaktf == "1").Select(s => new { s.fld_Nopkj, s.fld_KumpulanID }).FirstOrDefault();
                                     KumpulanKod = dbr.tbl_KumpulanKerja.Where(x => x.fld_KumpulanID == pkjdata.fld_KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KodKumpulan).FirstOrDefault();
-                                    tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Kum = KumpulanKod.Trim(), fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode });
+                                    tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Kum = KumpulanKod.Trim(), fld_Tarikh = CustMod_Attandance.dateseleted, fld_Kdhdct = CustMod_Attandance.WorkCode, fld_Hujan = CustMod_Attandance.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B", fld_SAPChargeCode = CustMod_Attandance.SAPChargeCode, fld_SAPGLCode = CustMod_Attandance.SAPGLCode });
                                 }
                             }
                             else
@@ -643,7 +665,7 @@ namespace MVC_SYSTEM.Controllers
             InitialLadang = GetLadangSelectionName.fld_NamaLadang.Substring(0, 3);
             //end faeza
 
-            var getJenisActvtDetails = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3 && x.fld_Deleted == false).FirstOrDefault();
+            //var getJenisActvtDetails = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3 && x.fld_Deleted == false).FirstOrDefault();
 
             JnisPktHT = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "jnspkt" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc }), "Value", "Text").ToList();
             PilihanPktHT = new SelectList(dbr.tbl_PktUtama.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(s => new SelectListItem { Value = s.fld_PktUtama, Text = s.fld_PktUtama + " - " + s.fld_NamaPktUtama }), "Value", "Text").ToList();
@@ -657,7 +679,7 @@ namespace MVC_SYSTEM.Controllers
             //if (InitialLadang == "FTP")
             //{
             //Modified by Shazana 9/11/2023
-            PilihanAktvtHT = new SelectList(db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt }), "Value", "Text").ToList();
+            PilihanAktvtHT = new SelectList(db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Unit == "KONG" && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt }), "Value", "Text").ToList();
             //PilihanAktvtHT = new SelectList(db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && getJenisActvtDetails.Contains(x.fld_KodJenisAktvt) && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt }), "Value", "Text").ToList();
 
             PilihanAktvtHT.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
@@ -1337,11 +1359,11 @@ namespace MVC_SYSTEM.Controllers
             int JumlahKadarHargaBerbeza = 0;
             if (estateCostCenter == "1000")
             {
-               
+
                 if (EstateFunction.CheckSAPGLMap(dbrpkt, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID))
                 {
                     if (HadirData != null)
-                    { 
+                    {
                         decimal? kadarbayarLast = 0;
                         CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbr, SelectDate, NegaraID, SyarikatID, WilayahID, LadangID);
                         if (!CutOfDateStatus)
@@ -1365,7 +1387,7 @@ namespace MVC_SYSTEM.Controllers
                             }
                             //Added by Shazana 9/10/2023 
                             decimal? fld_LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == PilihanPkt && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID2).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                            
+
                             //Added by Shazana 29/11/2023 //sekiranya tidak wujud dalam pkt_utama, code akan check luas dalam subpkt
                             if (fld_LsPktUtama == null)
                             {
@@ -3034,7 +3056,7 @@ namespace MVC_SYSTEM.Controllers
                         LadangID2 = PinjamDetails.fld_LadangIDAsal;
                         //Connection to db pinjam
                         Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
-                        MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass); 
+                        MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
                         dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
                         string str = detailKong.fld_KodPkt;
                         str = str.Substring(0, (str.Length - 2));
@@ -3878,11 +3900,11 @@ namespace MVC_SYSTEM.Controllers
             //{
             var estateCostCenter = GetLadang.GetLadangCostCenter(LadangID);
             //Modified by SHazana 10/11/2023
-            PilihanAktvtHT = new SelectList(db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && getJenisActvtDetails.Contains(x.fld_KodJenisAktvt) && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt + " - " + s.fld_Desc + " (RM" + s.fld_Harga + ")" }), "Value", "Text").ToList();
+            PilihanAktvtHT = new SelectList(db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Unit == "KONG" && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt + " - " + s.fld_Desc + " (RM" + s.fld_Harga + ")" }), "Value", "Text").ToList();
             PilihanAktvtHT.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
             //Modified by SHazana 10/11/2023
             //var AktivitiToolTip = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
-            var AktivitiToolTip = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && getJenisActvtDetails.Contains(x.fld_KodJenisAktvt) && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
+            var AktivitiToolTip = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Unit == "KONG" && x.fld_compcode == estateCostCenter).OrderBy(o => o.fld_KodAktvt).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
 
             db.Dispose();
             return Json(new { PilihanAktvtHT, AktivitiToolTip });

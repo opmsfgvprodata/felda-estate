@@ -5,7 +5,8 @@ namespace MVC_SYSTEM.Models
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
-        public partial class tbl_SAPPostDataDetails
+
+    public partial class tbl_SAPPostDataDetails
     {
         [Key]
         public Guid fld_ID { get; set; }
@@ -16,7 +17,7 @@ namespace MVC_SYSTEM.Models
         public string fld_GL { get; set; }
 
         [StringLength(25)] 
-        public string fld_IO { get; set; }
+        public string fld_IO { get; set;  }
 
         [StringLength(12)]
         public string fld_SAPActivityCode { get; set; }

@@ -4027,7 +4027,7 @@ namespace MVC_SYSTEM.Controllers
         }
 
         //Added by Shazana 23/6/2023
-        public ActionResult _EditSAPDataDetail(int? ItemID, Guid SAPPostRefID, string MonthList,string YearList)
+        public ActionResult _EditSAPDataDetail(int? ItemID, Guid SAPPostRefID, string MonthList, string YearList)
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = GetIdentity.ID(User.Identity.Name);
@@ -4053,12 +4053,17 @@ namespace MVC_SYSTEM.Controllers
             tbl_SAPPostDataDetails tbl_SAPPostDataDetails = new tbl_SAPPostDataDetails();
             tbl_SAPPostDataDetails = SapModel.tbl_SAPPostDataDetails.Find(fld_ID);
 
-            if (tbl_SAPPostDataDetails.fld_GL != null)
+            if(fld_GL != null && fld_GL =="")
+            {
+                tbl_SAPPostDataDetails.fld_GL = "";
+            }
+            else if (fld_GL != null)
             {
                 tbl_SAPPostDataDetails.fld_GL = fld_GL.PadLeft(10, '0');
             }
             try
             {
+                tbl_SAPPostDataDetails.fld_GL = tbl_SAPPostDataDetails.fld_GL;
                 SapModel.Entry(tbl_SAPPostDataDetails).State = EntityState.Modified;
                 SapModel.SaveChanges();
                 msg = GlobalResEstate.msgUpdate;
@@ -4084,6 +4089,7 @@ namespace MVC_SYSTEM.Controllers
                 return Json(new { success = false, msg = GlobalResEstate.msgError, status = "danger", checkingdata = "1" });
             }
             return Json(new { msg, statusmsg });
+            // return Json(new { success = true, msg = GlobalResEstate.msgUpdate, status = "success", checkingdata = "0", method = "2", btn = "btnSrch" });
         }
 
         //Added by Shazana 1/8/2023

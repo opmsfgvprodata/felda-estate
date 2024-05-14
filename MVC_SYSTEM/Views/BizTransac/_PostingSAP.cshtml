@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<MVC_SYSTEM.Models.vw_SAPPostData>
 
-
 @using System.Linq.Dynamic
 @using Microsoft.Ajax.Utilities
 @using MVC_SYSTEM.Class
@@ -200,11 +199,11 @@
                                                         @*Added by Shazana 23/6/2023*@
                                                         @if ((ViewBag.RoleUser == 1 || ViewBag.RoleUser == 2 || ViewBag.RoleUser == 3 || ViewBag.RoleUser == 4 || ViewBag.RoleUser == 10) && ViewBag.statusProceedA2 == null)
                                                         {
-                                                        <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoGLDetails.fld_ItemNo, SAPPostRefID = GLtoGLDetails.fld_PostRefID,MonthList = GLtoGLDetails.fld_Month,YearList = GLtoGLDetails.fld_Year })' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
+                                                        <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoGLDetails.fld_ItemNo, SAPPostRefID = GLtoGLDetails.fld_PostRefID ,MonthList = GLtoGLDetails.fld_Month,YearList = GLtoGLDetails.fld_Year})' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
                                                         }
                                                         else
                                                         {
-                                                            <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
+                                                        <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
                                                         }
                                                     </tr>
                                                     }
@@ -350,15 +349,15 @@
                                                             <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_VendorCode</td>
                                                             <td align="left" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_Desc</td>
                                                             @*modified by kamalia 28/2/22*@
-                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black; text-align: right !important;" border="1">@GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount)</td> @*modified by kamalia 24/12/2021 betulkan format duit*@
+                                                            <td align="center" style="vertical-align: middle !important; text-align: right !important; border: 1px solid black;" border="1">@GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount)</td>
                                                             @*Added by Shazana 23/6/2023*@
                                                             @if ((ViewBag.RoleUser == 1 || ViewBag.RoleUser == 2 || ViewBag.RoleUser == 3 || ViewBag.RoleUser == 4 || ViewBag.RoleUser == 10) && ViewBag.statusProceedKR == null)
                                                             {
-                                                            <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoVendorDetails.fld_ItemNo, SAPPostRefID= GLtoVendorDetails.fld_PostRefID ,MonthList = GLtoVendorDetails.fld_Month,YearList = GLtoVendorDetails.fld_Year })' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
+                                                            <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoVendorDetails.fld_ItemNo, SAPPostRefID= GLtoVendorDetails.fld_PostRefID ,MonthList = GLtoVendorDetails.fld_Month,YearList = GLtoVendorDetails.fld_Year})' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
                                                             }
                                                             else
                                                             {
-                                                                <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
+                                                            <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
                                                             }
                                                         </tr>
                                                         }
@@ -560,7 +559,7 @@
                 @*<button class="btn btn-success postSAPBtn" disabled>Post To SAP</button>*@
                 //farahin modified - 30/12/2021
                 //sarah modified - 16/12/2022
-                if (ViewBag.statusProceedA2 == true && ViewBag.statusProceedKR == true && (ViewBag.RefNoA2 != null && ViewBag.RefNoKR != null))
+                if (ViewBag.statusProceedA2 == true && ViewBag.statusProceedKR == true && (ViewBag.RefNoA2 != null && ViewBag.RefNoKR != null))  
                 {
                     <button class="btn btn-success  disabled" aria-disabled="true">Post To SAP</button>
                 }

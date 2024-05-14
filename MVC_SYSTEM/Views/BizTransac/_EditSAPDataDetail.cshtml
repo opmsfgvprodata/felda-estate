@@ -59,8 +59,10 @@
     </div>
 
     <div class="modal-footer">
+     @*   <input class="btn btn-success" type="submit" value=@GlobalResEstate.btnSave>*@
         <button class="btn btn-success" type="button" id="editdata" value=@GlobalResEstate.btnSave>Save</button>
         <button class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack</button>
+        @*<a style="text-align:right" href="@Url.Action("Index", "BasicInfo")" class="btn btn-warning">@GlobalResEstate.btnBack</a>*@
     </div>
 }
 
@@ -80,9 +82,8 @@
             ajxfn.contentType = "application/json";
             ajxfn.success = function (result) {
                 $.simplyToast(result.msg, result.statusmsg);
+                $("#UpdateProgress1").css("display", "none");
                 $("#closeTransactionDetails").load('@Url.Action("_PostingSAP", "BizTransac")', { MonthList: MonthList, YearList: YearList });
-                $(this).hide();
-
             };
             ajxfn.error = function () {
                 $.simplyToast('@GlobalResEstate.msgError', 'danger');

@@ -7,6 +7,8 @@
     GetConfig GetConfig = new GetConfig();
     GetIdentity GetIdentity = new GetIdentity();
     @Scripts.Render("~/bundles/jqueryval")
+    int? year = ViewBag.Year;
+    int? month = ViewBag.Month;
 }
 
 <div class="modal-header">
@@ -57,10 +59,8 @@
     </div>
 
     <div class="modal-footer">
-     @*   <input class="btn btn-success" type="submit" value=@GlobalResEstate.btnSave>*@
         <button class="btn btn-success" type="button" id="editdata" value=@GlobalResEstate.btnSave>Save</button>
         <button class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack</button>
-        @*<a style="text-align:right" href="@Url.Action("Index", "BasicInfo")" class="btn btn-warning">@GlobalResEstate.btnBack</a>*@
     </div>
 }
 
@@ -69,7 +69,8 @@
             var fld_ID = $('#fld_ID').val();
             var fld_GL = $('#fld_GL').val();
             var fld_IO = $('#fld_IO').val();
-
+            var MonthList = $('#MonthList').val();
+            var YearList = $('#YearList').val();
             var ajxfn = {};
             ajxfn.url = "@Url.Action("_UpdateDataDetail", "BizTransac")";
             ajxfn.type = "POST";
@@ -79,14 +80,16 @@
             ajxfn.contentType = "application/json";
             ajxfn.success = function (result) {
                 $.simplyToast(result.msg, result.statusmsg);
-                $("#UpdateProgress1").css("display", "none");
+                $("#closeTransactionDetails").load('@Url.Action("_PostingSAP", "BizTransac")', { MonthList: MonthList, YearList: YearList });
+                $(this).hide();
+
             };
             ajxfn.error = function () {
                 $.simplyToast('@GlobalResEstate.msgError', 'danger');
             };
             $.ajax(ajxfn);
         });
-    </script>
+</script>
 <script>
     $("form").removeData("validator");
     $("form").removeData("unobtrusiveValidation");

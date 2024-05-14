@@ -189,24 +189,24 @@
                                                     @foreach (var GLtoGLDetails in Model.Where(x => x.fld_DocType == "A2").OrderBy(o => o.fld_ItemNo).Distinct())
                                                     {
 
-                                                        <tr>
-                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_ItemNo</td>
-                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_GL</td>
-                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_IO</td>
-                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_SAPActivityCode</td>
-                                                            @*<td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1"></td>*@
-                                                            <td align="left" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_Desc</td>
-                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black; text-align: right !important;" border="1">@GetTriager.GetTotalForMoney(GLtoGLDetails.fld_Amount)</td> @*modified by kamalia 24/12/2021 betulkan format duit*@
-                                                            @*Added by Shazana 23/6/2023*@
-                                                            @if ((ViewBag.RoleUser == 1 || ViewBag.RoleUser == 2 || ViewBag.RoleUser == 3 || ViewBag.RoleUser == 4 || ViewBag.RoleUser == 10) && ViewBag.statusProceedA2 == null)
-                                                            {
-                                                                <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoGLDetails.fld_ItemNo, SAPPostRefID = GLtoGLDetails.fld_PostRefID })' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
-                                                            }
-                                                        </tr>
+                                                    <tr>
+                                                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_ItemNo</td>
+                                                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_GL</td>
+                                                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_IO</td>
+                                                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_SAPActivityCode</td>
+                                                        @*<td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1"></td>*@
+                                                        <td align="left" style="vertical-align:middle !important;border:1px solid black;" border="1">@GLtoGLDetails.fld_Desc</td>
+                                                        <td align="center" style="vertical-align:middle !important;border:1px solid black; text-align: right !important;" border="1">@GetTriager.GetTotalForMoney(GLtoGLDetails.fld_Amount)</td> @*modified by kamalia 24/12/2021 betulkan format duit*@
+                                                        @*Added by Shazana 23/6/2023*@
+                                                        @if ((ViewBag.RoleUser == 1 || ViewBag.RoleUser == 2 || ViewBag.RoleUser == 3 || ViewBag.RoleUser == 4 || ViewBag.RoleUser == 10) && ViewBag.statusProceedA2 == null)
+                                                        {
+                                                        <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoGLDetails.fld_ItemNo, SAPPostRefID = GLtoGLDetails.fld_PostRefID,MonthList = GLtoGLDetails.fld_Month,YearList = GLtoGLDetails.fld_Year })' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
+                                                        }
+                                                    </tr>
                                                     }
                                                 </tbody>
                                             </table>
@@ -344,23 +344,23 @@
                                                         @foreach (var GLtoVendorDetails in Model.Where(x => x.fld_DocType == "KR" && x.fld_flag == flag).OrderBy(o => o.fld_ItemNo).Distinct())
                                                         {
                                                             bill = bill + 1;
-                                                            <tr>
-                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@bill</td>
-                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_GL</td>
-                                                                <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_VendorCode</td>
-                                                                <td align="left" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_Desc</td>
-                                                                @*modified by kamalia 28/2/22*@
-                                                                <td align="center" style="vertical-align: middle !important; text-align: right !important; border: 1px solid black;" border="1">@GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount)</td>
-                                                                @*Added by Shazana 23/6/2023*@
-                                                                @if ((ViewBag.RoleUser == 1 || ViewBag.RoleUser == 2 || ViewBag.RoleUser == 3 || ViewBag.RoleUser == 4 || ViewBag.RoleUser == 10) && ViewBag.statusProceedKR ==null)
-                                                                {
-                                                                    <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoVendorDetails.fld_ItemNo, SAPPostRefID= GLtoVendorDetails.fld_PostRefID })' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
-                                                                }
-                                                            </tr>
+                                                        <tr>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@bill</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_GL</td>
+                                                            <td align="center" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_VendorCode</td>
+                                                            <td align="left" style="vertical-align: middle !important; border: 1px solid black;" border="1">@GLtoVendorDetails.fld_Desc</td>
+                                                            @*modified by kamalia 28/2/22*@
+                                                            <td align="center" style="vertical-align:middle !important;border:1px solid black; text-align: right !important;" border="1">@GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount)</td> @*modified by kamalia 24/12/2021 betulkan format duit*@
+                                                            @*Added by Shazana 23/6/2023*@
+                                                            @if ((ViewBag.RoleUser == 1 || ViewBag.RoleUser == 2 || ViewBag.RoleUser == 3 || ViewBag.RoleUser == 4 || ViewBag.RoleUser == 10) && ViewBag.statusProceedKR == null)
+                                                            {
+                                                            <td align="center" style="vertical-align: middle !important; text-align: center !important; border: 1px solid black;" border="1"><a data-modal='' href='@Url.Action("_EditSAPDataDetail", "BizTransac", new { ItemID = GLtoVendorDetails.fld_ItemNo, SAPPostRefID= GLtoVendorDetails.fld_PostRefID ,MonthList = GLtoVendorDetails.fld_Month,YearList = GLtoVendorDetails.fld_Year })' class='btn btn-success' title='Update Worker' onclick='return DisplayProgressMessage(this);'><i class='fa fa-edit fa-lg'></i></a></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <th style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid black;" border="1"></th>
+                                                            }
+                                                        </tr>
                                                         }
                                                     </tbody>
                                                 </table>

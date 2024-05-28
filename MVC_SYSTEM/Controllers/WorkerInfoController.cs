@@ -5904,9 +5904,23 @@ namespace MVC_SYSTEM.Controllers
 
             foreach (var wage in getWageBelow1000)
             {
+                //Modified by Shazana 28/5/2024
+                //var hadirHariBiasaByBulan = dbview.tbl_Kerjahdr
+                //    .Count(x => x.fld_Kdhdct == "H01" && x.fld_Nopkj == wage.fld_Nopkj &&
+                //                x.fld_Tarikh.Value.Month == MonthList &&
+                //                x.fld_Tarikh.Value.Year == YearList &&
+                //                x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
+                //                x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID);
+                decimal? gajibulanlatest = 0;
+                gajibulanlatest = dbview.tbl_GajiBulanan.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID
+                && x.fld_Month == MonthList && x.fld_Year == YearList && x.fld_Nopkj == wage.fld_Nopkj).Select(x => x.fld_GajiKasar).FirstOrDefault();
+                if (gajibulanlatest == null) { gajibulanlatest = 0; }
+
+                string[] listCuti = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "kategoricuti" && x.fldOptConfFlag1 != "kodCutiKuarantin" && x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fldDeleted == false).Select(x => x.fldOptConfValue).ToArray();
+
                 var hadirHariBiasaByBulan = dbview.tbl_Kerjahdr
-                    .Count(x => x.fld_Kdhdct == "H01" && x.fld_Nopkj == wage.fld_Nopkj &&
-                                x.fld_Tarikh.Value.Month == MonthList &&
+                    .Count(x => x.fld_Nopkj == wage.fld_Nopkj && (x.fld_Kdhdct == "H01" || x.fld_Kdhdct == "H02" || x.fld_Kdhdct == "H03" || listCuti.Contains(x.fld_Kdhdct))
+                                && x.fld_Tarikh.Value.Month == MonthList &&
                                 x.fld_Tarikh.Value.Year == YearList &&
                                 x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
                                 x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID);
@@ -5921,7 +5935,7 @@ namespace MVC_SYSTEM.Controllers
                 minimumWage.TarikhSahJawatan = wage.fld_Trshjw;
                 minimumWage.KategoriKerja = wage.fld_Ktgpkj;
                 minimumWage.JumlahHariBekerja = hadirHariBiasaByBulan;
-                minimumWage.GajiBulanan = wage.fld_ByrKerja;
+                minimumWage.GajiBulanan = gajibulanlatest;
                 minimumWage.Sebab = wage.fld_Sebab;
                 minimumWage.PelanTindakan = wage.fld_Tindakan;
                 minimumWage.NegaraID = NegaraID;

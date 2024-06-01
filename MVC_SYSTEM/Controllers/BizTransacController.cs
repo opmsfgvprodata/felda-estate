@@ -1313,30 +1313,30 @@ namespace MVC_SYSTEM.Controllers
                     }
                     else if (compCode == "8800")
                     {
-                        var req = new FPM_FTP.ZFM_DOCPOST_OPMSRequest();
-                        var res = new FPM_FTP.ZFM_DOCPOST_OPMSResponse();
-                        var cred = new FPM_FTP.ZWS_OPMS_DOCPOSTClient();
+                        var req = new FPM_FTQ.ZFM_DOCPOST_OPMSRequest();
+                        var res = new FPM_FTQ.ZFM_DOCPOST_OPMSResponse();
+                        var cred = new FPM_FTQ.ZWS_OPMS_DOCPOSTClient();
 
                         cred.ClientCredentials.UserName.UserName = userName;
                         cred.ClientCredentials.UserName.Password = password;
 
-                        var post = new FPM_FTP.ZFM_DOCPOST_OPMS();
+                        var post = new FPM_FTQ.ZFM_DOCPOST_OPMS();
 
-                        FPM_FTP.BAPIACHE09 BAPIACHE09 = new FPM_FTP.BAPIACHE09(); //document header
-                        FPM_FTP.BAPIACPA09 BAPIACPA09 = new FPM_FTP.BAPIACPA09(); //customer cpd
-                        FPM_FTP.BAPIRET2[] BAPIRET = new FPM_FTP.BAPIRET2[1]; //return structure
+                        FPM_FTQ.BAPIACHE09 BAPIACHE09 = new FPM_FTQ.BAPIACHE09(); //document header
+                        FPM_FTQ.BAPIACPA09 BAPIACPA09 = new FPM_FTQ.BAPIACPA09(); //customer cpd
+                        FPM_FTQ.BAPIRET2[] BAPIRET = new FPM_FTQ.BAPIRET2[1]; //return structure
 
                         //account payable
-                        FPM_FTP.BAPIACAP09[] BAPIACAP09 = null;
-                        FPM_FTP.BAPIACAP09 BAPIACAP09_details = new FPM_FTP.BAPIACAP09();
+                        FPM_FTQ.BAPIACAP09[] BAPIACAP09 = null;
+                        FPM_FTQ.BAPIACAP09 BAPIACAP09_details = new FPM_FTQ.BAPIACAP09();
 
                         //accountGL
-                        FPM_FTP.BAPIACGL09[] BAPIACGL09 = null;
-                        FPM_FTP.BAPIACGL09 BAPIACGL09_details = new FPM_FTP.BAPIACGL09();
+                        FPM_FTQ.BAPIACGL09[] BAPIACGL09 = null;
+                        FPM_FTQ.BAPIACGL09 BAPIACGL09_details = new FPM_FTQ.BAPIACGL09();
 
                         //currency
-                        FPM_FTP.BAPIACCR09[] BAPIACCR09 = null;
-                        FPM_FTP.BAPIACCR09 BAPIACCR09_details = new FPM_FTP.BAPIACCR09();
+                        FPM_FTQ.BAPIACCR09[] BAPIACCR09 = null;
+                        FPM_FTQ.BAPIACCR09 BAPIACCR09_details = new FPM_FTQ.BAPIACCR09();
 
 
 
@@ -1376,14 +1376,14 @@ namespace MVC_SYSTEM.Controllers
 
                                         //ACCOUNTGL
 
-                                        BAPIACGL09 = new FPM_FTP.BAPIACGL09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                        BAPIACCR09 = new FPM_FTP.BAPIACCR09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                        BAPIACGL09 = new FPM_FTQ.BAPIACGL09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                        BAPIACCR09 = new FPM_FTQ.BAPIACCR09[GLToGLPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
 
                                         foreach (var GLtoGLItem in GLToGLPostingData.DistinctBy(x => x.fld_ItemNo))
                                         {
-                                            BAPIACGL09_details = new FPM_FTP.BAPIACGL09();
-                                            BAPIACCR09_details = new FPM_FTP.BAPIACCR09();
-                                            BAPIACAP09_details = new FPM_FTP.BAPIACAP09();
+                                            BAPIACGL09_details = new FPM_FTQ.BAPIACGL09();
+                                            BAPIACCR09_details = new FPM_FTQ.BAPIACCR09();
+                                            BAPIACAP09_details = new FPM_FTQ.BAPIACAP09();
 
                                             if (!String.IsNullOrEmpty(GLtoGLItem.fld_GL))
                                             {
@@ -1433,7 +1433,7 @@ namespace MVC_SYSTEM.Controllers
 
 
 
-                                        FPM_FTP.BAPIRET2 RET = new FPM_FTP.BAPIRET2
+                                        FPM_FTQ.BAPIRET2 RET = new FPM_FTQ.BAPIRET2
                                         {
                                             TYPE = null,
                                             ID = null,
@@ -1452,7 +1452,7 @@ namespace MVC_SYSTEM.Controllers
                                         };
 
 
-                                        post = new FPM_FTP.ZFM_DOCPOST_OPMS
+                                        post = new FPM_FTQ.ZFM_DOCPOST_OPMS
                                         {
                                             ACCOUNTGL = BAPIACGL09,
                                             DOCUMENTHEADER = BAPIACHE09,
@@ -1599,15 +1599,15 @@ namespace MVC_SYSTEM.Controllers
                                             }
 
                                             //GL to Vendor Line Item Details
-                                            BAPIACGL09 = new FPM_FTP.BAPIACGL09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                            BAPIACAP09 = new FPM_FTP.BAPIACAP09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
-                                            BAPIACCR09 = new FPM_FTP.BAPIACCR09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            BAPIACGL09 = new FPM_FTQ.BAPIACGL09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            BAPIACAP09 = new FPM_FTQ.BAPIACAP09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
+                                            BAPIACCR09 = new FPM_FTQ.BAPIACCR09[GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo).Count()];
 
                                             i = 0;
                                             foreach (var GLtoVendorItem in GLToVendorPostingData.DistinctBy(x => x.fld_ItemNo))
                                             {
                                                 //GLAccount
-                                                BAPIACGL09_details = new FPM_FTP.BAPIACGL09();
+                                                BAPIACGL09_details = new FPM_FTQ.BAPIACGL09();
                                                 if (GLtoVendorItem.fld_GL != null)
                                                 {
                                                     BAPIACGL09_details.ITEMNO_ACC = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
@@ -1642,7 +1642,7 @@ namespace MVC_SYSTEM.Controllers
                                                 if (GLtoVendorItem.fld_VendorCode != null)
                                                 {
                                                     //Acc Payable
-                                                    BAPIACAP09_details = new FPM_FTP.BAPIACAP09();
+                                                    BAPIACAP09_details = new FPM_FTQ.BAPIACAP09();
                                                     BAPIACAP09_details.ITEMNO_ACC = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                     BAPIACAP09_details.VENDOR_NO = GLtoVendorItem.fld_VendorCode.ToString().PadLeft(10, '0');
                                                     BAPIACAP09_details.ITEM_TEXT = GLtoVendorItem.fld_Desc.ToString();
@@ -1652,7 +1652,7 @@ namespace MVC_SYSTEM.Controllers
                                                 }
 
                                                 //Currency Amt
-                                                BAPIACCR09_details = new FPM_FTP.BAPIACCR09();
+                                                BAPIACCR09_details = new FPM_FTQ.BAPIACCR09();
                                                 BAPIACCR09_details.ITEMNO_ACC = GLtoVendorItem.fld_ItemNo.ToString().PadLeft(10, '0');
                                                 BAPIACCR09_details.CURRENCY = GLtoVendorItem.fld_Currency;
                                                 BAPIACCR09_details.AMT_DOCCUR = (decimal)GLtoVendorItem.fld_Amount;
@@ -1662,7 +1662,7 @@ namespace MVC_SYSTEM.Controllers
                                                 i = i + 1;
                                             }
 
-                                            FPM_FTP.BAPIRET2 RET = new FPM_FTP.BAPIRET2
+                                            FPM_FTQ.BAPIRET2 RET = new FPM_FTQ.BAPIRET2
                                             {
                                                 TYPE = null,
                                                 ID = null,
@@ -1680,7 +1680,7 @@ namespace MVC_SYSTEM.Controllers
                                                 SYSTEM = null
                                             };
 
-                                            post = new FPM_FTP.ZFM_DOCPOST_OPMS
+                                            post = new FPM_FTQ.ZFM_DOCPOST_OPMS
                                             {
                                                 ACCOUNTGL = BAPIACGL09,
                                                 DOCUMENTHEADER = BAPIACHE09,

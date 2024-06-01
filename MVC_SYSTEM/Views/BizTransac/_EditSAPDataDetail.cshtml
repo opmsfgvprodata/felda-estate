@@ -7,6 +7,8 @@
     GetConfig GetConfig = new GetConfig();
     GetIdentity GetIdentity = new GetIdentity();
     @Scripts.Render("~/bundles/jqueryval")
+    int? year = ViewBag.Year;
+    int? month = ViewBag.Month;
 }
 
 <div class="modal-header">
@@ -69,7 +71,8 @@
             var fld_ID = $('#fld_ID').val();
             var fld_GL = $('#fld_GL').val();
             var fld_IO = $('#fld_IO').val();
-
+            var MonthList = $('#MonthList').val();
+            var YearList = $('#YearList').val();
             var ajxfn = {};
             ajxfn.url = "@Url.Action("_UpdateDataDetail", "BizTransac")";
             ajxfn.type = "POST";
@@ -80,13 +83,14 @@
             ajxfn.success = function (result) {
                 $.simplyToast(result.msg, result.statusmsg);
                 $("#UpdateProgress1").css("display", "none");
+                $("#closeTransactionDetails").load('@Url.Action("_PostingSAP", "BizTransac")', { MonthList: MonthList, YearList: YearList });
             };
             ajxfn.error = function () {
                 $.simplyToast('@GlobalResEstate.msgError', 'danger');
             };
             $.ajax(ajxfn);
         });
-    </script>
+</script>
 <script>
     $("form").removeData("validator");
     $("form").removeData("unobtrusiveValidation");

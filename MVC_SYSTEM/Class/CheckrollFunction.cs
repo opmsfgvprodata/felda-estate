@@ -453,11 +453,11 @@ namespace MVC_SYSTEM.Class
             if (paysheet =="PAPT")
             {
                 //get GL Code
-                var GLMap1 = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == paysheet && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
-                var GLMap2 = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == paysheet && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
+                var GLMap1 = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == "PA" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
+                var GLMap2 = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == "PT" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
 
                 Result = (GLMap1 != null && GLMap2 != null) ? true : false;
-                GLCode = (GLMap1 != null && GLMap1 != null) ? GLMap1.fld_KodGL : "";
+                GLCode = (GLMap1 != null && GLMap2 != null) ? GLMap1.fld_KodGL : "";
 
             }
             else

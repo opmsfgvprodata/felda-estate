@@ -902,7 +902,7 @@ namespace MVC_SYSTEM.Controllers
                         }
                         else
                         {
-                            if (EstateFunction.CheckSAPGLMapFPM(CustMod_HariTerabai.SelectionCategory, CustMod_HariTerabai.SelectionData,dbr, CustMod_HariTerabai.JnisPktHT, CustMod_HariTerabai.PilihanPktHT, CustMod_HariTerabai.PilihanAktvtHT, NegaraID, SyarikatID, WilayahID, LadangID, true, CustMod_HariTerabai.JenisChargeHT, out GLCode, 0))
+                            if (EstateFunction.CheckSAPGLMapFPM(CustMod_HariTerabai.SelectionCategory, CustMod_HariTerabai.SelectionData,dbr, CustMod_HariTerabai.JnisPktHT, CustMod_HariTerabai.PilihanPktHT, CustMod_HariTerabai.PilihanAktvtHT, NegaraID, SyarikatID, WilayahID, LadangID, true, CustMod_HariTerabai.JenisChargeHT, out GLCode, 0, 0)) //nanananana
                             {
                                 CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbr, CustMod_HariTerabai.dateseleted, NegaraID, SyarikatID, WilayahID, LadangID);
                             if (!CutOfDateStatus)
@@ -1336,6 +1336,7 @@ namespace MVC_SYSTEM.Controllers
             {
                 TransferPkt = false;
             }
+            int PinjampktTransferID = 0;//Added by Shazana 27/6/2024
             int transferLvlID = 0;
             var transferPktCode = "";
             var sapType = "";
@@ -1347,6 +1348,7 @@ namespace MVC_SYSTEM.Controllers
                 var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
                 if (pktTransfer != null)
                 {
+                    PinjampktTransferID = pktTransfer.fld_ID;//Added by Shazana 27/6/2024
                     PilihanPktAsal = pktTransfer.fld_KodPkt; //Added by Shazana 5/2/2024
                     JnisPkt = byte.Parse(pktTransfer.fld_JenisPkt.ToString());
                     NegaraID2 = pktTransfer.fld_NegaraIDAsal;
@@ -1848,7 +1850,7 @@ namespace MVC_SYSTEM.Controllers
             }
             else
             {
-                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData,dbrpkt, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID))
+                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData,dbrpkt, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID, PinjampktTransferID))
                 {
                     if (HadirData != null)
                     {
@@ -4097,6 +4099,7 @@ namespace MVC_SYSTEM.Controllers
             int? SyarikatID2 = SyarikatID;
             int? WilayahID2 = WilayahID;
             int? LadangID2 = LadangID;
+            int PinjampktTransferID = 0;
             var IOCC = "";
             int transferLvlID = 0;
             if (TrnsfrLvl == 0)
@@ -4125,6 +4128,7 @@ namespace MVC_SYSTEM.Controllers
                 var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
                 if (pktTransfer != null)
                 {
+                    PinjampktTransferID = pktTransfer.fld_ID;
                     IOCC = pktTransfer.fld_SAPCode;
                     JnisPkt = byte.Parse(pktTransfer.fld_JenisPkt.ToString());
                     NegaraID2 = pktTransfer.fld_NegaraIDAsal;
@@ -4262,7 +4266,7 @@ namespace MVC_SYSTEM.Controllers
             }
             else
             {
-                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData,dbrpkt, JnisPkt, PilihanPkt, KodAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID))
+                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData,dbrpkt, JnisPkt, PilihanPkt, KodAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID, PinjampktTransferID))
                 {
                     var tbl_MapGL = db.tbl_MapGL.Where(x => x.fld_SyarikatID == 1 && (x.fld_Paysheet == "PA" || x.fld_Paysheet == "PT") && x.fld_Deleted == false).ToList();
                     var tbl_JenisAktiviti = db.tbl_JenisAktiviti.Join(db.tbl_UpahAktiviti,

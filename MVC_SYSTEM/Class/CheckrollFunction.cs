@@ -391,9 +391,9 @@ namespace MVC_SYSTEM.Class
             }
             return Result;
         }
-        
+
         //Added by Shazana 20/5/2024
-        public bool CheckSAPGLMapFPM(int SelectionCategory, string SelectionData,MVC_SYSTEM_Models dbr, byte? JenisPkt, string GetPkt, string AktvtCd, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, bool HariTerabai, string JenisKiraanHariTerabai, out string GLCode, int transferPktID)
+        public bool CheckSAPGLMapFPM(int SelectionCategory, string SelectionData, MVC_SYSTEM_Models dbr, byte? JenisPkt, string GetPkt, string AktvtCd, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, bool HariTerabai, string JenisKiraanHariTerabai, out string GLCode, int transferPktID, int PinjampktTransferID)
         {
             bool Result = false;
             GLCode = "";
@@ -402,7 +402,64 @@ namespace MVC_SYSTEM.Class
             var GetLadang = new GetLadang();
             var estateCostCenter = GetLadang.GetLadangCostCenter(LadangID);
             string paysheet = "";
-            if(SelectionCategory == 1)
+            string host, catalog, user, pass = "";
+
+            if (transferPktID != 0 && PinjampktTransferID != 0)
+            {
+                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                var LadangPinjam = dbrpkt.tbl_PktPinjam.Where(x => x.fld_ID == PinjampktTransferID).FirstOrDefault();
+                if (SelectionCategory == 1)
+                {
+                    List<tbl_Pkjmast> tbl_Pkjmast = new List<tbl_Pkjmast>();
+                    tbl_KumpulanKerja tbl_KumpulanKerja = new tbl_KumpulanKerja();
+                    tbl_KumpulanKerja = dbrpkt.tbl_KumpulanKerja.Where(x => x.fld_KodKumpulan.Trim() == SelectionData.Trim() && x.fld_NegaraID == LadangPinjam.fld_NegaraID && x.fld_SyarikatID == LadangPinjam.fld_SyarikatID && x.fld_WilayahID == LadangPinjam.fld_WilayahID && x.fld_LadangID == LadangPinjam.fld_LadangID && x.fld_deleted == false).FirstOrDefault();
+                    tbl_Pkjmast = dbrpkt.tbl_Pkjmast.Where(x => x.fld_KumpulanID == tbl_KumpulanKerja.fld_KumpulanID && x.fld_NegaraID == LadangPinjam.fld_NegaraID && x.fld_SyarikatID == LadangPinjam.fld_SyarikatID && x.fld_WilayahID == LadangPinjam.fld_WilayahID && x.fld_LadangID == LadangPinjam.fld_LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").OrderBy(o => o.fld_Nopkj).ToList();
+                    int PAcount = 0; int PTcount = 0;
+                    if (tbl_Pkjmast != null)
+                    {
+                        PAcount = (tbl_Pkjmast.Where(x => x.fld_Kdrkyt != "MA").Count());
+                        PTcount = (tbl_Pkjmast.Where(x => x.fld_Kdrkyt == "MA").Count());
+                    }
+                    else
+                    {
+                        PAcount = 0;
+                        PTcount = 0;
+                    }
+                    if ((PTcount > 0) && (PAcount > 0))
+                    {
+                        paysheet = "PAPT";
+                    }
+                    else if ((PTcount == 0) && (PAcount > 0))
+                    {
+                        paysheet = "PA";
+                    }
+                    else if ((PTcount > 0) && (PAcount == 0))
+                    {
+                        paysheet = "PT";
+                    }
+
+                }
+                else if (SelectionCategory == 2)
+                {
+                    string detailsPkj = dbrpkt.tbl_Pkjmast.Where(x => x.fld_Nopkj == SelectionData && x.fld_LadangID == LadangPinjam.fld_LadangID && x.fld_WilayahID == LadangPinjam.fld_WilayahID).Select(x => x.fld_Kdrkyt).FirstOrDefault();
+                    if (detailsPkj == null)
+                    {
+                        paysheet = "";
+                    }
+                    if (detailsPkj == "MA")
+                    {
+                        paysheet = "PT";
+                    }
+                    else if (detailsPkj != "MA")
+                    {
+                        paysheet = "PA";
+                    }
+                }
+            }
+            else
+            { 
+            if (SelectionCategory == 1)
             {
                 List<tbl_Pkjmast> tbl_Pkjmast = new List<tbl_Pkjmast>();
                 tbl_KumpulanKerja tbl_KumpulanKerja = new tbl_KumpulanKerja();
@@ -410,9 +467,9 @@ namespace MVC_SYSTEM.Class
                 tbl_Pkjmast = dbr.tbl_Pkjmast.Where(x => x.fld_KumpulanID == tbl_KumpulanKerja.fld_KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").OrderBy(o => o.fld_Nopkj).ToList();
                 int PAcount = 0; int PTcount = 0;
                 if (tbl_Pkjmast != null)
-                { 
-                PAcount = (tbl_Pkjmast.Where(x => x.fld_Kdrkyt != "MA").Count()); 
-                PTcount = (tbl_Pkjmast.Where(x => x.fld_Kdrkyt == "MA").Count());
+                {
+                    PAcount = (tbl_Pkjmast.Where(x => x.fld_Kdrkyt != "MA").Count());
+                    PTcount = (tbl_Pkjmast.Where(x => x.fld_Kdrkyt == "MA").Count());
                 }
                 else
                 {
@@ -423,34 +480,34 @@ namespace MVC_SYSTEM.Class
                 {
                     paysheet = "PAPT";
                 }
-                else if ((PTcount ==0) && (PAcount > 0))
-                    {
+                else if ((PTcount == 0) && (PAcount > 0))
+                {
                     paysheet = "PA";
                 }
-                else if ((PTcount > 0 ) && (PAcount ==0))
+                else if ((PTcount > 0) && (PAcount == 0))
                 {
                     paysheet = "PT";
                 }
 
             }
-            else if (SelectionCategory== 2)
+            else if (SelectionCategory == 2)
             {
                 string detailsPkj = dbr.tbl_Pkjmast.Where(x => x.fld_Nopkj == SelectionData && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID).Select(x => x.fld_Kdrkyt).FirstOrDefault();
                 if (detailsPkj == null)
                 {
                     paysheet = "";
                 }
-                if (detailsPkj =="MA")
+                if (detailsPkj == "MA")
                 {
                     paysheet = "PT";
                 }
                 else if (detailsPkj != "MA")
-                    {
-                        paysheet = "PA";
-                    }
+                {
+                    paysheet = "PA";
+                }
             }
-
-            if (paysheet =="PAPT")
+        }
+            if (paysheet == "PAPT")
             {
                 //get GL Code
                 var GLMap1 = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == "PA" && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
@@ -462,14 +519,14 @@ namespace MVC_SYSTEM.Class
             }
             else
             {
-                        //get GL Code
-                        var GLMap = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == paysheet && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
+                //get GL Code
+                var GLMap = db.tbl_MapGL.Where(x => x.fld_KodAktvt == AktvtCd && x.fld_Paysheet == paysheet && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
 
-                        Result = GLMap != null ? true : false;
-                        GLCode = GLMap != null ? GLMap.fld_KodGL : "";
+                Result = GLMap != null ? true : false;
+                GLCode = GLMap != null ? GLMap.fld_KodGL : "";
 
             }
-
+        
             return Result;
         }
 

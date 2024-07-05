@@ -640,7 +640,7 @@ namespace MVC_SYSTEM.Controllers
 
         //comment by fatin - 10/04/2023
         //public ActionResult LevelsInfoPkt(string JnsPkt = "1", int page = 1, string sort = "fld_PktUtama", string sortdir = "ASC", string status = "false")
-        public ActionResult LevelsInfoPkt(string JnsPkt = "1", int page = 1, string sort = "fld_CreateDate", string sortdir = "DESC", string status = "false") //fatin added - 10/04/2023
+        public ActionResult LevelsInfoPkt(string JnsPkt = "1", int page = 1, string sort = "fld_PktUtama", string sortdir = "ASC", string status = "false") //fatin added - 10/04/2023
         {
             int? getuserid = GetIdentity.ID(User.Identity.Name);
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;

@@ -36,7 +36,7 @@ namespace MVC_SYSTEM.Controllers
 
         //comment by fatin - 11/04/2023
         //public ActionResult CCLevelsInfoPkt(string JnsPkt = "1", int page = 1, string sort = "fld_PktUtama", string sortdir = "ASC", string status = "false")
-        public ActionResult CCLevelsInfoPkt(string JnsPkt = "1", int page = 1, string sort = "fld_CreateDate", string sortdir = "DESC", string status = "false") //fatin added - 11/04/2023
+        public ActionResult CCLevelsInfoPkt(string JnsPkt = "1", int page = 1, string sort = "fld_PktUtama", string sortdir = "ASC", string status = "false") //fatin added - 11/04/2023
         {
             int? getuserid = GetIdentity.ID(User.Identity.Name);
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
@@ -1037,7 +1037,7 @@ namespace MVC_SYSTEM.Controllers
             if (JnsTnmn != "0" && StatusTnmn != "0" && LotPeneroka != "0")
             {
                 codetnmn = JnsTnmn + StatusTnmn + LotPeneroka;
-                var getpkt = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_SAPType == "CC" && x.fld_LadangID == LadangID && x.fld_PktUtama.Contains(codetnmn)).Select(s => s.fld_PktUtama).Distinct().OrderByDescending(s => s).FirstOrDefault();
+                var getpkt = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID  && x.fld_LadangID == LadangID && x.fld_PktUtama.Contains(codetnmn)).Select(s => s.fld_PktUtama).Distinct().OrderByDescending(s => s).FirstOrDefault();
 
                 if (getpkt != null)
                 {
@@ -1090,7 +1090,7 @@ namespace MVC_SYSTEM.Controllers
             return View();
         }
 
-        public ActionResult WBSLevelsInfoPkt(string JnsPkt = "1", int page = 1, string sort = "fld_CreateDate", string sortdir = "DESC", string status = "false")
+        public ActionResult WBSLevelsInfoPkt(string JnsPkt = "1", int page = 1, string sort = "fld_PktUtama", string sortdir = "ASC", string status = "false")
         {
             int? getuserid = GetIdentity.ID(User.Identity.Name);
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
@@ -2395,7 +2395,7 @@ namespace MVC_SYSTEM.Controllers
             if (JnsTnmn != "0" && StatusTnmn != "0" && LotPeneroka != "0")
             {
                 codetnmn = JnsTnmn + StatusTnmn + LotPeneroka;
-                var getpkt = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_SAPType == "WBS" && x.fld_LadangID == LadangID && x.fld_PktUtama.Contains(codetnmn)).Select(s => s.fld_PktUtama).Distinct().OrderByDescending(s => s).FirstOrDefault();
+                var getpkt = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama.Contains(codetnmn)).Select(s => s.fld_PktUtama).Distinct().OrderByDescending(s => s).FirstOrDefault();
 
                 if (getpkt != null)
                 {

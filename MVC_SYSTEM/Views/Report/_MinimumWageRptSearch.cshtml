@@ -47,7 +47,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.Where(x=> x.GajiBulanan <= 1500))
                 {
                     bil = bil + 1;
                     <tr>

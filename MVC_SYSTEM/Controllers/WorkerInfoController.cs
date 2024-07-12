@@ -5946,12 +5946,13 @@ namespace MVC_SYSTEM.Controllers
             }
 
             records.Content = GajiMinimaList
+                .Where(x=>x.GajiBulanan <= 1500)
                 .OrderBy(sort + " " + sortdir)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
-            records.TotalRecords = GajiMinimaList
+            records.TotalRecords = GajiMinimaList.Where(x => x.GajiBulanan <= 1500)
                 .Count();
 
             records.CurrentPage = page;

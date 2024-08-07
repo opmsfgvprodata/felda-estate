@@ -5698,19 +5698,31 @@ namespace MVC_SYSTEM.Controllers
 
                         foreach (var worker in workerData)
                         {
-                            var getOfferedWorkingDay = dbview.tbl_Produktiviti
-                                .Where(x => x.fld_Nopkj == worker.fld_Nopkj && x.fld_Month == MonthList &&
-                                            x.fld_Year == YearList && x.fld_Deleted == false)
-                                .Select(s => s.fld_HadirKerja)
-                                .SingleOrDefault();
+                            //Modified by Shazana 28/5/2024
+                            //var getOfferedWorkingDay = dbview.tbl_Produktiviti
+                            //    .Where(x => x.fld_Nopkj == worker.fld_Nopkj && x.fld_Month == MonthList &&
+                            //                x.fld_Year == YearList && x.fld_Deleted == false)
+                            //    .Select(s => s.fld_HadirKerja)
+                            //    .SingleOrDefault();
+                            decimal? gajibulanlatest = 0;
+                            gajibulanlatest = dbview.tbl_GajiBulanan.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID
+                            && x.fld_Month == MonthList && x.fld_Year == YearList && x.fld_Nopkj == worker.fld_Nopkj).Select(x => x.fld_GajiKasar).FirstOrDefault();
+                            if (gajibulanlatest== null) { gajibulanlatest = 0; }
+                            var getOfferedWorkingDay = db.tbl_HariBekerjaLadang.Where(x=>x.fld_NegaraID == NegaraID && x.fld_SyarikatID== SyarikatID &&
+                            x.fld_WilayahID == WilayahID && x.fld_LadangID== LadangID && x.fld_Deleted == false && x.fld_Year== YearList && x.fld_Month == MonthList)
+                            .Select(x=>x.fld_BilHariBekerja)
+                            .SingleOrDefault();
 
+                            string[] listCuti = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "kategoricuti" && x.fldOptConfFlag1 != "kodCutiKuarantin" && x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fldDeleted == false).Select(x=>x.fldOptConfValue).ToArray();
                             var getActualWorkingDay = dbview.tbl_Kerjahdr
                                 .Where(x => x.fld_Nopkj == worker.fld_Nopkj &&
                                             x.fld_Tarikh.Value.Month == MonthList &&
                                             x.fld_Tarikh.Value.Year == YearList &&
                                             x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
-                                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID)
-                                            .Select(s => s.fld_Kdhdct == "H01" || s.fld_Kdhdct == "H02" || s.fld_Kdhdct == "H03").Count();
+                                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID &&
+                                            (x.fld_Kdhdct == "H01" || x.fld_Kdhdct == "H02" || x.fld_Kdhdct == "H03" || listCuti.Contains(x.fld_Kdhdct))
+                                            )
+                                            .Select(s => s.fld_Kdhdct == "H01" || s.fld_Kdhdct == "H02" || s.fld_Kdhdct == "H03" || listCuti.Contains(s.fld_Kdhdct)).Count();
 
                             CustMod_MinimumWage GajiMinima = new CustMod_MinimumWage();
 
@@ -5722,7 +5734,7 @@ namespace MVC_SYSTEM.Controllers
                             GajiMinima.KategoriKerja = worker.fld_Ktgpkj;
                             GajiMinima.JumlahHariBekerja = getActualWorkingDay;
                             GajiMinima.JumlahHariTawaranKerja = getOfferedWorkingDay;
-                            GajiMinima.GajiBulanan = worker.fld_ByrKerja;
+                            GajiMinima.GajiBulanan = gajibulanlatest;
                             GajiMinima.Sebab = worker.fld_Sebab;
                             GajiMinima.PelanTindakan = worker.fld_Tindakan;
                             GajiMinimaList.Add(GajiMinima);
@@ -5765,19 +5777,32 @@ namespace MVC_SYSTEM.Controllers
 
                         if (workerDataSingle != null)
                         {
-                            var getOfferedWorkingDay = dbview.tbl_Produktiviti
-                                .Where(x => x.fld_Nopkj == SelectionList && x.fld_Month == MonthList &&
-                                            x.fld_Year == YearList && x.fld_Deleted == false)
-                                .Select(s => s.fld_HadirKerja)
-                                .SingleOrDefault();
+                            //Modified by Shazana 28/5/2024
+                            //var getOfferedWorkingDay = dbview.tbl_Produktiviti
+                            //    .Where(x => x.fld_Nopkj == SelectionList && x.fld_Month == MonthList &&
+                            //                x.fld_Year == YearList && x.fld_Deleted == false)
+                            //    .Select(s => s.fld_HadirKerja)
+                            //    .SingleOrDefault();
+                            decimal? gajibulanlatest = 0;
+                            gajibulanlatest = dbview.tbl_GajiBulanan.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID
+                            && x.fld_Month == MonthList && x.fld_Year == YearList && x.fld_Nopkj == SelectionList).Select(x => x.fld_GajiKasar).FirstOrDefault();
+                            if (gajibulanlatest == null) { gajibulanlatest = 0; }
 
+                            var getOfferedWorkingDay = db.tbl_HariBekerjaLadang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
+                             x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false && x.fld_Year == YearList && x.fld_Month == MonthList)
+                             .Select(x => x.fld_BilHariBekerja)
+                             .SingleOrDefault();
+
+                            string[] listCuti = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "kategoricuti" && x.fldOptConfFlag1 != "kodCutiKuarantin" && x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fldDeleted == false).Select(x => x.fldOptConfValue).ToArray();
                             var getActualWorkingDay = dbview.tbl_Kerjahdr
                                 .Where(x => x.fld_Nopkj == SelectionList &&
                                             x.fld_Tarikh.Value.Month == MonthList &&
                                             x.fld_Tarikh.Value.Year == YearList &&
                                             x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
-                                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID)
-                                .Select(s => s.fld_Kdhdct == "H01" || s.fld_Kdhdct == "H02" || s.fld_Kdhdct == "H03").Count();
+                                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID &&
+                                            (x.fld_Kdhdct == "H01" || x.fld_Kdhdct == "H02" || x.fld_Kdhdct == "H03" || listCuti.Contains(x.fld_Kdhdct))
+                                            )
+                                            .Select(s => s.fld_Kdhdct == "H01" || s.fld_Kdhdct == "H02" || s.fld_Kdhdct == "H03" || listCuti.Contains(s.fld_Kdhdct)).Count();
 
                             CustMod_MinimumWage GajiMinima = new CustMod_MinimumWage();
 
@@ -5789,7 +5814,7 @@ namespace MVC_SYSTEM.Controllers
                             GajiMinima.KategoriKerja = workerDataSingle.fld_Ktgpkj;
                             GajiMinima.JumlahHariBekerja = getActualWorkingDay;
                             GajiMinima.JumlahHariTawaranKerja = getOfferedWorkingDay;
-                            GajiMinima.GajiBulanan = workerDataSingle.fld_ByrKerja;
+                            GajiMinima.GajiBulanan = gajibulanlatest;
                             GajiMinima.Sebab = workerDataSingle.fld_Sebab;
                             GajiMinima.PelanTindakan = workerDataSingle.fld_Tindakan;
                             GajiMinimaList.Add(GajiMinima);
@@ -5833,19 +5858,32 @@ namespace MVC_SYSTEM.Controllers
 
                         foreach (var worker in workerData)
                         {
-                            var getOfferedWorkingDay = dbview.tbl_Produktiviti
-                                .Where(x => x.fld_Nopkj == worker.fld_Nopkj && x.fld_Month == MonthList &&
-                                            x.fld_Year == YearList && x.fld_Deleted == false)
-                                .Select(s => s.fld_HadirKerja)
-                                .SingleOrDefault();
+                            //Modified by Shazana 28/5/2024
+                            //var getOfferedWorkingDay = dbview.tbl_Produktiviti
+                            //    .Where(x => x.fld_Nopkj == worker.fld_Nopkj && x.fld_Month == MonthList &&
+                            //                x.fld_Year == YearList && x.fld_Deleted == false)
+                            //    .Select(s => s.fld_HadirKerja)
+                            //    .SingleOrDefault();
+                            decimal? gajibulanlatest = 0;
+                            gajibulanlatest = dbview.tbl_GajiBulanan.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID
+                            && x.fld_Month == MonthList && x.fld_Year == YearList && x.fld_Nopkj == worker.fld_Nopkj).Select(x => x.fld_GajiKasar).FirstOrDefault();
+                            if (gajibulanlatest == null) { gajibulanlatest = 0; }
 
+                            var getOfferedWorkingDay = db.tbl_HariBekerjaLadang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
+                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false && x.fld_Year == YearList && x.fld_Month == MonthList)
+                            .Select(x => x.fld_BilHariBekerja)
+                            .SingleOrDefault();
+
+                            string[] listCuti = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "kategoricuti" && x.fldOptConfFlag1 != "kodCutiKuarantin" && x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fldDeleted == false).Select(x => x.fldOptConfValue).ToArray();
                             var getActualWorkingDay = dbview.tbl_Kerjahdr
                                 .Where(x => x.fld_Nopkj == worker.fld_Nopkj &&
                                             x.fld_Tarikh.Value.Month == MonthList &&
                                             x.fld_Tarikh.Value.Year == YearList &&
                                             x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
-                                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID)
-                                .Select(s => s.fld_Kdhdct == "H01" || s.fld_Kdhdct == "H02" || s.fld_Kdhdct == "H03").Count();
+                                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID &&
+                                             (x.fld_Kdhdct == "H01" || x.fld_Kdhdct == "H02" || x.fld_Kdhdct == "H03" || listCuti.Contains(x.fld_Kdhdct))
+                                             )
+                                            .Select(s => s.fld_Kdhdct == "H01" || s.fld_Kdhdct == "H02" || s.fld_Kdhdct == "H03" || listCuti.Contains(s.fld_Kdhdct)).Count();
 
                             CustMod_MinimumWage GajiMinima = new CustMod_MinimumWage();
 
@@ -5857,7 +5895,7 @@ namespace MVC_SYSTEM.Controllers
                             GajiMinima.KategoriKerja = worker.fld_Ktgpkj;
                             GajiMinima.JumlahHariBekerja = getActualWorkingDay;
                             GajiMinima.JumlahHariTawaranKerja = getOfferedWorkingDay;
-                            GajiMinima.GajiBulanan = worker.fld_ByrKerja;
+                            GajiMinima.GajiBulanan = gajibulanlatest;
                             GajiMinima.Sebab = worker.fld_Sebab;
                             GajiMinima.PelanTindakan = worker.fld_Tindakan;
                             GajiMinimaList.Add(GajiMinima);
@@ -5906,19 +5944,33 @@ namespace MVC_SYSTEM.Controllers
 
                         foreach (var worker in workerData)
                         {
-                            var getOfferedWorkingDay = dbview.tbl_Produktiviti
-                                .Where(x => x.fld_Nopkj == worker.fld_Nopkj && x.fld_Month == MonthList &&
-                                            x.fld_Year == YearList && x.fld_Deleted == false)
-                                .Select(s => s.fld_HadirKerja)
-                                .SingleOrDefault();
+                            //Modified by Shazana 28/5/2024
+                            //var getOfferedWorkingDay = dbview.tbl_Produktiviti
+                            //    .Where(x => x.fld_Nopkj == worker.fld_Nopkj && x.fld_Month == MonthList &&
+                            //                x.fld_Year == YearList && x.fld_Deleted == false)
+                            //    .Select(s => s.fld_HadirKerja)
+                            //    .SingleOrDefault();
 
+                            decimal? gajibulanlatest = 0;
+                            gajibulanlatest = dbview.tbl_GajiBulanan.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID
+                            && x.fld_Month == MonthList && x.fld_Year == YearList && x.fld_Nopkj == worker.fld_Nopkj).Select(x => x.fld_GajiKasar).FirstOrDefault();
+                            if (gajibulanlatest == null) { gajibulanlatest = 0; }
+
+                            var getOfferedWorkingDay = db.tbl_HariBekerjaLadang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
+                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false && x.fld_Year == YearList && x.fld_Month == MonthList)
+                            .Select(x => x.fld_BilHariBekerja)
+                            .SingleOrDefault();
+
+                            string[] listCuti = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "kategoricuti" && x.fldOptConfFlag1 != "kodCutiKuarantin" && x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fldDeleted == false).Select(x => x.fldOptConfValue).ToArray();
                             var getActualWorkingDay = dbview.tbl_Kerjahdr
                                 .Where(x => x.fld_Nopkj == worker.fld_Nopkj &&
                                             x.fld_Tarikh.Value.Month == MonthList &&
                                             x.fld_Tarikh.Value.Year == YearList &&
                                             x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
-                                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID)
-                                .Select(s => s.fld_Kdhdct == "H01" || s.fld_Kdhdct == "H02" || s.fld_Kdhdct == "H03").Count();
+                                            x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID &&
+                                             (x.fld_Kdhdct == "H01" || x.fld_Kdhdct == "H02" || x.fld_Kdhdct == "H03" || listCuti.Contains(x.fld_Kdhdct))
+                                            )
+                                            .Select(s => s.fld_Kdhdct == "H01" || s.fld_Kdhdct == "H02" || s.fld_Kdhdct == "H03" || listCuti.Contains(s.fld_Kdhdct)).Count();
 
                             CustMod_MinimumWage GajiMinima = new CustMod_MinimumWage();
 
@@ -5930,7 +5982,7 @@ namespace MVC_SYSTEM.Controllers
                             GajiMinima.KategoriKerja = worker.fld_Ktgpkj;
                             GajiMinima.JumlahHariBekerja = getActualWorkingDay;
                             GajiMinima.JumlahHariTawaranKerja = getOfferedWorkingDay;
-                            GajiMinima.GajiBulanan = worker.fld_ByrKerja;
+                            GajiMinima.GajiBulanan = gajibulanlatest;
                             GajiMinima.Sebab = worker.fld_Sebab;
                             GajiMinima.PelanTindakan = worker.fld_Tindakan;
                             GajiMinimaList.Add(GajiMinima);

@@ -10339,6 +10339,15 @@ namespace MVC_SYSTEM.App_LocalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maklumat Pekerja Kontraktor.
+        /// </summary>
+        public static string titleContractWorker {
+            get {
+                return ResourceManager.GetString("titleContractWorker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Kepuasan Pelanggan.
         /// </summary>
         public static string titleCust {

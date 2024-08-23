@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 
 using MVC_SYSTEM.MasterModels;
+using MVC_SYSTEM.CustomModels;
 
 namespace MVC_SYSTEM.Class
 {
@@ -901,6 +902,20 @@ namespace MVC_SYSTEM.Class
             insentif = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "insentif" && x.fldOptConfValue == code && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).Select(s => s.fldOptConfDesc).FirstOrDefault();
             return insentif;
         }
-  
+
+        public List<CustMod_DateList> GetDateListFunc(int? month = 1, int? year = 2020)
+        {
+            List<CustMod_DateList> DateList = new List<CustMod_DateList>();
+            var frstdaythsmnth = new DateTime(int.Parse(year.ToString()), int.Parse(month.ToString()), 1);
+            var fstdaynxtmnth = frstdaythsmnth.AddMonths(1);
+
+            for (DateTime date = frstdaythsmnth; date < fstdaynxtmnth; date = date.AddDays(1))
+            {
+                DateList.Add(new CustMod_DateList() { Date = date });
+            }
+
+            return DateList;
+        }
+
     }
 }

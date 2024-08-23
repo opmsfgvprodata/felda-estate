@@ -122,6 +122,9 @@ namespace MVC_SYSTEM.Models
         public virtual DbSet<vw_Kerja_Hdr_Cuti> vw_Kerja_Hdr_Cuti { get; set; }
         public virtual DbSet<vw_Kerja_OT> vw_Kerja_OT { get; set; }
         public virtual DbSet<tbl_KerjaKesukaran> tbl_KerjaKesukaran { get; set; }
+        public virtual DbSet<tbl_KerjahdrCuti> tbl_KerjahdrCuti { get; set; }
+        public virtual DbSet<tbl_KerjaOT> tbl_KerjaOT { get; set; }
+        public virtual DbSet<tbl_KerjaBonus> tbl_KerjaBonus { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -156,6 +159,10 @@ namespace MVC_SYSTEM.Models
             modelBuilder.Entity<tbl_Kerja>()
                .Property(e => e.fld_KadarByr)
                .HasPrecision(18, 3);
+
+            modelBuilder.Entity<tbl_KerjaOT>()
+              .Property(e => e.fld_JamOT)
+              .HasPrecision(4, 2);
 
             //modelBuilder.Entity<tbl_Blok>()
             //    .Property(e => e.fld_LsBlok)

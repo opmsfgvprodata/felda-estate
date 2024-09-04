@@ -8724,6 +8724,77 @@ namespace MVC_SYSTEM.Controllers
 
         }
 
+        public ActionResult EstKekuatanPkjLdgReport()
+        {
+            ViewBag.Report = "class = active";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+
+            return View();
+        }
+
+        public ViewResult _EstKekuatanPkjLdgReport(string print)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value,
+                NegaraID.Value);
+            MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+
+            ViewBag.NegaraID = NegaraID;
+            ViewBag.SyarikatID = SyarikatID;
+
+            ViewBag.NamaSyarikat = db.tbl_Syarikat
+                .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID)
+                .Select(s => s.fld_NamaSyarikat)
+                .FirstOrDefault();
+            ViewBag.NoSyarikat = db.tbl_Syarikat
+                .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID)
+                .Select(s => s.fld_NoSyarikat)
+                .FirstOrDefault();
+            ViewBag.Print = print;
+
+            List<CustMod_KekuatanPekerja> KekuatanPkjList = new List<CustMod_KekuatanPekerja>();
+
+            var workerData = dbview.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Kdaktf == "1").ToList();
+
+            foreach (var worker in workerData)
+            {
+
+                var perluLadangData = db.tbl_PerluLadang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID).FirstOrDefault();
+                var pkjKontraktor = dbr.tbl_BuruhKontrak.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID).Sum(x => x.fld_JumlahBuruh); 
+                //var pekerjaTempatan = workerData.Where(x => x.fld_Kdrkyt == "MA").Count();
+                //var pekerjaAsing = workerData.Where(x => x.fld_Kdrkyt != "MA").Count();
+
+                CustMod_KekuatanPekerja KekuatanPkj = new CustMod_KekuatanPekerja();
+
+
+                KekuatanPkj.fld_KeperluanSebenar = perluLadangData == null ? 0 : perluLadangData.fld_Perlu;
+                KekuatanPkj.fld_LuasKeseluruhan = perluLadangData == null ? 0 : perluLadangData.fld_Luas;
+                KekuatanPkj.fld_Kdrkyt = worker.fld_Kdrkyt;
+                //KekuatanPkj.fld_PekerjaTempatan = pekerjaTempatan;
+                //KekuatanPkj.fld_PekerjaAsing = pekerjaAsing;
+                KekuatanPkj.fld_PekerjaKontraktor = pkjKontraktor == null ? 0 : pkjKontraktor;
+                KekuatanPkjList.Add(KekuatanPkj);
+            }
+
+            if (KekuatanPkjList.Count == 0)
+            {
+                ViewBag.Message = GlobalResEstate.msgNoRecord;
+            }
+
+            return View(KekuatanPkjList);
+
+        }
         //public ActionResult TansListingRpt()
         //{
         //    ViewBag.Report = "class = active";

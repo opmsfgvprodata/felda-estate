@@ -331,6 +331,7 @@
     <Compile Include="Controllers\WorkerInfoController.cs" />
     <Compile Include="CorpNewModels\MVC_SYSTEM_CorpNewModels.cs" />
     <Compile Include="CorpNewModels\tbl_SalaryRequest.cs" />
+    <Compile Include="CustomModels\CustMod_KekuatanPekerja.cs" />
     <Compile Include="CustomModels\CustMode_PostSAPData.cs" />
     <Compile Include="CustomModels\CustMod_Attandance.cs" />
     <Compile Include="CustomModels\CustMod_AttWork.cs" />
@@ -3391,6 +3392,8 @@
     <Content Include="Views\WorkerInfo\_BuruhKontraktorCreate.cshtml" />
     <Content Include="Views\WorkerInfo\_BuruhKontraktorEdit.cshtml" />
     <Content Include="Views\WorkerInfo\_BuruhKontraktorDelete.cshtml" />
+    <Content Include="Views\Report\EstKekuatanPkjLdgReport.cshtml" />
+    <Content Include="Views\Report\_EstKekuatanPkjLdgReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Asset\Upload\120\" />

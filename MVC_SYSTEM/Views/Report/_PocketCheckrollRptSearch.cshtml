@@ -27,11 +27,15 @@
     var kerjahdrCuti = ViewBag.kerjahdrCuti as List<tbl_KerjahdrCuti>;
     var kerjaOT = ViewBag.kerjaOT as List<tbl_KerjaOT>;
     var insentif = ViewBag.insentif as List<tbl_Insentif>;
+    var gajiBulanan = ViewBag.gajiBulanan as List<tbl_GajiBulanan>;
+    var carumanTambahan = ViewBag.carumanTambahan as List<tbl_ByrCarumanTambahan>;
     var datelist = ViewBag.datelist as List<CustMod_DateList>;
     var activiti = ViewBag.activiti as List<MVC_SYSTEM.MasterModels.tbl_UpahAktiviti>;
     var incentive = ViewBag.incentive as List<MVC_SYSTEM.MasterModels.tbl_JenisInsentif>;
     var incomeIncentiveCode = incentive.Where(x => x.fld_JenisInsentif == "P").Select(s => s.fld_KodInsentif).Distinct().ToList();
+    var deductionIncentiveCode = incentive.Where(x => x.fld_JenisInsentif == "T").Select(s => s.fld_KodInsentif).Distinct().ToList();
     var kerjaBonus = ViewBag.kerjaBonus as List<tbl_KerjaBonus>;
+    var jenisCarumanTambahan = ViewBag.jenisCarumanTambahan as List<MVC_SYSTEM.MasterModels.tbl_CarumanTambahan>;
 }
 
 @if (Model.Count() <= 0)
@@ -54,6 +58,12 @@ else
                 var kerjaOTPkj = kerjaOT.Where(x => x.fld_Nopkj == pkj).ToList();
                 var kerjahdrCutiPkj = kerjahdrCuti.Where(x => x.fld_Nopkj == pkj).ToList();
                 var incentivePkj = insentif.Where(x => x.fld_Nopkj == pkj).ToList();
+                var gajiPkj = gajiBulanan.Where(x => x.fld_Nopkj == pkj).FirstOrDefault();
+                var carumanTambahanPkj = new List<tbl_ByrCarumanTambahan>();
+                if (gajiPkj != null)
+                {
+                    carumanTambahanPkj = carumanTambahan.Where(x => x.fld_GajiID == gajiPkj.fld_ID).ToList();
+                }
                 decimal? totalIncomePkj = 0m;
                 if (checkrollPkj.fld_KumpulanID != null && kerjaHdrPkj.Count() > 0)
                 {
@@ -404,6 +414,62 @@ else
                                     <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">Jumlah Pendapatan</td>
                                     <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalIncomePkj</td>
                                 </tr>
+                                <tr>
+                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="37">Potongan</td>
+                                </tr>
+                                @foreach (var item in incentivePkj.Where(x => deductionIncentiveCode.Contains(x.fld_KodInsentif)).ToList())
+                                {
+                                    var incentiveDetail = incentive.Where(x => x.fld_KodInsentif == item.fld_KodInsentif).FirstOrDefault();
+                                    <tr>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@incentiveDetail.fld_Keterangan</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">RM</td>
+                                        @foreach (var item2 in datelist)
+                                        {
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
+                                        }
+                                        @if (datelist.Count() <= 31)
+                                        {
+                                            var remainingdatecount = 31 - datelist.Count();
+                                            for (int x = 1; remainingdatecount >= x; x++)
+                                            {
+                                                <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
+                                            }
+                                        }
+
+                                        @{
+                                            totalIncomePkj += item.fld_NilaiInsentif;
+                                        }
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fld_NilaiInsentif</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fld_NilaiInsentif</td>
+                                    </tr>
+                                }
+                                @if (gajiPkj.fld_KWSPPkj > 0)
+                                {
+                                    <tr>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">KWSP</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@gajiPkj.fld_KWSPPkj</td>
+                                    </tr>
+                                }
+                                @if (gajiPkj.fld_SocsoPkj > 0)
+                                {
+                                    <tr>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">SOCSO</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@gajiPkj.fld_SocsoPkj</td>
+                                    </tr>
+                                }
+                                @foreach (var item in carumanTambahanPkj)
+                                {
+                                    if (item.fld_CarumanPekerja > 0)
+                                    {
+                                        var carumanName = jenisCarumanTambahan.Where(x => x.fld_KodCaruman == item.fld_KodCaruman).Select(s => s.fld_NamaCaruman).FirstOrDefault();
+                                        <tr>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">@carumanName</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fld_CarumanPekerja</td>
+                                        </tr>
+                                    }
+                                }
                             </tbody>
                         </table>
                         <div class="clearfix"></div>

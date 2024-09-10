@@ -6937,6 +6937,8 @@ namespace MVC_SYSTEM.Controllers
             var kerjaOT = new List<tbl_KerjaOT>();
             var insentif = new List<Models.tbl_Insentif>();
             var kerjaBonus = new List<Models.tbl_KerjaBonus>();
+            var gajiBulanan = new List<Models.tbl_GajiBulanan>();
+            var carumanTambahan = new List<Models.tbl_ByrCarumanTambahan>();
 
             if (MonthList != null && YearList != null)
             {
@@ -6971,6 +6973,8 @@ namespace MVC_SYSTEM.Controllers
                     kerjaOT = pocketCheckroll.Read<tbl_KerjaOT>().ToList();
                     insentif = pocketCheckroll.Read<Models.tbl_Insentif>().ToList();
                     kerjaBonus = pocketCheckroll.Read<Models.tbl_KerjaBonus>().ToList();
+                    gajiBulanan = pocketCheckroll.Read<Models.tbl_GajiBulanan>().ToList();
+                    carumanTambahan = pocketCheckroll.Read<Models.tbl_ByrCarumanTambahan>().ToList();
                     con.Close();
                 }
                 catch (Exception)
@@ -6986,6 +6990,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.NamaLadang = db.tbl_Ladang.Where(x => x.fld_ID == LadangID && x.fld_Deleted == false).Select(s => s.fld_LdgCode + "-" + s.fld_LdgName).FirstOrDefault();
             ViewBag.activiti = db.tbl_UpahAktiviti.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).ToList();
             ViewBag.incentive = db.tbl_JenisInsentif.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).ToList();
+            ViewBag.jenisCarumanTambahan = db.tbl_CarumanTambahan.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).ToList();
             ViewBag.pkjmast = pkjmast;
             ViewBag.kerjahdr = kerjahdr;
             ViewBag.kerja = kerja;
@@ -6994,6 +6999,8 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.kerjaOT = kerjaOT;
             ViewBag.insentif = insentif;
             ViewBag.kerjaBonus = kerjaBonus;
+            ViewBag.gajiBulanan = gajiBulanan;
+            ViewBag.carumanTambahan = carumanTambahan;
             ViewBag.Date = System.DateTime.Now.ToShortDateString();
             ViewBag.Month = MonthList;
             ViewBag.Year = YearList;

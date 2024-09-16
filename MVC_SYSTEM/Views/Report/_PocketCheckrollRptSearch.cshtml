@@ -65,6 +65,8 @@ else
                     carumanTambahanPkj = carumanTambahan.Where(x => x.fld_GajiID == gajiPkj.fld_ID).ToList();
                 }
                 decimal? totalIncomePkj = 0m;
+                decimal? totalDeductionPkj = 0m;
+                decimal? totalNetIncomePkj = 0m;
                 if (checkrollPkj.fld_KumpulanID != null && kerjaHdrPkj.Count() > 0)
                 {
                     var kumpulan = Kump.Where(x => x.fld_KumpulanID == checkrollPkj.fld_KumpulanID).FirstOrDefault();
@@ -183,8 +185,8 @@ else
                                             totalIncomePkj += totalAmt;
                                         }
                                         <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalMonthlyOutcome</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@activitiDetail.fld_Harga</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalAmt</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@activitiDetail.fld_Harga</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@totalAmt</td>
                                     </tr>
                                 }
                                 @foreach (var item in kerjaPkj.Select(s => new { s.fld_KodAktvt, s.fld_KodPkt }).Distinct().ToList())
@@ -223,7 +225,7 @@ else
                                             }
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalMonthlyOutcome</td>
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalAmt</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@totalAmt</td>
                                         </tr>
                                     }
                                 }
@@ -282,7 +284,7 @@ else
                                             }
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalMonthlyOutcome</td>
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalMonthlyOutcome</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@totalMonthlyOutcome</td>
                                         </tr>
                                     }
                                 }
@@ -342,7 +344,7 @@ else
                                             }
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalJamOT</td>
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalMonthlyOutcome</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@totalMonthlyOutcome</td>
                                         </tr>
                                     }
                                 }
@@ -379,85 +381,52 @@ else
                                         }
                                         <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalMonthlyOutcome</td>
                                         <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalAmt</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@totalAmt</td>
                                     </tr>
                                 }
                                 @foreach (var item in incentivePkj.Where(x => incomeIncentiveCode.Contains(x.fld_KodInsentif)).ToList())
                                 {
                                     var incentiveDetail = incentive.Where(x => x.fld_KodInsentif == item.fld_KodInsentif).FirstOrDefault();
                                     <tr>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@incentiveDetail.fld_Keterangan</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">RM</td>
-                                        @foreach (var item2 in datelist)
-                                        {
-                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                        }
-                                        @if (datelist.Count() <= 31)
-                                        {
-                                            var remainingdatecount = 31 - datelist.Count();
-                                            for (int x = 1; remainingdatecount >= x; x++)
-                                            {
-                                                <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                            }
-                                        }
-
-                                        @{
-                                            totalIncomePkj += item.fld_NilaiInsentif;
-                                        }
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fld_NilaiInsentif</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fld_NilaiInsentif</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">@incentiveDetail.fld_Keterangan</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@item.fld_NilaiInsentif</td>
                                     </tr>
+                                    totalIncomePkj += item.fld_NilaiInsentif;
                                 }
                                 <tr>
-                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">Jumlah Pendapatan</td>
-                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@totalIncomePkj</td>
+                                    <td width="1%" style="font-weight: bold;    margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align: left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">Jumlah Pendapatan Kasar</td>
+                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@totalIncomePkj</td>
                                 </tr>
-                                <tr>
-                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="37">Potongan</td>
-                                </tr>
+                                @if (incentivePkj.Where(x => deductionIncentiveCode.Contains(x.fld_KodInsentif)).Count() > 0 || gajiPkj.fld_KWSPPkj > 0 || gajiPkj.fld_SocsoPkj > 0)
+                                {
+                                    <tr>
+                                        <td width="1%" style="font-weight: bold; margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align: left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="37">Potongan</td>
+                                    </tr>
+                                }
                                 @foreach (var item in incentivePkj.Where(x => deductionIncentiveCode.Contains(x.fld_KodInsentif)).ToList())
                                 {
                                     var incentiveDetail = incentive.Where(x => x.fld_KodInsentif == item.fld_KodInsentif).FirstOrDefault();
                                     <tr>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@incentiveDetail.fld_Keterangan</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">RM</td>
-                                        @foreach (var item2 in datelist)
-                                        {
-                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                        }
-                                        @if (datelist.Count() <= 31)
-                                        {
-                                            var remainingdatecount = 31 - datelist.Count();
-                                            for (int x = 1; remainingdatecount >= x; x++)
-                                            {
-                                                <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                            }
-                                        }
-
-                                        @{
-                                            totalIncomePkj += item.fld_NilaiInsentif;
-                                        }
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fld_NilaiInsentif</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">-</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fld_NilaiInsentif</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">@incentiveDetail.fld_Keterangan</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@item.fld_NilaiInsentif</td>
                                     </tr>
+                                    totalDeductionPkj += item.fld_NilaiInsentif;
                                 }
                                 @if (gajiPkj.fld_KWSPPkj > 0)
                                 {
                                     <tr>
                                         <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">KWSP</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@gajiPkj.fld_KWSPPkj</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@gajiPkj.fld_KWSPPkj</td>
                                     </tr>
+                                    totalDeductionPkj += gajiPkj.fld_KWSPPkj;
                                 }
                                 @if (gajiPkj.fld_SocsoPkj > 0)
                                 {
                                     <tr>
                                         <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">SOCSO</td>
-                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@gajiPkj.fld_SocsoPkj</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@gajiPkj.fld_SocsoPkj</td>
                                     </tr>
+                                    totalDeductionPkj += gajiPkj.fld_SocsoPkj;
                                 }
                                 @foreach (var item in carumanTambahanPkj)
                                 {
@@ -466,10 +435,27 @@ else
                                         var carumanName = jenisCarumanTambahan.Where(x => x.fld_KodCaruman == item.fld_KodCaruman).Select(s => s.fld_NamaCaruman).FirstOrDefault();
                                         <tr>
                                             <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align:left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">@carumanName</td>
-                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none">@item.fld_CarumanPekerja</td>
+                                            <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@item.fld_CarumanPekerja</td>
                                         </tr>
+                                        totalDeductionPkj += item.fld_CarumanPekerja;
                                     }
                                 }
+
+                                @if (incentivePkj.Where(x => deductionIncentiveCode.Contains(x.fld_KodInsentif)).Count() > 0 || gajiPkj.fld_KWSPPkj > 0 || gajiPkj.fld_SocsoPkj > 0)
+                                {
+                                    <tr>
+                                        <td width="1%" style="font-weight: bold; margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align: left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">Jumlah Potongan</td>
+                                        <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@totalDeductionPkj</td>
+                                    </tr>
+                                }
+
+                                @{
+                                    totalNetIncomePkj = totalIncomePkj - totalDeductionPkj;
+                                }
+                                <tr>
+                                    <td width="1%" style="font-weight: bold; margin: 2px !important; padding: 2px !important; vertical-align: middle !important; text-align: left; border-bottom: 1px dotted gray; border-right: none; border-left: none" colspan="36">Jumlah Pendapatan Bersih</td>
+                                    <td width="1%" style="margin: 2px !important; padding: 2px !important; vertical-align: middle !important; border-bottom: 1px dotted gray; border-right: none; border-left: none" align="right">@totalNetIncomePkj</td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="clearfix"></div>

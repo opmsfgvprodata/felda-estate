@@ -1274,7 +1274,7 @@ namespace MVC_SYSTEM.Controllers
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
             MVC_SYSTEM_SP_Models dbsp = MVC_SYSTEM_SP_Models.ConnectToSqlServer(host, catalog, user, pass);
 
-            Document pdfDoc = new Document(PageSize.A4.Rotate(), 10, 10, 10, 5);
+            Document pdfDoc = new Document(PageSize.A3.Rotate(), 10, 10, 5, 5);
             MemoryStream ms = new MemoryStream();
             MemoryStream output = new MemoryStream();
             PdfWriter pdfWriter = PdfWriter.GetInstance(pdfDoc, ms);
@@ -1360,6 +1360,8 @@ namespace MVC_SYSTEM.Controllers
                 var activiti = db.tbl_UpahAktiviti.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).ToList();
                 var incentive = db.tbl_JenisInsentif.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).ToList();
                 var incomeIncentiveCode = incentive.Where(x => x.fld_JenisInsentif == "P").Select(s => s.fld_KodInsentif).Distinct().ToList();
+                var deductionIncentiveCode = incentive.Where(x => x.fld_JenisInsentif == "T").Select(s => s.fld_KodInsentif).Distinct().ToList();
+                var jenisCarumanTambahan = db.tbl_CarumanTambahan.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).ToList();
 
                 var pkjmast = new List<tbl_Pkjmast>();
                 var kerjahdr = new List<tbl_Kerjahdr>();
@@ -1369,6 +1371,8 @@ namespace MVC_SYSTEM.Controllers
                 var kerjaOT = new List<tbl_KerjaOT>();
                 var insentif = new List<Models.tbl_Insentif>();
                 var kerjaBonus = new List<Models.tbl_KerjaBonus>();
+                var gajiBulanan = new List<Models.tbl_GajiBulanan>();
+                var carumanTambahan = new List<Models.tbl_ByrCarumanTambahan>();
 
                 if (MonthList != null && YearList != null)
                 {
@@ -1402,6 +1406,8 @@ namespace MVC_SYSTEM.Controllers
                         kerjaOT = pocketCheckroll.Read<tbl_KerjaOT>().ToList();
                         insentif = pocketCheckroll.Read<Models.tbl_Insentif>().ToList();
                         kerjaBonus = pocketCheckroll.Read<Models.tbl_KerjaBonus>().ToList();
+                        gajiBulanan = pocketCheckroll.Read<Models.tbl_GajiBulanan>().ToList();
+                        carumanTambahan = pocketCheckroll.Read<Models.tbl_ByrCarumanTambahan>().ToList();
                         con.Close();
                     }
                     catch (Exception)
@@ -1419,7 +1425,15 @@ namespace MVC_SYSTEM.Controllers
                     var kerjaOTPkj = kerjaOT.Where(x => x.fld_Nopkj == pkj).ToList();
                     var kerjahdrCutiPkj = kerjahdrCuti.Where(x => x.fld_Nopkj == pkj).ToList();
                     var incentivePkj = insentif.Where(x => x.fld_Nopkj == pkj).ToList();
+                    var gajiPkj = gajiBulanan.Where(x => x.fld_Nopkj == pkj).FirstOrDefault();
+                    var carumanTambahanPkj = new List<tbl_ByrCarumanTambahan>();
+                    if (gajiPkj != null)
+                    {
+                        carumanTambahanPkj = carumanTambahan.Where(x => x.fld_GajiID == gajiPkj.fld_ID).ToList();
+                    }
                     decimal? totalIncomePkj = 0m;
+                    decimal? totalDeductionPkj = 0m;
+                    decimal? totalNetIncomePkj = 0m;
 
                     if (checkrollPkj.fld_KumpulanID != null && kerjaHdrPkj.Count() > 0)
                     {
@@ -1528,7 +1542,7 @@ namespace MVC_SYSTEM.Controllers
                         table = new PdfPTable(37);
                         table.WidthPercentage = 100;
                         table.SpacingBefore = 5f;
-                        widths = new float[] { 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2 };
+                        widths = new float[] { 2, 2, 1.5f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 2, 2, 2 };
                         table.SetWidths(widths);
 
                         chunk = new Chunk("Aktiviti", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
@@ -1849,7 +1863,7 @@ namespace MVC_SYSTEM.Controllers
                                 cell.BorderColor = BaseColor.BLACK;
                                 table.AddCell(cell);
                             }
-                            
+
                         }
                         //Kesukaran
 
@@ -2197,79 +2211,22 @@ namespace MVC_SYSTEM.Controllers
                             cell.VerticalAlignment = Element.ALIGN_MIDDLE;
                             cell.Border = Rectangle.BOTTOM_BORDER;
                             cell.BorderColor = BaseColor.BLACK;
+                            cell.Colspan = 36;
                             table.AddCell(cell);
 
-                            chunk = new Chunk("-", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                            chunk = new Chunk(item.fld_NilaiInsentif.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                             cell = new PdfPCell(new Phrase(chunk));
-                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
                             cell.VerticalAlignment = Element.ALIGN_MIDDLE;
                             cell.Border = Rectangle.BOTTOM_BORDER;
                             cell.BorderColor = BaseColor.BLACK;
                             table.AddCell(cell);
-
-                            chunk = new Chunk("RM", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                            cell = new PdfPCell(new Phrase(chunk));
-                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                            cell.Border = Rectangle.BOTTOM_BORDER;
-                            cell.BorderColor = BaseColor.BLACK;
-                            table.AddCell(cell);
-
-                            foreach (var item2 in datelist)
-                            {
-                                chunk = new Chunk("-", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                                cell = new PdfPCell(new Phrase(chunk));
-                                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                                cell.Border = Rectangle.BOTTOM_BORDER;
-                                cell.BorderColor = BaseColor.BLACK;
-                                table.AddCell(cell);
-                            }
-
-                            if (datelist.Count() <= 31)
-                            {
-                                var remainingdatecount = 31 - datelist.Count();
-                                for (int x = 1; remainingdatecount >= x; x++)
-                                {
-                                    chunk = new Chunk("-".ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                                    cell = new PdfPCell(new Phrase(chunk));
-                                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                                    cell.Border = Rectangle.BOTTOM_BORDER;
-                                    cell.BorderColor = BaseColor.BLACK;
-                                    table.AddCell(cell);
-                                }
-                            }
 
                             totalIncomePkj += item.fld_NilaiInsentif;
-
-                            chunk = new Chunk(item.fld_NilaiInsentif.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                            cell = new PdfPCell(new Phrase(chunk));
-                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                            cell.Border = Rectangle.BOTTOM_BORDER;
-                            cell.BorderColor = BaseColor.BLACK;
-                            table.AddCell(cell);
-
-                            chunk = new Chunk("-", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                            cell = new PdfPCell(new Phrase(chunk));
-                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                            cell.Border = Rectangle.BOTTOM_BORDER;
-                            cell.BorderColor = BaseColor.BLACK;
-                            table.AddCell(cell);
-
-                            chunk = new Chunk(item.fld_NilaiInsentif.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
-                            cell = new PdfPCell(new Phrase(chunk));
-                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                            cell.Border = Rectangle.BOTTOM_BORDER;
-                            cell.BorderColor = BaseColor.BLACK;
-                            table.AddCell(cell);
                         }
                         //Insentif
 
-                        chunk = new Chunk("Jumlah Pendapatan", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        chunk = new Chunk("Jumlah Pendapatan Kasar", FontFactory.GetFont("Arial", 7, Font.BOLD, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_LEFT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -2279,6 +2236,151 @@ namespace MVC_SYSTEM.Controllers
                         table.AddCell(cell);
 
                         chunk = new Chunk(totalIncomePkj.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        table.AddCell(cell);
+
+                        if (incentivePkj.Where(x => deductionIncentiveCode.Contains(x.fld_KodInsentif)).Count() > 0 || gajiPkj.fld_KWSPPkj > 0 || gajiPkj.fld_SocsoPkj > 0)
+                        {
+                            chunk = new Chunk("Potongan", FontFactory.GetFont("Arial", 7, Font.BOLD, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            cell.Colspan = 37;
+                            table.AddCell(cell);
+                        }
+
+                        foreach (var item in incentivePkj.Where(x => deductionIncentiveCode.Contains(x.fld_KodInsentif)).ToList())
+                        {
+                            var incentiveDetail = incentive.Where(x => x.fld_KodInsentif == item.fld_KodInsentif).FirstOrDefault();
+
+                            chunk = new Chunk(incentiveDetail.fld_Keterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            cell.Colspan = 36;
+                            table.AddCell(cell);
+
+                            chunk = new Chunk(item.fld_NilaiInsentif.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            table.AddCell(cell);
+                            totalDeductionPkj += item.fld_NilaiInsentif;
+                        }
+
+                        if (gajiPkj.fld_KWSPPkj > 0)
+                        {
+                            chunk = new Chunk("KWSP", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            cell.Colspan = 36;
+                            table.AddCell(cell);
+
+                            chunk = new Chunk(gajiPkj.fld_KWSPPkj.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            table.AddCell(cell);
+
+                            totalDeductionPkj += gajiPkj.fld_KWSPPkj;
+                        }
+
+                        if (gajiPkj.fld_SocsoPkj > 0)
+                        {
+                            chunk = new Chunk("SOCSO", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            cell.Colspan = 36;
+                            table.AddCell(cell);
+
+                            chunk = new Chunk(gajiPkj.fld_SocsoPkj.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            table.AddCell(cell);
+
+                            totalDeductionPkj += gajiPkj.fld_SocsoPkj;
+                        }
+
+                        foreach (var item in carumanTambahanPkj)
+                        {
+                            if (item.fld_CarumanPekerja > 0)
+                            {
+                                var carumanName = jenisCarumanTambahan.Where(x => x.fld_KodCaruman == item.fld_KodCaruman).Select(s => s.fld_NamaCaruman).FirstOrDefault();
+
+                                chunk = new Chunk(carumanName, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                cell = new PdfPCell(new Phrase(chunk));
+                                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                cell.BorderColor = BaseColor.BLACK;
+                                cell.Colspan = 36;
+                                table.AddCell(cell);
+
+                                chunk = new Chunk(item.fld_CarumanPekerja.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                cell = new PdfPCell(new Phrase(chunk));
+                                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                cell.BorderColor = BaseColor.BLACK;
+                                table.AddCell(cell);
+
+                                totalDeductionPkj += item.fld_CarumanPekerja;
+                            }
+                        }
+
+                        if (incentivePkj.Where(x => deductionIncentiveCode.Contains(x.fld_KodInsentif)).Count() > 0 || gajiPkj.fld_KWSPPkj > 0 || gajiPkj.fld_SocsoPkj > 0)
+                        {
+                            chunk = new Chunk("Jumlah Potongan", FontFactory.GetFont("Arial", 7, Font.BOLD, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            cell.Colspan = 36;
+                            table.AddCell(cell);
+
+                            chunk = new Chunk(totalDeductionPkj.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                            cell = new PdfPCell(new Phrase(chunk));
+                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            cell.Border = Rectangle.BOTTOM_BORDER;
+                            cell.BorderColor = BaseColor.BLACK;
+                            table.AddCell(cell);
+                        }
+
+                        totalNetIncomePkj = totalIncomePkj - totalDeductionPkj;
+
+                        chunk = new Chunk("Jumlah Pendapatan Bersih", FontFactory.GetFont("Arial", 7, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.BLACK;
+                        cell.Colspan = 36;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(totalNetIncomePkj.ToString(), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
                         cell = new PdfPCell(new Phrase(chunk));
                         cell.HorizontalAlignment = Element.ALIGN_RIGHT;
                         cell.VerticalAlignment = Element.ALIGN_MIDDLE;

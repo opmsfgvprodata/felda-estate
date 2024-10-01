@@ -346,20 +346,40 @@ namespace MVC_SYSTEM.Class
                 {
                     if (JenisKiraanHariTerabai == "kong")
                     {
-                        switch (JenisPkt)
+                        if (transferPktID == 0)
                         {
-                            case 1:
-                                //Take GetPkt Direct
-                                break;
-                            case 2:
-                                GetPkt = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_KodPktUtama).FirstOrDefault();
-                                break;
-                            case 3:
-                                GetPkt = dbr.tbl_Blok.Where(x => x.fld_Blok == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_KodPktutama).FirstOrDefault();
-                                break;
+                            switch (JenisPkt)
+                            {
+                                case 1:
+                                    //Take GetPkt Direct
+                                    break;
+                                case 2:
+                                    GetPkt = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_KodPktUtama).FirstOrDefault();
+                                    break;
+                                case 3:
+                                    GetPkt = dbr.tbl_Blok.Where(x => x.fld_Blok == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_KodPktutama).FirstOrDefault();
+                                    break;
+                            }
+                            tbl_PktUtama = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).ToList();
+                        }
+                        else
+                        {
+                            switch (JenisPkt)
+                            {
+                                case 1:
+                                    GetPkt = dbr.tbl_PktUtama.Where(x => x.fld_ID == transferPktID).Select(s => s.fld_PktUtama).FirstOrDefault();
+                                    break;
+                                case 2:
+                                    GetPkt = dbr.tbl_SubPkt.Where(x => x.fld_ID == transferPktID).Select(s => s.fld_KodPktUtama).FirstOrDefault();
+                                    break;
+                                case 3:
+                                    GetPkt = dbr.tbl_Blok.Where(x => x.fld_ID == transferPktID).Select(s => s.fld_KodPktutama).FirstOrDefault();
+                                    break;
+                            }
+                            tbl_PktUtama = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).ToList();
                         }
 
-                        var PktData = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).Select(s => new { s.fld_StatusTnmn, s.fld_IOcode, s.fld_JnsLot }).FirstOrDefault();
+                        var PktData = tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).Select(s => new { s.fld_StatusTnmn, s.fld_IOcode, s.fld_JnsLot }).FirstOrDefault();
                         GetPaySheetID = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusTanaman" && x.fldOptConfValue == PktData.fld_StatusTnmn && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfFlag2).FirstOrDefault();
 
                         //get GL Code

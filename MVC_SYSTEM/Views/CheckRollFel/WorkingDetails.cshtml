@@ -251,7 +251,7 @@
         var ajxfn = {};
         ajxfn.url = "@Url.Action("GetGLSAP", "CheckRollFel")";
         ajxfn.type = "POST";
-        ajxfn.data = JSON.stringify({ JnisPkt: JnisPkt, PilihanPkt: PilihanPkt, PilihanAktvt: PilihanAktvt });
+        ajxfn.data = JSON.stringify({ JnisPkt: JnisPkt, PilihanPkt: PilihanPkt, PilihanAktvt: PilihanAktvt, TrnsfrLvl: $("#TrnsfrLvlHT").val() });
         ajxfn.datatype = "json";
         ajxfn.async = false;
         ajxfn.contentType = "application/json";
@@ -1464,6 +1464,51 @@
         }
 
     });
+
+    $("#TrnsfrLvlHT").change(function () {
+    $("#UpdateProgress1").css("display", "");
+    var TrnsfrLvl = $("#TrnsfrLvlHT").val();
+    if (TrnsfrLvl === "1") {
+        var ajxfn = {};
+        ajxfn.url = "@Url.Action("GetPktTrnsfrHT", "CheckRollFel")";
+        ajxfn.type = "POST";
+        ajxfn.data = JSON.stringify({ JnsPkt: $("#JnisPktHT").val(), TrnsfrLvl: $("#TrnsfrLvlHT").val() });
+        ajxfn.datatype = "json";
+        ajxfn.contentType = "application/json";
+        ajxfn.success = function (result) {
+            $('#PilihanPktHT').empty();
+            for (var i = 0; i < result.PilihPeringkat.length; i++) {
+                $("#PilihanPktHT").append("<option value=" + result.PilihPeringkat[i].Value + ">" + result.PilihPeringkat[i].Text + "</option>");
+            }
+            $("#UpdateProgress1").css("display", "none");
+        };
+        ajxfn.error = function () {
+            $.simplyToast('@GlobalResEstate.msgError', 'danger');
+            $("#UpdateProgress1").css("display", "none");
+        };
+        $.ajax(ajxfn);
+    } else {
+        var ajxfn = {};
+        ajxfn.url = "@Url.Action("GetPktHT", "CheckRollFel")";
+        ajxfn.type = "POST";
+        ajxfn.data = JSON.stringify({ JnisAktvt: $("#JnisAktvtHT").val(), TrnsfrLvl: $("#TrnsfrLvlHT").val() });
+        ajxfn.datatype = "json";
+        ajxfn.contentType = "application/json";
+        ajxfn.success = function (result) {
+            $('#PilihanPktHT').empty();
+            for (var i = 0; i < result.PilihPeringkat.length; i++) {
+                $("#PilihanPktHT").append("<option value=" + result.PilihPeringkat[i].Value + ">" + result.PilihPeringkat[i].Text + "</option>");
+            }
+            $("#UpdateProgress1").css("display", "none");
+        };
+        ajxfn.error = function () {
+            $.simplyToast('@GlobalResEstate.msgError', 'danger');
+            $("#UpdateProgress1").css("display", "none");
+        };
+        $.ajax(ajxfn);
+    }
+
+});
 
     $("#JnisPkt").change(function () {
         ClearInput();

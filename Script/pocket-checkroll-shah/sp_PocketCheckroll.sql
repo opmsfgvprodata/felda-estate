@@ -1,24 +1,18 @@
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+
+
+/****** Object:  StoredProcedure [dbo].[sp_PocketCheckroll]    Script Date: 10/8/2024 6:28:59 AM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE sp_PocketCheckroll 
+CREATE PROCEDURE [dbo].[sp_PocketCheckroll] 
 	-- Add the parameters for the stored procedure here
 	@NegaraID INT,
 	@SyarikatID INT,
@@ -47,5 +41,13 @@ BEGIN
 	SELECT * FROM tbl_KerjaOT WITH (NOLOCK) WHERE fld_LadangID = @LadangID AND YEAR(fld_Tarikh) = @Year AND MONTH(fld_Tarikh) = @Month AND fld_Nopkj IN (SELECT fld_Nopkj FROM @Workers) ORDER BY fld_Nopkj ASC, fld_Tarikh ASC
 
 	SELECT * FROM tbl_Insentif WITH (NOLOCK) WHERE fld_LadangID = @LadangID AND fld_Year = @Year AND fld_Month = @Month AND fld_Nopkj IN (SELECT fld_Nopkj FROM @Workers) ORDER BY fld_Nopkj ASC
+
+	SELECT * FROM tbl_KerjaBonus WITH (NOLOCK) WHERE fld_LadangID = @LadangID AND YEAR(fld_Tarikh) = @Year AND MONTH(fld_Tarikh) = @Month AND fld_Nopkj IN (SELECT fld_Nopkj FROM @Workers) ORDER BY fld_Nopkj ASC, fld_Tarikh ASC
+
+	SELECT * FROM tbl_GajiBulanan WITH (NOLOCK) WHERE fld_LadangID = @LadangID AND fld_Year = @Year AND fld_Month = @Month AND fld_Nopkj IN (SELECT fld_Nopkj FROM @Workers) ORDER BY fld_Nopkj ASC
+
+	SELECT * FROM tbl_ByrCarumanTambahan WITH (NOLOCK) WHERE fld_GajiID IN (SELECT fld_ID FROM tbl_GajiBulanan WITH (NOLOCK) WHERE fld_LadangID = @LadangID AND fld_Year = @Year AND fld_Month = @Month AND fld_Nopkj IN (SELECT fld_Nopkj FROM @Workers))
 END
 GO
+
+

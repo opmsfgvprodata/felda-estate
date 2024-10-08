@@ -66,8 +66,12 @@
             <div class="modal-footer" style="margin-top: -18px">
                 @* comment by fatin - 11/04/2023 *@
                 @*<a class="btn btn-success" data-modal="" href="@Url.Action("_SLPDataPeringkat", "BasicInfo")" id="btnIO" onclick="return DisplayProgressMessage2(this);">
-                        Data SLP
-                    </a>*@
+            Data SLP
+        </a>*@
+                <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@(uniquefilename)')">
+                    <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+                </a>
+
                 <a class="btn btn-success" data-modal="" href="@Url.Action("CCLevelsPktCreate", "BasicInfo")" id="btnPkt" onclick="return DisplayProgressMessage2(this);">
                     Daftar Peringkat
                 </a>
@@ -79,9 +83,6 @@
                 </a>
                 <a class="btn btn-warning" href="@Url.Action("Index", "BasicInfo")" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnBack</a>
 
-                <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@(uniquefilename)')">
-                    <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
-                </a>
             </div>
         </div>
     }

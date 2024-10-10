@@ -6507,7 +6507,7 @@ namespace MVC_SYSTEM.Controllers
             List<SelectListItem> SelectionList = new List<SelectListItem>();
             SelectionList = new SelectList(dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Kdaktf == "1").OrderBy(o => o.fld_Nopkj).Select(s => new SelectListItem { Value = s.fld_Nopkj, Text = s.fld_Nopkj + "-" + s.fld_Nama }), "Value", "Text").ToList();
             SelectionList.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblAll, Value = "0" }));
-
+            ViewBag.costcenter = "";
             ViewBag.SelectionList = SelectionList;
             ViewBag.MonthList = monthList;
             ViewBag.YearList = yearlist;
@@ -6654,11 +6654,11 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
             ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).Select(s => s.fld_NoSyarikat).FirstOrDefault();
             ViewBag.NamaLadang = db.tbl_Ladang.Where(x => x.fld_ID == LadangID && x.fld_Deleted == false).Select(s => s.fld_LdgCode + "-" + s.fld_LdgName).FirstOrDefault();
-
             ViewBag.PayslipList = payslipList;
             ViewBag.KerjaList = kerjaList;
             ViewBag.KerjahdrList = kerjahdrList;
             ViewBag.KerjakesukaranList = kerjakesukaranList;
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             return View(pkjList);
         }
 
@@ -6701,6 +6701,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.WebConfigList = webConfigList;
             ViewBag.PktHargaKesukaran = pktHargaKesukaran;
             ViewBag.HardWorkDatasNew = hardWorkDatasNew;
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             return View(payslip);
         }
 

@@ -818,7 +818,7 @@ namespace MVC_SYSTEM.Controllers
                                 Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
                                 dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
                                 var tbl_PktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == pktTransfer.fld_OriginPktID).FirstOrDefault();
-                                CustMod_HariTerabai.PilihanPktHT = tbl_PktUtama.fld_PktUtama;
+                                CustMod_HariTerabai.PilihanPktHT = PilihanPktAsal;
                                 sapType = tbl_PktUtama.fld_SAPType;
                             }
                         }
@@ -1094,7 +1094,7 @@ namespace MVC_SYSTEM.Controllers
                                         }
                                         dbrpkt.tbl_KerjaHariTerabai.AddRange(tbl_KerjaHariTerabais);
                                         dbrpkt.SaveChanges();
-                                        EstateFunction.SaveDataKerjaSAPFPM(dbrpkt, dbrpkt, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, false, "", 0, getuserid);
+                                        EstateFunction.SaveDataKerjaSAPFPM(dbrpkt, dbrpkt, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, "", PilihanPktID, getuserid);
                                     }
                                 }
                                 else

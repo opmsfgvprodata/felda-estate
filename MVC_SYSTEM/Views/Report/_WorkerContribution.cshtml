@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<MVC_SYSTEM.ViewingModels.ContributionReport>
-
+@using MVC_SYSTEM.Models
 @{
     int bill = 1;
     @* fatin added  - 06/03/2023 *@
@@ -16,9 +16,12 @@
     @* end *@
     System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
     GetTriager GetTriager = new GetTriager();
+    GetConfig GetConfig = new GetConfig();
     ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
     DateTime Todaydate = ChangeTimeZone.gettimezone();
     string uniquefilename = "ContributionReport" + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 
 @if (Model != null && Model.Count() != 0)
@@ -29,9 +32,9 @@
             <thead>
                 <tr>
                     <th colspan="13" style="text-align:center;vertical-align:middle;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                         <br />
                         Monthly Contribution Report
                         <br />

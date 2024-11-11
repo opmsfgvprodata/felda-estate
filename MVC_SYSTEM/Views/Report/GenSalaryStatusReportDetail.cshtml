@@ -18,6 +18,8 @@
     int i = 0;
     int j = 0;
     int? statusJana = 0;
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 
 <div class="panel panel-primary">
@@ -35,9 +37,9 @@
                     <thead>
                         <tr>
                             <th colspan="6" style="text-align:center;vertical-align:middle; border:none;">
-                                @ViewBag.NamaSyarikat
+                                @namapenuhsyarikat
                                 <br />
-                                (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                                (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                                 <br />
                                 Laporan Status Penjanaan Gaji
                                 <br />

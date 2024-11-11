@@ -8,7 +8,7 @@
     string worker = ViewBag.WorkerList;
     int incomeCount = 0;
     int deductionCount = 0;
-
+    GetConfig GetConfig = new GetConfig();
     //farahin tambah  - 23/02/2021
     int bill = 0;
     decimal JumlahPendapatanPerson = 0;
@@ -19,7 +19,8 @@
     ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
     DateTime Todaydate = ChangeTimeZone.gettimezone();
     string uniquefilename = "IncentiveReport_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
-
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 
 @if (Model != null && Model.Count() != 0)
@@ -31,9 +32,9 @@
             <thead>
                 <tr>
                     <th colspan="9" style="text-align: center; vertical-align: middle; border: none;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                         <br />
                         @GlobalResEstate.lblIncentiveReport
                     </th>
@@ -179,7 +180,7 @@
 
 
     </div>
-    
+
     if (ViewBag.Print == null)
     {
         <div style="text-align:right; margin-top:10px">

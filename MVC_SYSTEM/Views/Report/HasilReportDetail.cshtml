@@ -32,6 +32,8 @@
     decimal JumlahSkar = 0;
     decimal JumlahOverall = 0;
     decimal JumlahAmount = 0;
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 
 @if (Model != null && Model.Count() != 0)
@@ -58,9 +60,9 @@
             <thead>
                 <tr>
                     <th colspan="16" style="text-align:center;vertical-align:middle;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                         <br />
                         @GlobalResEstate.lblHasilReport
                         <br />

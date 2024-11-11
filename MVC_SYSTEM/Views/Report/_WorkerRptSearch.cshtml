@@ -15,6 +15,8 @@
     int minute = ChangeTimeZone.gettimezone().Minute;
     int second = ChangeTimeZone.gettimezone().Second;
     string uniquefilename = "WorkerRpt_" + year.ToString() + month.ToString() + day.ToString() + hour.ToString() + minute.ToString() + second.ToString();
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 @if (Model != null && Model.Count() != 0)
 {
@@ -27,9 +29,9 @@
             <thead>
                 <tr>
                     <th colspan="4" style="text-align:center;vertical-align:middle; border:none;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        @GlobalResEstate.lblCompanyNo : @namasyarikat
                         <br />
                         @GlobalResEstate.lblWorkerReport
                         <br />

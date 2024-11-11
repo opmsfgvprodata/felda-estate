@@ -12,6 +12,8 @@
     ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
     DateTime Todaydate = ChangeTimeZone.gettimezone();
     string uniquefilename = "KWSP_Socso_Report_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 @if (Model != null && Model.Count() != 0)
 {
@@ -25,9 +27,9 @@
             <thead>
                 <tr>
                     <th colspan="6" style="text-align:center;vertical-align:middle; border:none;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                         <br />
                         @GlobalResEstate.lblKwspSocsoReport
                         <br />

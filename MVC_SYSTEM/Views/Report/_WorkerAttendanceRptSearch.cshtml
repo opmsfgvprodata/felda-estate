@@ -3,7 +3,7 @@
 
 @{
     GetTriager GetTriager = new GetTriager();
-
+    GetConfig GetConfig = new GetConfig();
     int? month = ViewBag.MonthList;
     int? year = ViewBag.YearList;
     string worker = ViewBag.WorkerList;
@@ -13,6 +13,8 @@
     ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
     DateTime Todaydate = ChangeTimeZone.gettimezone();
     string uniquefilename = "AttendanceReport_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 
 @if (Model != null && Model.Count() != 0)
@@ -24,8 +26,8 @@
             <thead style="border:hidden; ">
                 <tr style="border:hidden">
                     <th style="text-align: center; vertical-align: middle; border:hidden" colspan="17">
-                        <p> @ViewBag.NamaSyarikat </p>
-                        <p>(@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)</p>
+                        <p> @namapenuhsyarikat </p>
+                        <p>(@GlobalResEstate.lblCompanyNo : @namasyarikat)</p>
                         <p> @GlobalResEstate.lblAttendanceReport</p>
                     </th>
                 </tr>

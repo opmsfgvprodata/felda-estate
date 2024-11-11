@@ -17,8 +17,9 @@
     decimal PeratusAbsent = 0;
     ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
     DateTime Todaydate = ChangeTimeZone.gettimezone();
-    //GetConfig GetConfig = new GetConfig();
-
+    GetConfig GetConfig = new GetConfig();
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
     //farahin comment
     //string uniquefilename = "AccountReport_" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
     //farahin ubah uniquefilename
@@ -39,9 +40,9 @@ else
             <thead>
                 <tr>
                     <th colspan="21" style="text-align:center;vertical-align:middle;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                         <br />
                         @*@GlobalResEstate.lblAverageMonthlySalaryReport*@ @*Shazana 29/11/2022*@
                         @GlobalResEstate.lblAverageMonthlySalaryReport  @ViewBag.YearSelection @*Shazana 29/11/2022*@

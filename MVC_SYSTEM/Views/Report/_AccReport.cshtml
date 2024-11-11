@@ -12,6 +12,8 @@
     string uniquefilename = "AccountReport_" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
     //farahin tambah -23/02/2021
     int bill = 0;
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 @if (Model != null && Model.Count() != 0)
 {
@@ -29,9 +31,9 @@
 
                 <tr>
                     <th colspan="7" style="text-align:center;vertical-align:middle; border:none !important;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                         <br />
                         @GlobalResEstate.WorkerAccReport
                         <br />

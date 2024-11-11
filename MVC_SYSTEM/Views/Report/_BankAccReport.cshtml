@@ -13,6 +13,8 @@
     //farahin tukar uniquefilename & tambah declaration  - 23/02/2021
     string uniquefilename = "BankAccountReport_" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
     int bill = 0;
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 
     //AjaxOptions options = new AjaxOptions
     //{
@@ -34,9 +36,9 @@
 
                 <tr>
                     <th colspan="11" style="text-align:center;vertical-align:middle; border:none !important;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                         <br />
                         @GlobalResEstate.lblEstateAccReport
                         <br />

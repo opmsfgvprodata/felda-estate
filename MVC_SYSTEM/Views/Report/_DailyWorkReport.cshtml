@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<MVC_SYSTEM.Models.sp_KerjaInfoDetails_Result>
-@using MVC_SYSTEM.Class
-@{
+    @using MVC_SYSTEM.Class
+    @{
     ViewBag.Title = "WorkReport";
     //Layout = "~/Views/Shared/_LayoutMain.cshtml";
     System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
@@ -24,7 +24,7 @@
     decimal? totalBeg = 0;
     decimal? totalOverallAmount = 0;
 
-    
+
     //KadarOT kadar = new KadarOT();
     GetTriager Triager = new GetTriager();
     //tbl_CostCentre Costcenter = new tbl_CostCentre();
@@ -37,11 +37,12 @@
     int minute = ChangeTimeZone.gettimezone().Minute;
     int second = ChangeTimeZone.gettimezone().Second;
     string uniquefilename = "KerjaHarian_" + year.ToString() + month.ToString() + day.ToString() + hour.ToString() + minute.ToString() + second.ToString();
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 
+    }
 
-}
-
-@*<div id="UpdateProgress1" style="display:none;">
+    @*<div id="UpdateProgress1" style="display:none;">
         <div class="progressTest">
             <label>
                 @GlobalResEstate.msgWait
@@ -49,14 +50,14 @@
         </div>
     </div>*@
 
-@*@if (ViewBag.getflag == 1)
+    @*@if (ViewBag.getflag == 1)
     {
-        <p style="color:red">@GlobalResEstate.msgChooseWork</p>
+    <p style="color:red">@GlobalResEstate.msgChooseWork</p>
     }
     else
     {*@
-@if (Model != null && Model.Count() != 0)
-{
+    @if (Model != null && Model.Count() != 0)
+    {
 
     <div id="scrollArea2" class="modal-body">
         <logo />
@@ -65,9 +66,9 @@
             <thead>
                 <tr>
                     <th colspan="14" style="text-align:center;vertical-align:middle;">
-                        @ViewBag.NamaSyarikat
+                        @namapenuhsyarikat
                         <br />
-                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        (@GlobalResEstate.lblCompanyNo : @namasyarikat)
                         <br />
                         @GlobalResEstate.lblWorkReport
                         <br />
@@ -85,29 +86,29 @@
         @foreach (var item in Model)
         {
 
-            if(item.fld_OverallAmount == null)
-            {
-                item.fld_OverallAmount = 0;
-            }
+        if(item.fld_OverallAmount == null)
+        {
+        item.fld_OverallAmount = 0;
+        }
 
-            totalOverallAmount = totalOverallAmount + item.fld_OverallAmount;
+        totalOverallAmount = totalOverallAmount + item.fld_OverallAmount;
 
-            if (item.fld_Unit == "KONG")
-            {
-                totalKong = totalKong + item.fld_Amount;
-            }
-            else if (item.fld_Unit == "HEKTAR")
-            {
-                totalHektar = totalHektar + item.fld_Amount;
-            }
-            else if (item.fld_Unit == "TAN")
-            {
-                totalTan = totalTan + item.fld_Amount;
-            }
-            else if (item.fld_Unit == "BEG")
-            {
-                totalBeg = totalBeg + item.fld_Amount;
-            }
+        if (item.fld_Unit == "KONG")
+        {
+        totalKong = totalKong + item.fld_Amount;
+        }
+        else if (item.fld_Unit == "HEKTAR")
+        {
+        totalHektar = totalHektar + item.fld_Amount;
+        }
+        else if (item.fld_Unit == "TAN")
+        {
+        totalTan = totalTan + item.fld_Amount;
+        }
+        else if (item.fld_Unit == "BEG")
+        {
+        totalBeg = totalBeg + item.fld_Amount;
+        }
 
         }
 
@@ -164,87 +165,89 @@
         </table>
 
 
-        @*<div class="well2">*@
-        @*<div id="scrollArea2" class="modal-body">*@
-        @foreach (var GetWorker in ViewBag.GetWorkerList)
-        {
-            JumlahHasilK = 0;
-            JumlahJamOTK = 0;
-            JumlahBonusK = 0;
-            JumlahSemuaK = 0;
-            JumlahOTK = 0;
-            JumlahKwsnSkr = 0;
-            JumlahKslrhan = 0;
-            Loop = 1;
-            <table class="table table-hover table-bordered" style="font-size: 11px;" border="0">
-                <thead>
-                    <tr>
-                        <th colspan="17">
-                            @GlobalResEstate.hdrNoPkj : @GetWorker
-                            <br />
-                            @GlobalResEstate.hdrName : @Model.Where(x => x.fld_Nopkj == GetWorker).Select(s => s.fld_Nama).Distinct().FirstOrDefault()
-                        </th>
-                    </tr>
-                    <tr>
-                        <th class="text-center-0" width="2%">
-                            <b>@GlobalResEstate.lblDate</b>
-                        </th>
-                        <th class="text-center" width="3%">
-                            <b>@GlobalResEstate.lblRaining</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.hdrAttendance</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.lblLevel</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.hdrActvtCode</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.hdrUnit</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.hdrTotalOutcome</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.hdrPrice/@GlobalResEstate.hdrUnit</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.hdrOutcome (RM)</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>Insentif Kawasan Sukar (RM)</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>Jumlah (RM)</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.lblOvertimeHour</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.lblTotalOt (RM)</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.lblDailyBonus (RM)</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.lblTotal (RM)</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.lblUserID</b>
-                        </th>
-                        <th class="text-center" width="5%">
-                            <b>@GlobalResEstate.lblUserName</b>
-                        </th>
-                    </tr>
-                </thead>
-                @{
+        @*<div class="well2">
+            *@
+            @*<div id="scrollArea2" class="modal-body">
+                *@
+                @foreach (var GetWorker in ViewBag.GetWorkerList)
+                {
+                JumlahHasilK = 0;
+                JumlahJamOTK = 0;
+                JumlahBonusK = 0;
+                JumlahSemuaK = 0;
+                JumlahOTK = 0;
+                JumlahKwsnSkr = 0;
+                JumlahKslrhan = 0;
+                Loop = 1;
+                <table class="table table-hover table-bordered" style="font-size: 11px;" border="0">
+                    <thead>
+                        <tr>
+                            <th colspan="17">
+                                @GlobalResEstate.hdrNoPkj : @GetWorker
+                                <br />
+                                @GlobalResEstate.hdrName : @Model.Where(x => x.fld_Nopkj == GetWorker).Select(s => s.fld_Nama).Distinct().FirstOrDefault()
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="text-center-0" width="2%">
+                                <b>@GlobalResEstate.lblDate</b>
+                            </th>
+                            <th class="text-center" width="3%">
+                                <b>@GlobalResEstate.lblRaining</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.hdrAttendance</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.lblLevel</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.hdrActvtCode</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.hdrUnit</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.hdrTotalOutcome</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.hdrPrice/@GlobalResEstate.hdrUnit</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.hdrOutcome (RM)</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>Insentif Kawasan Sukar (RM)</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>Jumlah (RM)</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.lblOvertimeHour</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.lblTotalOt (RM)</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.lblDailyBonus (RM)</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.lblTotal (RM)</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.lblUserID</b>
+                            </th>
+                            <th class="text-center" width="5%">
+                                <b>@GlobalResEstate.lblUserName</b>
+                            </th>
+                        </tr>
+                    </thead>
+                    @{
                     var WorkDetails = Model.Where(x => x.fld_Nopkj.Trim() == GetWorker).OrderBy(o => o.fld_Tarikh).ToList();
                     DateTime? KeepOldDateTime = WorkDetails.Select(s => s.fld_Tarikh).Take(1).FirstOrDefault();
-                }
-                @foreach (var WorkDetail in WorkDetails)
-                {
+                    }
+                    @foreach (var WorkDetail in WorkDetails)
+                    {
                     var BonusHarian2 = WorkDetail.fld_JumlahBonus == null ? 0 : WorkDetail.fld_JumlahBonus;
                     var OT2 = WorkDetail.fld_JumlahOT == null ? 0 : WorkDetail.fld_JumlahOT;
                     var Jmlah2 = WorkDetail.fld_Amount == null ? 0 : WorkDetail.fld_Amount;
@@ -266,29 +269,29 @@
                     <tr>
                         @if (Loop == 1)
                         {
-                            <td rowspan="@rowspncount" align="center" valign="middle" width="2%">
-                                @string.Format("{0:dd/MM/yyyy}", WorkDetail.fld_Tarikh)
-                            </td>
-                            <td rowspan="@rowspncount" align="center" valign="middle" width="3%">
-                                @{var Hujan = WorkDetail.fld_Hujan == 0 ? "Tidak" : "Ya";}
-                                @Hujan
-                            </td>
-                            <td rowspan="@rowspncount" align="center" valign="middle" width="5%">
-                                @GetConfig.GetWebConfigDesc(WorkDetail.fld_Kdhdct, "cuti", ViewBag.NegaraID, ViewBag.SyarikatID)
-                            </td>
+                        <td rowspan="@rowspncount" align="center" valign="middle" width="2%">
+                            @string.Format("{0:dd/MM/yyyy}", WorkDetail.fld_Tarikh)
+                        </td>
+                        <td rowspan="@rowspncount" align="center" valign="middle" width="3%">
+                            @{var Hujan = WorkDetail.fld_Hujan == 0 ? "Tidak" : "Ya";}
+                            @Hujan
+                        </td>
+                        <td rowspan="@rowspncount" align="center" valign="middle" width="5%">
+                            @GetConfig.GetWebConfigDesc(WorkDetail.fld_Kdhdct, "cuti", ViewBag.NegaraID, ViewBag.SyarikatID)
+                        </td>
                         }
                         @if (KeepOldDateTime != WorkDetail.fld_Tarikh)
                         {
-                            <td rowspan="@rowspncount" align="center" valign="middle" width="2%">
-                                @string.Format("{0:dd/MM/yyyy}", WorkDetail.fld_Tarikh)
-                            </td>
-                            <td rowspan="@rowspncount" align="center" valign="middle" width="3%">
-                                @{var Hujan = WorkDetail.fld_Hujan == 0 ? "Tidak" : "Ya";}
-                                @Hujan
-                            </td>
-                            <td rowspan="@rowspncount" align="center" valign="middle" width="5%">
-                                @GetConfig.GetWebConfigDesc(WorkDetail.fld_Kdhdct, "cuti", ViewBag.NegaraID, ViewBag.SyarikatID)
-                            </td>
+                        <td rowspan="@rowspncount" align="center" valign="middle" width="2%">
+                            @string.Format("{0:dd/MM/yyyy}", WorkDetail.fld_Tarikh)
+                        </td>
+                        <td rowspan="@rowspncount" align="center" valign="middle" width="3%">
+                            @{var Hujan = WorkDetail.fld_Hujan == 0 ? "Tidak" : "Ya";}
+                            @Hujan
+                        </td>
+                        <td rowspan="@rowspncount" align="center" valign="middle" width="5%">
+                            @GetConfig.GetWebConfigDesc(WorkDetail.fld_Kdhdct, "cuti", ViewBag.NegaraID, ViewBag.SyarikatID)
+                        </td>
                         }
                         <td align="center" width="5%">
                             @{var KodPkt = WorkDetail.fld_KodPkt == null ? "-" : WorkDetail.fld_KodPkt;}
@@ -347,118 +350,120 @@
                     </tr>
                     KeepOldDateTime = WorkDetail.fld_Tarikh;
                     Loop++;
+                    }
+                    <tfoot>
+                        <tr>
+                            <th colspan="8" bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                                <strong>Jumlah</strong>
+                            </th>
+                            <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                                <strong>@JumlahHasilK</strong>
+                            </th>
+                            <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                                <strong>@JumlahKwsnSkr</strong>
+                            </th>
+                            <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                                <strong>@JumlahKslrhan</strong>
+                            </th>
+                            <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                                <strong>@JumlahJamOTK</strong>
+                            </th>
+                            <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important" border="1">
+                                <strong>@JumlahOTK</strong>
+                            </th>
+                            <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                                <strong>@JumlahBonusK</strong>
+                            </th>
+                            <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
+                                <strong>@JumlahSemuaK</strong>
+                            </th>
+                            <th colspan="2" bgcolor="#085480" style="color:white; text-align: center; vertical-align:middle !important;" border="1">
+                                <strong></strong>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+                <hr class="style6">
                 }
-                <tfoot>
-                    <tr>
-                        <th colspan="8" bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
-                            <strong>Jumlah</strong>
-                        </th>
-                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
-                            <strong>@JumlahHasilK</strong>
-                        </th>
-                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
-                            <strong>@JumlahKwsnSkr</strong>
-                        </th>
-                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
-                            <strong>@JumlahKslrhan</strong>
-                        </th>
-                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
-                            <strong>@JumlahJamOTK</strong>
-                        </th>
-                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important" border="1">
-                            <strong>@JumlahOTK</strong>
-                        </th>
-                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
-                            <strong>@JumlahBonusK</strong>
-                        </th>
-                        <th bgcolor="#085480" style="color:white; text-align: right; vertical-align:middle !important;" border="1">
-                            <strong>@JumlahSemuaK</strong>
-                        </th>
-                        <th colspan="2" bgcolor="#085480" style="color:white; text-align: center; vertical-align:middle !important;" border="1">
-                            <strong></strong>
-                        </th>
-                    </tr>
-                </tfoot>
-            </table>
-            <hr class="style6">
-        }
 
-        @*</div>*@
-        @* </div>*@
+                @*
+            </div>*@
+            @*
+        </div>*@
 
         <newpage />
     </div>
 
     if (ViewBag.Print == null)
     {
-        <div style="text-align:right; margin-top:10px">
-            <a class="btn btn-default btn-sm" href="#" id="printpage">
-                <span class="glyphicon glyphicon-print"> </span> @GlobalResEstate.btnPrint
-            </a>
-            <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
-                <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadPdf
-            </a>
-            @* farahin ubah function onclick - 23/02/2021 *@
-            <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@uniquefilename')">
-                <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
-            </a>
-        </div>
+    <div style="text-align:right; margin-top:10px">
+        <a class="btn btn-default btn-sm" href="#" id="printpage">
+            <span class="glyphicon glyphicon-print"> </span> @GlobalResEstate.btnPrint
+        </a>
+        <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+            <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadPdf
+        </a>
+        @* farahin ubah function onclick - 23/02/2021 *@
+        <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@uniquefilename')">
+            <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+        </a>
+    </div>
     }
-}
+    }
 
 
-@if (Model == null || Model.Count() == 0)
-{
+    @if (Model == null || Model.Count() == 0)
+    {
     <div id="scrollArea2" class="modal-body" style="text-align: center">
         <p style="color: red">@ViewBag.Message</p>
 
     </div>
-}
-
-<style>
-    #page td {
-        padding: 2px;
-        margin: 2px;
     }
-</style>
 
-@* farahin tambah untuk download excel - 23/02/2021*@
-<script src="~/Asset/Scripts/FromHTML.js"></script>
-<script src="~/Asset/Scripts/FileSaver.js"></script>
-<script>
-    $(document).ready(function () {
-        $("#printpage").click(function () {
-            var DivElement = document.getElementById("scrollArea2").innerHTML;
-            var oldPage = document.body.innerHTML;
-            document.body.innerHTML = DivElement;
-            window.print();
-            document.body.innerHTML = oldPage;
-        });
+    <style>
+        #page td {
+            padding: 2px;
+            margin: 2px;
+        }
+    </style>
 
-        $("#downloadpdf").click(function () {
-
-              //farahin - cater utk button pdf - 23/02/2021
-            var myHtml = document.getElementById('scrollArea2').innerHTML;
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("ConvertPDF2", "Report")',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify({ myHtml: myHtml, filename: "@uniquefilename", reportname: "WorkReport" }),
-                success: function (result) {
-                    if (result.success) {
-                        var win = window.open(result.link, '_blank');
-                        win.focus();
-                    } else {
-                        $.simplyToast(result.msg, result.status);
-                    }
-                },
-                error: function (error) {
-                    $.simplyToast('Sorry to many data', 'danger');
-                }
+    @* farahin tambah untuk download excel - 23/02/2021*@
+    <script src="~/Asset/Scripts/FromHTML.js"></script>
+    <script src="~/Asset/Scripts/FileSaver.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#printpage").click(function () {
+                var DivElement = document.getElementById("scrollArea2").innerHTML;
+                var oldPage = document.body.innerHTML;
+                document.body.innerHTML = DivElement;
+                window.print();
+                document.body.innerHTML = oldPage;
             });
-            return false;
-        });
+
+            $("#downloadpdf").click(function () {
+
+                //farahin - cater utk button pdf - 23/02/2021
+                var myHtml = document.getElementById('scrollArea2').innerHTML;
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("ConvertPDF2", "Report")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ myHtml: myHtml, filename: "@uniquefilename", reportname: "WorkReport" }),
+                    success: function (result) {
+                        if (result.success) {
+                            var win = window.open(result.link, '_blank');
+                            win.focus();
+                        } else {
+                            $.simplyToast(result.msg, result.status);
+                        }
+                    },
+                    error: function (error) {
+                        $.simplyToast('Sorry to many data', 'danger');
+                    }
+                });
+                return false;
+            });
 
 
             @*var RadioGroup = $('input[name=RadioGroup]:checked').val();
@@ -527,5 +532,5 @@
 
             return (sa);
         });*@
-    });
-</script>
+        });
+    </script>

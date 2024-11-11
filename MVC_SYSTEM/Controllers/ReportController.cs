@@ -220,6 +220,7 @@ namespace MVC_SYSTEM.Controllers
             List<SelectListItem> GroupList2 = new List<SelectListItem>();
             GroupList2 = new SelectList(dbr.vw_KumpulanKerja.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false && x.bilangan_ahli >= 0).OrderBy(o => o.fld_KodKumpulan).Select(s => new SelectListItem { Value = s.fld_KodKumpulan, Text = s.fld_KodKumpulan + "-" + s.fld_Keterangan }), "Value", "Text").ToList();
             GroupList2.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblAll, Value = "0" }));
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.Print = print;
 
             if (GroupList == null)
@@ -289,6 +290,7 @@ namespace MVC_SYSTEM.Controllers
 
             ViewBag.NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
             ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NoSyarikat).FirstOrDefault();
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.StatusList = StatusList2;
             ViewBag.getflag = 2;
             ViewBag.Print = print;
@@ -349,9 +351,7 @@ namespace MVC_SYSTEM.Controllers
             List<SelectListItem> StatusList2 = new List<SelectListItem>();
             StatusList2 = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusaktif" && x.fldDeleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc }), "Value", "Text").ToList();
             StatusList2.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblAll, Value = "0" }));
-
-            ViewBag.NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
-            ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NoSyarikat).FirstOrDefault();
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.StatusList = StatusList2;
             //ViewBag.getflag = 2;
             ViewBag.Print = print;
@@ -481,10 +481,9 @@ namespace MVC_SYSTEM.Controllers
             int month = Minus1month.Month;
             int drpyear = 0;
             int drprangeyear = 0;
-
             drpyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
             drprangeyear = timezone.gettimezone().Year;
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             var yearlist = new List<SelectListItem>();
             for (var i = drpyear; i <= drprangeyear; i++)
             {
@@ -627,6 +626,7 @@ namespace MVC_SYSTEM.Controllers
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
 
             var yearlist = new List<SelectListItem>();
             for (var i = rangeyear; i <= year; i++)
@@ -896,6 +896,7 @@ namespace MVC_SYSTEM.Controllers
             string host, catalog, user, pass = "";
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
 
             DateTime todaydate = DateTime.Today;
@@ -928,6 +929,7 @@ namespace MVC_SYSTEM.Controllers
             string host, catalog, user, pass = "";
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
 
             DateTime todaydate = DateTime.Today;
@@ -1115,7 +1117,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.MonthSelection = MonthList;
             ViewBag.YearSelection = YearList;
             ViewBag.Print = print;
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             if (MonthList == null && YearList == null && SelectionList == null)
             {
 
@@ -1280,7 +1282,7 @@ namespace MVC_SYSTEM.Controllers
             //MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
 
             var result = db.tbl_Ladang.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WlyhID == WilayahID && x.fld_ID == LadangID);
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
             ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NoSyarikat).FirstOrDefault();
             ViewBag.Print = print;
@@ -1650,7 +1652,7 @@ namespace MVC_SYSTEM.Controllers
             int drpyear = 0;
             int drprangeyear = 0;
             int month = timezone.gettimezone().Month;
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             List<SelectListItem> SelectionList = new List<SelectListItem>();
             SelectionList = new SelectList(
                 dbr.tbl_Pkjmast
@@ -1701,12 +1703,11 @@ namespace MVC_SYSTEM.Controllers
             MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
 
             List<vw_MaklumatInsentifPekerja> MaklumatInsentifPekerja = new List<vw_MaklumatInsentifPekerja>();
-
             ViewBag.MonthList = MonthList;
             ViewBag.YearList = YearList;
             ViewBag.WorkerList = SelectionList;
             ViewBag.Print = print;
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.NamaSyarikat = db.tbl_Syarikat
                 .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID)
                 .Select(s => s.fld_NamaSyarikat)
@@ -1715,7 +1716,7 @@ namespace MVC_SYSTEM.Controllers
                 .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID)
                 .Select(s => s.fld_NoSyarikat)
                 .FirstOrDefault();
-
+            
 
             if (MonthList == null && YearList == null)
             {
@@ -2087,7 +2088,7 @@ namespace MVC_SYSTEM.Controllers
             MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
 
             List<vw_MaklumatCutiPekerja> MaklumatCutiPekerja = new List<vw_MaklumatCutiPekerja>();
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.YearList = YearList;
             ViewBag.WorkerList = SelectionList;
             ViewBag.NamaSyarikat = db.tbl_Syarikat
@@ -2856,7 +2857,7 @@ namespace MVC_SYSTEM.Controllers
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
             MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             List<vw_MaklumatKehadiranPekerja> MaklumatKehadiranPekerja = new List<vw_MaklumatKehadiranPekerja>();
 
             ViewBag.YearList = YearList;
@@ -3369,7 +3370,7 @@ namespace MVC_SYSTEM.Controllers
 
             ViewBag.MonthList = MonthList;
             ViewBag.YearList = YearList;
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.NamaSyarikat = db.tbl_Syarikat
                 .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID)
                 .Select(s => s.fld_NamaSyarikat)
@@ -4856,7 +4857,7 @@ namespace MVC_SYSTEM.Controllers
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
 
             List<vw_PaySheetPekerjaCustomModel> PaySheetPekerjaList = new List<vw_PaySheetPekerjaCustomModel>();
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.MonthList = MonthList;
             ViewBag.YearList = YearList;
             ViewBag.WorkerList = SelectionList;
@@ -5483,7 +5484,7 @@ namespace MVC_SYSTEM.Controllers
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
             //MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
             MVC_SYSTEM_SP_Models dbsp = MVC_SYSTEM_SP_Models.ConnectToSqlServer(host, catalog, user, pass);
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
             ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NoSyarikat).FirstOrDefault();
             ViewBag.YearSelection = YearList;
@@ -5640,7 +5641,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.WorkerList = SelectionList;
             ViewBag.NegaraID = NegaraID;
             ViewBag.SyarikatID = SyarikatID;
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             ViewBag.NamaSyarikat = db.tbl_Syarikat
                 .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID)
                 .Select(s => s.fld_NamaSyarikat)
@@ -6245,7 +6246,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NoSyarikat).FirstOrDefault();
             ViewBag.YearSelection = YearList;
             ViewBag.Print = print;
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             int groupID = Convert.ToInt32(GroupList);
             //int YearID = Convert.ToInt32(YearList);
 
@@ -6391,7 +6392,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
             ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NoSyarikat).FirstOrDefault();
             ViewBag.Print = print;
-
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
             if (YearList == null && MonthList == null)
             {
                 ViewBag.Message = GlobalResEstate.msgChooseMonthYear;
@@ -6456,6 +6457,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.MonthSelection = MonthList;
             ViewBag.NegaraID = NegaraID;
             ViewBag.SyarikatID = SyarikatID;
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
 
             if (MonthList == 0)
             {
@@ -7259,6 +7261,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).Select(s => s.fld_NoSyarikat).FirstOrDefault();
             ViewBag.StatusList = StatusList2;
             ViewBag.Print = print;
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
 
             if (StatusList == null && SelectionList == null)
             {
@@ -8556,6 +8559,8 @@ namespace MVC_SYSTEM.Controllers
             int ID = 1;
             string WorkerName = "";
             string WorkerIDNo = "";
+
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
 
             var GetInsetifEffectCode = db.tbl_JenisInsentif.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_JenisInsentif == "P" && x.fld_AdaCaruman == true && x.fld_Deleted == false).Select(s => s.fld_KodInsentif).ToList();
             //var GetAddContributionDetails = db.tbl_SubCarumanTambahan.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).ToList();

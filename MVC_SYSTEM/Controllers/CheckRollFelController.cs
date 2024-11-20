@@ -951,7 +951,7 @@ namespace MVC_SYSTEM.Controllers
                         }
                         else
                         {
-                            if (EstateFunction.CheckSAPGLMapFPM(CustMod_HariTerabai.SelectionCategory, CustMod_HariTerabai.SelectionData, dbr, CustMod_HariTerabai.JnisPktHT, CustMod_HariTerabai.PilihanPktHT, CustMod_HariTerabai.PilihanAktvtHT, NegaraID2, SyarikatID2, WilayahID2, LadangID2, true, CustMod_HariTerabai.JenisChargeHT, out GLCode, transferLvlID, PinjampktTransferID)) //nanananana
+                            if (EstateFunction.CheckSAPGLMapFPM(CustMod_HariTerabai.SelectionCategory, CustMod_HariTerabai.SelectionData, dbr, CustMod_HariTerabai.JnisPktHT, CustMod_HariTerabai.PilihanPktHT, CustMod_HariTerabai.PilihanAktvtHT, NegaraID2, SyarikatID2, WilayahID2, LadangID2, true, CustMod_HariTerabai.JenisChargeHT, out GLCode, transferLvlID, PinjampktTransferID, WilayahID, SyarikatID)) //Modified by Shazana 15/10
                             {
                                 CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbrpkt, CustMod_HariTerabai.dateseleted, NegaraID, SyarikatID, WilayahID, LadangID);
                                 if (!CutOfDateStatus)
@@ -1898,7 +1898,7 @@ namespace MVC_SYSTEM.Controllers
             }
             else
             {
-                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData, dbrpkt, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID, PinjampktTransferID))
+                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData, dbrpkt, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID, PinjampktTransferID,WilayahID,SyarikatID))
                 {
                     if (HadirData != null)
                     {
@@ -4448,7 +4448,7 @@ namespace MVC_SYSTEM.Controllers
             }
             else
             {
-                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData, dbrpkt, JnisPkt, PilihanPkt, KodAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID, PinjampktTransferID))
+                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData, dbrpkt, JnisPkt, PilihanPkt, KodAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID, PinjampktTransferID, WilayahID,SyarikatID))
                 {
                     var tbl_MapGL = db.tbl_MapGL.Where(x => x.fld_SyarikatID == 1 && (x.fld_Paysheet == "PA" || x.fld_Paysheet == "PT") && x.fld_Deleted == false).ToList();
                     var tbl_JenisAktiviti = db.tbl_JenisAktiviti.Join(db.tbl_UpahAktiviti,

@@ -413,7 +413,7 @@ namespace MVC_SYSTEM.Class
         }
 
         //Added by Shazana 20/5/2024
-        public bool CheckSAPGLMapFPM(int SelectionCategory, string SelectionData, MVC_SYSTEM_Models dbr, byte? JenisPkt, string GetPkt, string AktvtCd, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, bool HariTerabai, string JenisKiraanHariTerabai, out string GLCode, int transferPktID, int PinjampktTransferID)
+        public bool CheckSAPGLMapFPM(int SelectionCategory, string SelectionData, MVC_SYSTEM_Models dbr, byte? JenisPkt, string GetPkt, string AktvtCd, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, bool HariTerabai, string JenisKiraanHariTerabai, out string GLCode, int transferPktID, int PinjampktTransferID,int? WilayahID1, int? SyarikatID1)
         {
             bool Result = false;
             GLCode = "";
@@ -426,8 +426,11 @@ namespace MVC_SYSTEM.Class
 
             if (transferPktID != 0 && PinjampktTransferID != 0)
             {
-                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                //Modified by Shaana 15/10
+                //Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID1.Value, SyarikatID1.Value, NegaraID.Value);
                 MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                //Modified by Shazana 14/10/2024
                 var LadangPinjam = dbrpkt.tbl_PktPinjam.Where(x => x.fld_ID == PinjampktTransferID).FirstOrDefault();
                 if (SelectionCategory == 1)
                 {

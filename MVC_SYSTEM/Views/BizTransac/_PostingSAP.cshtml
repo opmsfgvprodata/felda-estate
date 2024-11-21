@@ -313,7 +313,9 @@
                                                     </div>
                                                 </div>
                                             }
-                                            foreach (var krFlag in Model.DistinctBy(s => s.fld_flag).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag))
+                                            //Modified by Shazana 20/11/2024
+                                            foreach (var krFlag in Model.DistinctBy(s => s.fld_flag).Where(x => x.fld_DocType == "KR").OrderBy(x => x.fld_flag))
+                                            //foreach (var krFlag in Model.DistinctBy(s => s.fld_flag).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag))
                                             {
                                                 var DocNo = Model.DistinctBy(s => s.fld_DocNoSAP).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag).Select(s => s.fld_DocNoSAP).FirstOrDefault();
                                                 int bill = 0;

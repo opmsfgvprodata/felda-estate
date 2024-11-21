@@ -319,7 +319,7 @@
                                             {
                                                 var DocNo = Model.DistinctBy(s => s.fld_DocNoSAP).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag).Select(s => s.fld_DocNoSAP).FirstOrDefault();
                                                 int bill = 0;
-
+                                                int flagKR = krFlag.fld_flag;
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>
@@ -343,7 +343,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach (var GLtoVendorDetails in Model.Where(x => x.fld_DocType == "KR" && x.fld_flag == flag).OrderBy(o => o.fld_ItemNo).Distinct())
+                                                        @foreach (var GLtoVendorDetails in Model.Where(x => x.fld_DocType == "KR" && x.fld_flag == flagKR).OrderBy(o => o.fld_ItemNo).Distinct())
                                                         {
                                                             bill = bill + 1;
                                                             <tr>

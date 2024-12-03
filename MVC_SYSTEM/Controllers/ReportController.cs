@@ -3630,6 +3630,7 @@ namespace MVC_SYSTEM.Controllers
             ViewBag.UserName = User.Identity.Name;
             ViewBag.Date = DateTime.Now.ToShortDateString();
             ViewBag.Print = print;
+            ViewBag.costcenter = db.tbl_Ladang.Where(x => x.fld_ID == LadangID).Select(x => x.fld_CostCentre).FirstOrDefault();
 
             if (MonthList == null && YearList == null)
             {

@@ -23,6 +23,8 @@
     int minute = ChangeTimeZone.gettimezone().Minute;
     int second = ChangeTimeZone.gettimezone().Second;
     string uniquefilename = "PaySlipRpt_" + ViewBag.UserID + "_" + year1.ToString() + month1.ToString() + day.ToString() + hour.ToString() + minute.ToString() + second.ToString();
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
 }
 
 @if (Model != null && Model.Count() != 0)
@@ -40,9 +42,9 @@
                 <th colspan="18" style="text-align: center; vertical-align: middle; border: none;">
                     <img src="~/Asset/Images/logo_FTPSB.jpg" height="60" width="60" />
                     <br />
-                    @ViewBag.NamaSyarikat
+                    @namapenuhsyarikat
                     <br />
-                    (@ViewBag.NoSyarikat)
+                    (@namasyarikat)
                     <br />
                     @GlobalResEstate.lblPayslipReport @GlobalResEstate.hdrForMonth @ViewBag.MonthList/@ViewBag.YearList
                     <br />

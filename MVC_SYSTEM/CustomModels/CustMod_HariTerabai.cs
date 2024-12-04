@@ -20,8 +20,10 @@ namespace MVC_SYSTEM.CustomModels
         public string WorkCode { get; set; }
 
         public int Rainning { get; set; }
-        
+
         public byte? JnisPktHT { get; set; }
+
+        public byte? TrnsfrLvlHT { get; set; }
 
         public string PilihanPktHT { get; set; }
 

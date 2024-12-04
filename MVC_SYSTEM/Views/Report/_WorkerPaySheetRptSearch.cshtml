@@ -142,32 +142,34 @@
                             //totalSocsoPkj += item.PaySheetPekerja.fld_SocsoPkj; //shaiful komen 5/5
                             //totalSocsoMjk += item.PaySheetPekerja.fld_SocsoMjk; //shaiful komen 5/5
                         }
-                        else if (caruman.fld_KodCarumanTambahan == "SBKP01")
-                        {
-                            totalSIPMjk += caruman.fld_CarumanMajikan;
-                            totalSIPPkj += caruman.fld_CarumanPekerja;
 
-                            grandTotalSIPPjk += 0;
-                            grandTotalSIPMjk += 0;
+                        //Commented by Shazana 26/8/2024
+                        //else if (caruman.fld_KodCarumanTambahan == "SBKP01")
+                        //{
+                        //    totalSIPMjk += caruman.fld_CarumanMajikan;
+                        //    totalSIPPkj += caruman.fld_CarumanPekerja;
 
-                            //totalSocsoPkj += item.PaySheetPekerja.fld_SocsoPkj; //shaiful komen 5/5/2023
-                            //totalSocsoMjk += item.PaySheetPekerja.fld_SocsoMjk; //shaiful komen 5/5/2023
+                        //    grandTotalSIPPjk += 0;
+                        //    grandTotalSIPMjk += 0;
 
-                            totalSocsoPkj2 += caruman.fld_CarumanPekerja; //shaiful add 5/5/2023
-                            totalSocsoMjk2 += caruman.fld_CarumanMajikan; //shaiful add 5/5/2023
+                        //    //totalSocsoPkj += item.PaySheetPekerja.fld_SocsoPkj; //shaiful komen 5/5/2023
+                        //    //totalSocsoMjk += item.PaySheetPekerja.fld_SocsoMjk; //shaiful komen 5/5/2023
 
-                            //totalSIPMjk += 0;
-                            //totalSIPPkj += 0;
+                        //    totalSocsoPkj2 += caruman.fld_CarumanPekerja; //shaiful add 5/5/2023
+                        //    totalSocsoMjk2 += caruman.fld_CarumanMajikan; //shaiful add 5/5/2023
 
-                            //totalSocsoPkj += caruman.fld_CarumanPekerja; //sini utk letak sbkp ke socso majikan
-                            //totalSocsoMjk += caruman.fld_CarumanMajikan; //sini utk letak sbkp ke socso majikan
+                        //    //totalSIPMjk += 0;
+                        //    //totalSIPPkj += 0;
 
-                            //grandTotalSIPPjk = totalSIPPkj;
-                            //grandTotalSIPMjk = totalSIPMjk;
+                        //    //totalSocsoPkj += caruman.fld_CarumanPekerja; //sini utk letak sbkp ke socso majikan
+                        //    //totalSocsoMjk += caruman.fld_CarumanMajikan; //sini utk letak sbkp ke socso majikan
 
-                            //grandTotalSIPPjk = Convert.ToDouble(grandTotalSIPPjk);
-                            //grandTotalSIPMjk = Convert.ToDouble(grandTotalSIPMjk);
-                        }
+                        //    //grandTotalSIPPjk = totalSIPPkj;
+                        //    //grandTotalSIPMjk = totalSIPMjk;
+
+                        //    //grandTotalSIPPjk = Convert.ToDouble(grandTotalSIPPjk);
+                        //    //grandTotalSIPMjk = Convert.ToDouble(grandTotalSIPMjk);
+                        //}
                         //sampai sini shaiful add
 
                         //shaiful comment 03/01/2023
@@ -264,9 +266,12 @@
                         <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@totalIncome</td>
                         <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_KWSPMjk</td>
                         @*shaiful comment 10/01/2023*@
-                        @*<td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_SocsoMjk</td>*@
+                        @*Uncomment by Shazana 26/8/2024*@
+                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_SocsoMjk</td>
+                       
+                        <!--Commented by Shazana 26/8/2024-->
                         @*shaiful add 10/01/2023*@
-                        @if (item.PaySheetPekerja.fld_SocsoMjk.Value != 0)
+                        @*@if (item.PaySheetPekerja.fld_SocsoMjk.Value != 0)
                         {
                             <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_SocsoMjk</td>
                         }
@@ -292,7 +297,7 @@
                             {
                                 <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">0.00</td>
                             }
-                        }
+                        }-->*@
                         @*shaiful add sampai sini*@
                         @*shaiful comment 04/01/2023*@
                         @*<td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@totalSIPMjk</td>*@
@@ -335,9 +340,11 @@
                         <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_LainPotongan</td>
                         <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_KWSPPkj</td>
                         @*shaiful comment 10/01/2023*@
-                        @*<td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_SocsoPkj</td>*@
+                        @*Uncomment by Shazana 26/8/2024*@
+                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_SocsoPkj</td>
+                       <!--Commented by Shazana 26/8/2024-->
                         @*shaiful add 10/01/2023*@
-                        @if (item.PaySheetPekerja.fld_SocsoPkj != 0)
+                        @*@if (item.PaySheetPekerja.fld_SocsoPkj != 0)
                         {
                             <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_SocsoPkj</td>
                         }
@@ -363,7 +370,7 @@
                             {
                                 <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">0.00</td>
                             }
-                        }
+                        }*@
                         @*shaiful add sampai sini*@
                         @*<td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.PaySheetPekerja.fld_SocsoPkj</td>*@
                         @*shaiful komen 04/01/2023*@
@@ -591,64 +598,77 @@
                         <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalBayarKerja</td>
                         <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalOtherIncome</td>
                         <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalKWSPMjk</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoMjk + totalSocsoMjk2) </td> @*shaiful tukar 5/5/2023 totalSocsoMjk*@
-                        @*shaiful komen sini 04/01/2023*@
-                        @*<td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPMjk</td>*@
-                        @*shaiful add 04/01/2023*@
+                        <!--Commented by Shazana 26/8/2024
+                        <!--<td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoMjk + totalSocsoMjk2) </td>-->
+                        --> <!--@*shaiful tukar 5/5/2023 totalSocsoMjk*@-->
+                        @*Uncommented by Shazana 26/8/2024*@
+                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoMjk)
+                            @*shaiful komen sini 04/01/2023*@
+                            @*<td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPMjk</td>*@
+                            @*shaiful add 04/01/2023*@
                         @if (grandTotalSIPMjk == 0)
                         {
-                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">0.00</td>
+                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">0.00</td>
                         }
                         else
                         {
                             <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPMjk</td>
                         }
-                        @*shaiful add sampai sini 04/01/2023*@
-                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalIncomeOverall</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalOtherDeduction</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalKWSPPkj</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoPkj + totalSocsoPkj2)</td>  @*shaiful tukar 5/5/2023 totalSocsoPkj*@
-                        @*shaiful komen sini 04/01/2023*@
-                        @*<td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPPjk</td>*@
+                            @*shaiful add sampai sini 04/01/2023*@
+                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalIncomeOverall</td>
+                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalOtherDeduction</td>
+                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalKWSPPkj</td>
+                            @*Commented by Shazana 26/8/2024*@
+                            <!--<td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoPkj + totalSocsoPkj2)</td>-->  @*shaiful tukar 5/5/2023 totalSocsoPkj*@
+                            @*Modified by Shazana 26/8/2024*@
+                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoPkj)</td>  @*shaiful tukar 5/5/2023 totalSocsoPkj*@
+                            @*shaiful komen sini 04/01/2023*@
+                            @*<td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPPjk</td>*@
 
-                        @*shaiful add 04/01/2023*@
-                        @if (@grandTotalSIPPjk == 0)
-                        {
-                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">0.00</td>
-                        }
-                        else
-                        {
-                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPPjk</td>
-                        }
-                        @*shaiful add sampai sini 04/01/2023*@
-                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalDeductionOverall</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalNetPay</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
-                    </tr>
+                            @*shaiful add 04/01/2023*@
+                            @if (@grandTotalSIPPjk == 0)
+                            {
+                                <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">0.00</td>
+                            }
+                            else
+                            {
+                                <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPPjk</td>
+                            }
+                            @*shaiful add sampai sini 04/01/2023*@
+                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalDeductionOverall</td>
+                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalNetPay</td>
+                            <td align="center" style="margin: 2px !important; padding-top: 20px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
+                        </tr>
                 }
                 else
                 {
-                    <tr>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@GlobalResEstate.lblTotal</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalBayarKerja</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalOtherIncome</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalKWSPMjk</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoMjk + totalSocsoMjk2)</td> @*shaiful tukar 5/5/2023*@
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPMjk</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalIncomeOverall</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalOtherDeduction</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalKWSPPkj</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoPkj + totalSocsoPkj2)</td> @*shaiful tukar 5/5/2023*@
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPPjk</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalDeductionOverall</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalNetPay</td>
-                        <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
-                    </tr>
+            <tr>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@GlobalResEstate.lblTotal</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalBayarKerja</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalOtherIncome</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalKWSPMjk</td>
+                @*Commented by Shazana 26/8/2024*@
+                <!--<td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoMjk + totalSocsoMjk2)</td>--> @*shaiful tukar 5/5/2023*@
+                @* Added by Shazana 26/8/2024*@
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoMjk)</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPMjk</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalIncomeOverall</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalOtherDeduction</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalKWSPPkj</td>
+               @* Commented by Shazana 26/8/2024*@
+                <!--<td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoPkj + totalSocsoPkj2)</td>--> @*shaiful tukar 5/5/2023*@
+                @*Added by Shazana 26/8/2024*@
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@(totalSocsoPkj)</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@grandTotalSIPPjk</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalDeductionOverall</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; border-bottom: 1px solid gray; text-align: right; border-right: none; border-left: none; font-weight:bold">@totalNetPay</td>
+                <td align="center" style="margin: 2px !important; padding-top: 60px !important; padding-bottom: 2px !important; vertical-align: middle !important; border-top: 1px solid gray; text-align: right; border-right: none; border-left: none"></td>
+            </tr>
                 }
                 @* end added by faeza *@
 

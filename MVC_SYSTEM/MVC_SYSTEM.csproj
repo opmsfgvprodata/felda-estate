@@ -341,6 +341,7 @@
     <Compile Include="CustomModels\CustMod_DesignationIncentiveEligibility.cs" />
     <Compile Include="CustomModels\CustMod_GroupIncentiveEligibility.cs" />
     <Compile Include="CustomModels\CustMod_HariTerabai.cs" />
+    <Compile Include="CustomModels\CustMod_KedudukanPekerja.cs" />
     <Compile Include="CustomModels\CustMod_Kerjahdr.cs" />
     <Compile Include="CustomModels\CustMod_Kerjahdrgroup.cs" />
     <Compile Include="CustomModels\CustMod_MinimumWage.cs" />
@@ -551,6 +552,7 @@
     <Compile Include="Models\StringTrimmerInterceptor.cs" />
     <Compile Include="Models\tblHtmlReport.cs" />
     <Compile Include="Models\tblOptionConfigsWeb.cs" />
+    <Compile Include="Models\tbl_BuruhKontrak.cs" />
     <Compile Include="Models\tbl_AktvtKerja.cs" />
     <Compile Include="Models\tbl_Asaspkt.cs" />
     <Compile Include="Models\tbl_Blok.cs" />
@@ -700,6 +702,7 @@
     <Compile Include="ViewingModels\RejectList.cs" />
     <Compile Include="ViewingModels\SystemConfigList.cs" />
     <Compile Include="ViewingModels\tbl_AsaspktList.cs" />
+    <Compile Include="ViewingModels\tbl_BuruhKontrak.cs" />
     <Compile Include="ViewingModels\tbl_CutiUmumMaster.cs" />
     <Compile Include="ViewingModels\tbl_GLSAP.cs" />
     <Compile Include="ViewingModels\tbl_HargaGetahSMRList.cs" />
@@ -3385,6 +3388,13 @@
     <Content Include="Views\BasicInfo\WBSLevelsSubPktCreate.cshtml" />
     <Content Include="Views\BasicInfo\WBSLevelsSubPktDelete.cshtml" />
     <Content Include="Views\BasicInfo\WBSLevelsSubPktUpdate.cshtml" />
+    <Content Include="Views\Report\EstKedudukanPkjMengikutWlyhReport.cshtml" />
+    <Content Include="Views\Report\_EstKedudukanPkjMengikutWlyhReport.cshtml" />
+    <Content Include="Views\WorkerInfo\BuruhKontraktor.cshtml" />
+    <Content Include="Views\WorkerInfo\_BuruhKontraktor.cshtml" />
+    <Content Include="Views\WorkerInfo\_BuruhKontraktorCreate.cshtml" />
+    <Content Include="Views\WorkerInfo\_BuruhKontraktorEdit.cshtml" />
+    <Content Include="Views\WorkerInfo\_BuruhKontraktorDelete.cshtml" />
     <Content Include="Views\Report\PocketCheckrollRpt.cshtml" />
     <Content Include="Views\Report\_PocketCheckrollRptSearch.cshtml" />
   </ItemGroup>

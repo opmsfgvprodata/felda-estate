@@ -1,0 +1,199 @@
+﻿@using MVC_SYSTEM.Class
+@model IEnumerable<MVC_SYSTEM.CustomModels.CustMod_KedudukanPekerja>
+
+@{
+    GetConfig getConfig = new GetConfig();
+    int? month = ViewBag.MonthList;
+    int? year = ViewBag.YearList;
+    string worker = ViewBag.WorkerList;
+    int bil = 1;
+    int? JumPrdktvt = 0;
+    int? JumArtisan = 0;
+    int? JumTKT = 0;
+    int? JumTKI = 0;
+    int? JumTKB = 0;
+    int? JumTKN = 0;
+    int? JumTKIN = 0;
+    int? JumTKP = 0;
+    int? JumTKPH = 0;
+    int? JumTKA = 0;
+    int? JumBesar = 0;
+
+    ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+    DateTime Todaydate = ChangeTimeZone.gettimezone();
+    string uniquefilename = "KedudukanPekerjaReport" + ViewBag.UserID + "_" + Todaydate.Year.ToString() + Todaydate.Month.ToString() + Todaydate.Day.ToString() + Todaydate.Hour.ToString() + Todaydate.Minute.ToString() + Todaydate.Second.ToString();
+}
+
+@if (Model != null && Model.Count() != 0)
+{
+    <div id="scrollArea2" class="modal-body">
+        <logo />
+        <table class="table table-hover table-bordered" style="font-size: 11px;" border="0">
+            <thead>
+                <tr>
+                    <th colspan="14" style="text-align: center; vertical-align: middle; border: none;">
+                        @ViewBag.NamaSyarikat
+                        <br />
+                        (@GlobalResEstate.lblCompanyNo : @ViewBag.NoSyarikat)
+                        <br />
+                        Laporan Kedudukan Pekerja
+                    </th>
+                </tr>
+                <tr>
+                    <th rowspan="3" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">BIL.</th>
+                    <th rowspan="3" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">KOD LADANG</th>
+                    <th rowspan="3" width="10%" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">NAMA LADANG</th>
+                    <th colspan="2" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">TEMPATAN</th>
+                    <th rowspan="3" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">JUMLAH</th>
+                    <th colspan="6" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">ASING</th>
+                    <th rowspan="3" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">JUMLAH</th>
+                    <th rowspan="3" width="5%" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">JUMLAH BESAR</th>
+                </tr>
+                <tr>
+                    <th rowspan="3" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">PEKERJA AM (ADA PRODUKTIVITI)</th>
+                    <th rowspan="3" bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">ARTISAN</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">TKI</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">TKB</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">TKN</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">TKIN</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">TKP</th>
+                    <th bgcolor="#ffcc80" style="color:black;text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">TKPH</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @{
+                        int? Prdktvt = Model.Where(x => x.fld_Kdrkyt == "MA" && x.fldOptConfFlag1 == "designation" && x.fldOptConfFlag2 == "PRODUKTIVITI").Count();
+                        int? Artisan = Model.Where(x => x.fld_Kdrkyt == "MA" && x.fldOptConfFlag1 == "designation" && x.fldOptConfFlag2 == "ARTISAN").Count();
+                        int? jumTKT = Prdktvt + Artisan;
+                        int? TKI = Model.Where(x => x.fld_Kdrkyt == "IN").Count();
+                        int? TKB = Model.Where(x => x.fld_Kdrkyt == "BA").Count();
+                        int? TKN = Model.Where(x => x.fld_Kdrkyt == "NE").Count();
+                        int? TKIN = Model.Where(x => x.fld_Kdrkyt == "ID").Count();
+                        int? TKP = Model.Where(x => x.fld_Kdrkyt == "PK").Count();
+                        int? TKPH = Model.Where(x => x.fld_Kdrkyt == "PH").Count();
+                        int? jumTKA = TKI + TKB + TKN + TKIN + TKP + TKPH;
+                        int? jumBesar = jumTKT + jumTKA;
+
+                    }
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@bil</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@Model.FirstOrDefault().fld_LdgCode</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@Model.FirstOrDefault().fld_LdgName</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@Prdktvt</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@Artisan</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@jumTKT</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@TKI</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@TKB</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@TKN</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@TKIN</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@TKP</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@TKPH</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@jumTKA</td>
+                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" rowspan="1">@jumBesar</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    @{
+                        JumPrdktvt = JumPrdktvt + Prdktvt;
+                        JumArtisan = JumArtisan + Artisan;
+                        JumTKT = JumTKT + jumTKT;
+                        JumTKI = JumTKI + TKI;
+                        JumTKB = JumTKB + TKB;
+                        JumTKN = JumTKN + TKN;
+                        JumTKIN = JumTKIN + TKIN;
+                        JumTKP = JumTKP + TKP;
+                        JumTKPH = JumTKPH + TKPH;
+                        JumTKA = JumTKA + jumTKA;
+                        JumBesar = JumBesar + jumBesar;
+                    }
+                    <td colspan="3" bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">JUMLAH</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumPrdktvt</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumArtisan</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumTKT</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumTKI</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumTKB</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumTKN</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumTKIN</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumTKP</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumTKPH </td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumTKA</td>
+                    <td bgcolor="#f4a142" style="color:black; text-align: center; vertical-align:middle !important;border:1px solid black;" border="1">@JumBesar</td>
+                </tr>
+            </tfoot>
+
+        </table>
+        <newpage />
+    </div>
+
+
+    if (ViewBag.Print == null)
+    {
+        <div style="text-align:right; margin-top:10px">
+            <a class="btn btn-default btn-sm" href="#" id="printpage">
+                <span class="glyphicon glyphicon-print"> </span> @GlobalResEstate.btnPrint
+            </a>
+            <a class="btn btn-default btn-sm" href="#" id="downloadpdf">
+                <span><img src="~/Asset/Images/pdf-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadPdf
+            </a>
+            <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@uniquefilename')">
+                <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+            </a>
+        </div>
+    }
+}
+
+@if (Model.Count() == 0)
+{
+    <div id="scrollArea2" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+
+    </div>
+}
+
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+</style>
+
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#printpage").click(function () {
+            var DivElement = document.getElementById("scrollArea2").innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+        })
+
+        $("#downloadpdf").click(function () {
+          var myHtml = document.getElementById('scrollArea2').innerHTML;
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ConvertPDF2", "Report")',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ myHtml: myHtml, filename: "@uniquefilename", reportname: "MinimumWageReport" }),
+                success: function (result) {
+                    if (result.success) {
+                        var win = window.open(result.link, '_blank');
+                        win.focus();
+                    } else {
+                        $.simplyToast(result.msg, result.status);
+                    }
+                },
+                error: function (error) {
+                    $.simplyToast('Sorry to many data', 'danger');
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
+

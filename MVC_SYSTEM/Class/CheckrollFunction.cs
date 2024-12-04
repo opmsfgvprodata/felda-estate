@@ -346,20 +346,40 @@ namespace MVC_SYSTEM.Class
                 {
                     if (JenisKiraanHariTerabai == "kong")
                     {
-                        switch (JenisPkt)
+                        if (transferPktID == 0)
                         {
-                            case 1:
-                                //Take GetPkt Direct
-                                break;
-                            case 2:
-                                GetPkt = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_KodPktUtama).FirstOrDefault();
-                                break;
-                            case 3:
-                                GetPkt = dbr.tbl_Blok.Where(x => x.fld_Blok == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_KodPktutama).FirstOrDefault();
-                                break;
+                            switch (JenisPkt)
+                            {
+                                case 1:
+                                    //Take GetPkt Direct
+                                    break;
+                                case 2:
+                                    GetPkt = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_KodPktUtama).FirstOrDefault();
+                                    break;
+                                case 3:
+                                    GetPkt = dbr.tbl_Blok.Where(x => x.fld_Blok == GetPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_KodPktutama).FirstOrDefault();
+                                    break;
+                            }
+                            tbl_PktUtama = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).ToList();
+                        }
+                        else
+                        {
+                            switch (JenisPkt)
+                            {
+                                case 1:
+                                    GetPkt = dbr.tbl_PktUtama.Where(x => x.fld_ID == transferPktID).Select(s => s.fld_PktUtama).FirstOrDefault();
+                                    break;
+                                case 2:
+                                    GetPkt = dbr.tbl_SubPkt.Where(x => x.fld_ID == transferPktID).Select(s => s.fld_KodPktUtama).FirstOrDefault();
+                                    break;
+                                case 3:
+                                    GetPkt = dbr.tbl_Blok.Where(x => x.fld_ID == transferPktID).Select(s => s.fld_KodPktutama).FirstOrDefault();
+                                    break;
+                            }
+                            tbl_PktUtama = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).ToList();
                         }
 
-                        var PktData = dbr.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).Select(s => new { s.fld_StatusTnmn, s.fld_IOcode, s.fld_JnsLot }).FirstOrDefault();
+                        var PktData = tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PktUtama == GetPkt).Select(s => new { s.fld_StatusTnmn, s.fld_IOcode, s.fld_JnsLot }).FirstOrDefault();
                         GetPaySheetID = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "statusTanaman" && x.fldOptConfValue == PktData.fld_StatusTnmn && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfFlag2).FirstOrDefault();
 
                         //get GL Code
@@ -393,7 +413,7 @@ namespace MVC_SYSTEM.Class
         }
 
         //Added by Shazana 20/5/2024
-        public bool CheckSAPGLMapFPM(int SelectionCategory, string SelectionData, MVC_SYSTEM_Models dbr, byte? JenisPkt, string GetPkt, string AktvtCd, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, bool HariTerabai, string JenisKiraanHariTerabai, out string GLCode, int transferPktID, int PinjampktTransferID)
+        public bool CheckSAPGLMapFPM(int SelectionCategory, string SelectionData, MVC_SYSTEM_Models dbr, byte? JenisPkt, string GetPkt, string AktvtCd, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, bool HariTerabai, string JenisKiraanHariTerabai, out string GLCode, int transferPktID, int PinjampktTransferID,int? WilayahID1, int? SyarikatID1)
         {
             bool Result = false;
             GLCode = "";
@@ -406,8 +426,11 @@ namespace MVC_SYSTEM.Class
 
             if (transferPktID != 0 && PinjampktTransferID != 0)
             {
-                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                //Modified by Shaana 15/10
+                //Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID1.Value, SyarikatID1.Value, NegaraID.Value);
                 MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                //Modified by Shazana 14/10/2024
                 var LadangPinjam = dbrpkt.tbl_PktPinjam.Where(x => x.fld_ID == PinjampktTransferID).FirstOrDefault();
                 if (SelectionCategory == 1)
                 {

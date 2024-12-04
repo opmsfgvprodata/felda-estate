@@ -20,7 +20,11 @@
                             <label id="catsel">@GlobalResEstate.lblLevelType</label>
                             @Html.DropDownList("JnisPktHT", null, htmlAttributes: new { @class = "form-control" })
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-2">
+                            <label id="catsel">Pinjam Pekerja</label>
+                            @Html.DropDownList("TrnsfrLvlHT", null, htmlAttributes: new { @class = "form-control" })
+                        </div>
+                        <div class="col-sm-3">
                             <label id="catsel">@GlobalResEstate.lblLevelSelection</label>
                             @Html.DropDownList("PilihanPktHT", null, htmlAttributes: new { @class = "form-control" })
                         </div>

@@ -47,10 +47,13 @@
 }
 else
 {
-    <div id="scrollArea2" class="modal-body">
-        @if (pkjmast != null)
+<div id="scrollArea2" class="modal-body">
+    @if (pkjmast != null)
+    {
+        foreach (var pkj in Model.Select(s => s.fld_Nopkj).Distinct())
         {
-            foreach (var pkj in Model.Select(s => s.fld_Nopkj).Distinct())
+            var gajiPkj = gajiBulanan.Where(x => x.fld_Nopkj == pkj).FirstOrDefault();
+            if (gajiPkj != null)
             {
                 var checkrollPkj = pkjmast.Where(x => x.fld_Nopkj == pkj).FirstOrDefault();
                 var kerjaHdrPkj = kerjahdr.Where(x => x.fld_Nopkj == pkj).ToList();
@@ -58,7 +61,6 @@ else
                 var kerjaOTPkj = kerjaOT.Where(x => x.fld_Nopkj == pkj).ToList();
                 var kerjahdrCutiPkj = kerjahdrCuti.Where(x => x.fld_Nopkj == pkj).ToList();
                 var incentivePkj = insentif.Where(x => x.fld_Nopkj == pkj).ToList();
-                var gajiPkj = gajiBulanan.Where(x => x.fld_Nopkj == pkj).FirstOrDefault();
                 var carumanTambahanPkj = new List<tbl_ByrCarumanTambahan>();
                 if (gajiPkj != null)
                 {
@@ -462,10 +464,10 @@ else
                     </div>
                     <newpage />
                 }
-
             }
         }
-    </div>
+    }
+</div>
 
     if (ViewBag.Print == "")
     {

@@ -15,126 +15,152 @@
     grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
 }
 
-<div class="text-center">@grid.TotalRowCount @Html.Label(GlobalResEstate.lblTotalRecord)</div>
-<div>
-    @{
-        @grid.GetHtml(htmlAttributes: new { id = "grid" }, // id for ajaxUpdateContainerId parameter
-                                fillEmptyRows: false,
-                                tableStyle: "table table-bordered table-striped table-list table-hover",
-                                headerStyle: "header_table",
-                                alternatingRowStyle: "Grid-alt",
-                                selectedRowStyle: "Grid-selected",
-                                rowStyle: "Grid-rowstyle",
-                                footerStyle: "table-pager",
-                                mode: WebGridPagerModes.All,
-                                columns: grid.Columns(
-                                    grid.Column(GlobalResEstate.hdrNo, canSort: false, format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, style: "count"),
-                                    grid.Column("fld_IOcode", "Kod IO", style: "kod"),
-                                    grid.Column("fld_PktUtama", "Kod Peringkat", style: "kod"),
-                                    grid.Column("fld_NamaPktUtama", "Nama Peringkat", style: "desc"),
-                                    grid.Column("fld_LsPktUtama", "Luas", style: "luas"),
-                                        //sarah added 05/01/2023
-                                        grid.Column("namatanaman", "Status Tanaman", style: "luas"),
-                                    //end
-                                    // fatin added 10/04/2023
-                                    //grid.Column("Tahun Tanaman", format: (item) =>
-                                    //{
-                                    //    var tahun = String.Format("{0:yyyy}", item.fld_CreateDate);
-                                    //    return @Html.Raw(tahun);
+@{
+    GetTriager GetTriager = new GetTriager();
 
-                                    //}, style: "luas"),
-                                    grid.Column(GlobalResEstate.hdrAction, format: (item) =>
-                                    {
-                                        var kerjaPktCount = getConfig.GetKerjaPktCount(item.fld_PktUtama, item.fld_NegaraID, item.fld_SyarikatID, item.fld_WilayahID, item.fld_LadangID);
+    int? month = ViewBag.MonthList;
+    int? year = ViewBag.YearList;
+    int bil = 0;
+    decimal? debit = 0;
+    decimal? credit = 0;
 
-                                        if (item.fld_Deleted == false)
+    ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+
+    int year1 = ChangeTimeZone.gettimezone().Year;
+    int month1 = ChangeTimeZone.gettimezone().Month;
+    int day = ChangeTimeZone.gettimezone().Day;
+    int hour = ChangeTimeZone.gettimezone().Hour;
+    int minute = ChangeTimeZone.gettimezone().Minute;
+    int second = ChangeTimeZone.gettimezone().Second;
+    string uniquefilename = "Transaction_Listing_" + ViewBag.UserID + "_" + year1.ToString() + month1.ToString() + day.ToString() + hour.ToString() + minute.ToString() + second.ToString();
+
+}
+<div id="scrollArea2" class="modal-body">
+    <div class="text-center">@grid.TotalRowCount @Html.Label(GlobalResEstate.lblTotalRecord)</div>
+    <div>
+        @{
+            @grid.GetHtml(htmlAttributes: new { id = "grid" }, // id for ajaxUpdateContainerId parameter
+                                    fillEmptyRows: false,
+                                    tableStyle: "table table-bordered table-striped table-list table-hover",
+                                    headerStyle: "header_table",
+                                    alternatingRowStyle: "Grid-alt",
+                                    selectedRowStyle: "Grid-selected",
+                                    rowStyle: "Grid-rowstyle",
+                                    footerStyle: "table-pager",
+                                    mode: WebGridPagerModes.All,
+                                    columns: grid.Columns(
+                                        grid.Column(GlobalResEstate.hdrNo, canSort: false, format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, style: "count"),
+                                        grid.Column("fld_IOcode", "Kod IO", style: "kod"),
+                                        grid.Column("fld_PktUtama", "Kod Peringkat", style: "kod"),
+                                        grid.Column("fld_NamaPktUtama", "Nama Peringkat", style: "desc"),
+                                        grid.Column("fld_LsPktUtama", "Luas", style: "luas"),
+                                            //sarah added 05/01/2023
+                                            grid.Column("namatanaman", "Status Tanaman", style: "luas"),
+                                        //end
+                                        // fatin added 10/04/2023
+                                        //grid.Column("Tahun Tanaman", format: (item) =>
+                                        //{
+                                        //    var tahun = String.Format("{0:yyyy}", item.fld_CreateDate);
+                                        //    return @Html.Raw(tahun);
+
+                                        //}, style: "luas"),
+                                        grid.Column(GlobalResEstate.hdrAction, format: (item) =>
                                         {
+                                            var kerjaPktCount = getConfig.GetKerjaPktCount(item.fld_PktUtama, item.fld_NegaraID, item.fld_SyarikatID, item.fld_WilayahID, item.fld_LadangID);
 
-                                            if (kerjaPktCount > 0)
+                                            if (item.fld_Deleted == false)
                                             {
-                                                var tindakan = "<a data-modal='' href='" + @Url.Action("LevelsPktUpdate", "BasicInfo") + "/?id=" + item.fld_PktUtama + "' class='btn btn-success' title='Kemaskini Peringkat' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-lg'></i></a>&nbsp;" +
-                                                "<button type='button' class='btn btn-danger' onclick='return DisplayExist(this);'><i class='fa fa-trash fa-lg'></i></button>";
-                                                return @Html.Raw(tindakan);
+
+                                                if (kerjaPktCount > 0)
+                                                {
+                                                    var tindakan = "<a data-modal='' href='" + @Url.Action("LevelsPktUpdate", "BasicInfo") + "/?id=" + item.fld_PktUtama + "' class='btn btn-success' title='Kemaskini Peringkat' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-lg'></i></a>&nbsp;" +
+                                                    "<button type='button' class='btn btn-danger' onclick='return DisplayExist(this);'><i class='fa fa-trash fa-lg'></i></button>";
+                                                    return @Html.Raw(tindakan);
+                                                }
+
+                                                else
+                                                {
+                                                    var tindakan = "<a data-modal='' href='" + @Url.Action("LevelsPktUpdate", "BasicInfo") + "/?id=" + item.fld_PktUtama + "' class='btn btn-success' title='Kemaskini Peringkat' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-lg'></i></a>&nbsp;" +
+                                                    "<a data-modal='' href='" + @Url.Action("LevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=true' class='btn btn-danger' role='button' title='Nyah Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-trash fa-lg'></i></a>&nbsp;";
+                                                    return @Html.Raw(tindakan);
+                                                }
                                             }
 
                                             else
                                             {
-                                                var tindakan = "<a data-modal='' href='" + @Url.Action("LevelsPktUpdate", "BasicInfo") + "/?id=" + item.fld_PktUtama + "' class='btn btn-success' title='Kemaskini Peringkat' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-lg'></i></a>&nbsp;" +
-                                                "<a data-modal='' href='" + @Url.Action("LevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=true' class='btn btn-danger' role='button' title='Nyah Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-trash fa-lg'></i></a>&nbsp;";
+                                                var tindakan = "<a data-modal='' href='" + @Url.Action("LevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=false' class='btn btn-danger' title='Aktifkan Semula' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-undo fa-lg'></i></a>&nbsp;";
                                                 return @Html.Raw(tindakan);
                                             }
-                                        }
 
-                                        else
-                                        {
-                                            var tindakan = "<a data-modal='' href='" + @Url.Action("LevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=false' class='btn btn-danger' title='Aktifkan Semula' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-undo fa-lg'></i></a>&nbsp;";
-                                            return @Html.Raw(tindakan);
-                                        }
-
-                                    }, canSort: false, style: "tindakan")
-               //end
-               //comment by fatin - 10/04/2023
-               /*grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "tindakan",
-                   format: @<text>
-                           @if (item.fld_Deleted == true)
-                           {
-                               @Html.Raw("<a data-modal='' href='" + @Url.Action("LevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=false' class='btn btn-warning' title='Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-unlock fa-lg'></i></a>")
-                           }
-                           else
-                           {
-                               @Html.Raw("<a data-modal='' href='" + @Url.Action("LevelsPktUpdate", "BasicInfo") + "/?id=" + item.fld_PktUtama + "' class='btn btn-success' title='Kemaskini Peringkat' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-lg'></i></a>&nbsp;")
-                               @Html.Raw("<a data-modal='' href='" + @Url.Action("LevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=true' class='btn btn-warning' title='Nyah Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-trash fa-lg'></i></a>")
-                           }
-                   </text>)*/
-               ))
-    }
+                                        }, canSort: false, style: "tindakan")
+                   //end
+                   //comment by fatin - 10/04/2023
+                   /*grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "tindakan",
+                       format: @<text>
+                               @if (item.fld_Deleted == true)
+                               {
+                                   @Html.Raw("<a data-modal='' href='" + @Url.Action("LevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=false' class='btn btn-warning' title='Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-unlock fa-lg'></i></a>")
+                               }
+                               else
+                               {
+                                   @Html.Raw("<a data-modal='' href='" + @Url.Action("LevelsPktUpdate", "BasicInfo") + "/?id=" + item.fld_PktUtama + "' class='btn btn-success' title='Kemaskini Peringkat' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-lg'></i></a>&nbsp;")
+                                   @Html.Raw("<a data-modal='' href='" + @Url.Action("LevelsPktDelete", "BasicInfo") + "/?id=" + item.fld_PktUtama + "&status=true' class='btn btn-warning' title='Nyah Aktifkan' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-trash fa-lg'></i></a>")
+                               }
+                       </text>)*/
+                   ))
+        }
+    </div>
 </div>
 
-<!-- fatin added 11/04/2023 -->
-<script>
-    function DisplayExist() {
-        $.simplyToast('Peringkat ini mempunyai rekod kehadiran dan rekod kerja pada bulan ini. Hapus peringkat tidak dibenarkan.', 'danger');
-    }
-</script>
-<!-- end -->
+
+    <script src="~/Asset/Scripts/FromHTML.js"></script>
+    <script src="~/Asset/Scripts/FileSaver.js"></script>
 
 
-<style>
-    .header_table th {
-        text-align: center;
-        vertical-align: middle !important;
-    }
+    <script>
+        function DisplayExist() {
+            $.simplyToast('Peringkat ini mempunyai rekod kehadiran dan rekod kerja pada bulan ini. Hapus peringkat tidak dibenarkan.', 'danger');
+        }
+    </script>
+    <!-- end -->
 
-    .count {
-        width: 30px;
-        font-size: 12px;
-        text-align: center;
-        vertical-align: middle !important;
-    }
 
-    .kod {
-        width: 100px;
-        font-size: 12px;
-        text-align: center;
-        vertical-align: middle !important;
-    }
+    <style>
+        .header_table th {
+            text-align: center;
+            vertical-align: middle !important;
+        }
 
-    .desc {
-        width: 200px;
-        font-size: 12px;
-        text-align: left;
-        vertical-align: middle !important;
-    }
+        .count {
+            width: 30px;
+            font-size: 12px;
+            text-align: center;
+            vertical-align: middle !important;
+        }
 
-    .luas {
-        width: 100px;
-        font-size: 12px;
-        text-align: center;
-        vertical-align: middle !important;
-    }
+        .kod {
+            width: 100px;
+            font-size: 12px;
+            text-align: center;
+            vertical-align: middle !important;
+        }
 
-    .tindakan {
-        width: 80px;
-        text-align: center;
-    }
-</style>
+        .desc {
+            width: 200px;
+            font-size: 12px;
+            text-align: left;
+            vertical-align: middle !important;
+        }
+
+        .luas {
+            width: 100px;
+            font-size: 12px;
+            text-align: center;
+            vertical-align: middle !important;
+        }
+
+        .tindakan {
+            width: 80px;
+            text-align: center;
+        }
+    </style>

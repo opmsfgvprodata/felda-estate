@@ -55,7 +55,7 @@ namespace MVC_SYSTEM.Controllers
         private SendEmailNotification SendEmailNotification = new SendEmailNotification();
         private MVC_SYSTEM_Models dbest2 = new MVC_SYSTEM_Models();
         private MVC_SYSTEM_Viewing dbest3 = new MVC_SYSTEM_Viewing();
-
+        private GetLadang getLadang = new GetLadang();
         //Added by Shazana 13/2/2023
         private GeneralClass GeneralClass = new GeneralClass();
         // GET: BizTransac
@@ -762,7 +762,21 @@ namespace MVC_SYSTEM.Controllers
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
 
             var getSAPReturnMsgData = dbr.tbl_SAPPostReturn.Where(x => x.fld_SAPPostRefID == postRefID).OrderBy(o => o.fld_SortNo);
-
+            var getSAPRefMsgData = dbr.tbl_SAPPostRef.Where(x => x.fld_ID == postRefID).FirstOrDefault();
+            if (getSAPRefMsgData != null)
+            {
+                ViewBag.Month = getSAPRefMsgData.fld_Month;
+                ViewBag.Year = getSAPRefMsgData.fld_Year;
+                ViewBag.Wilayah = getwilyah.GetWilayahName(getSAPRefMsgData.fld_WilayahID.Value);
+                ViewBag.Ladang = getLadang.GetLadangName(getSAPRefMsgData.fld_LadangID.Value, getSAPRefMsgData.fld_WilayahID.Value);
+            }
+            else
+            {
+                ViewBag.Month = 0;
+                ViewBag.Year = 0;
+                ViewBag.Wilayah = 0;
+                ViewBag.Ladang = 0;
+            }
             return PartialView("_SAPReturnMsg", getSAPReturnMsgData);
 
 
@@ -4010,7 +4024,6 @@ namespace MVC_SYSTEM.Controllers
                     string headerTable3 = @"<Table>            
            <tr><td colspan =1 align =right style=font-size:medium >Posting Month:</td>" + "<td colspan = 2 align = left style = font-size:medium > " + GLtoVendor.fld_Month.ToString() + "</td>" +
                "<td colspan =1 align =right style=font-size:medium >Posting Year:</td>" + "<td colspan = 1 align = left style = font-size:medium > " + GLtoVendor.fld_Year.ToString() + "</td></tr> " +
-
                "<tr><td colspan =1 align =right style=font-size:medium >Posting Date:</td>" + "<td colspan = 2 align = left style = font-size:medium > " + GLtoVendor.fld_PostingDate.ToString() + "</td>" +
                "</tr> " +
                "</ Table>";
@@ -4159,6 +4172,274 @@ namespace MVC_SYSTEM.Controllers
             }
 
             return Json(ladanglist);
+        }
+
+        public void SAPDocStatus(int? MonthList, int? YearList)
+        {
+            int Userid = GetIdentity.ID(User.Identity.Name);
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            MVC_SYSTEM_MasterModels MasterModel = new MVC_SYSTEM_MasterModels();
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            GridView gv = new GridView();
+            GridView gvk = new GridView();
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            var message = "";
+
+            var postingData = new List<vw_SAPPostData>();
+            var Syarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+            ViewBag.NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
+            ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NoSyarikat).FirstOrDefault();
+
+            if (!String.IsNullOrEmpty(MonthList.ToString()) && !String.IsNullOrEmpty(YearList.ToString()))
+            {
+                postingData = dbr.vw_SAPPostData
+                    .Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID).ToList();
+
+                var ClosingTransaction = dbr.tbl_TutupUrusNiaga.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Month == MonthList && x.fld_Year == YearList).FirstOrDefault();
+                ViewBag.ClosingStatus = ClosingTransaction.fld_StsTtpUrsNiaga;
+
+                var statusProceedA2 = dbr.tbl_SAPPostRef.Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID && x.fld_DocType == "A2").FirstOrDefault();
+
+                if (statusProceedA2 != null)
+                {
+                    ViewBag.statusProceedA2 = statusProceedA2.fld_StatusProceed;
+                }
+                else
+                {
+                    ViewBag.statusProceedA2 = null;
+                }
+
+            }
+            int dataCount = 1;
+
+
+            if (postingData.Count() > 0)
+            {
+
+                int k = 1; ;
+                gv.AutoGenerateColumns = false;
+                gv.Columns.Add(new BoundField { HeaderText = "Item No", DataField = "k" });
+                gv.Columns.Add(new BoundField { HeaderText = "GL", DataField = "fld_GL" });
+                gv.Columns.Add(new BoundField { HeaderText = "Vendor No", DataField = "fld_VendorCode" });
+                gv.Columns.Add(new BoundField { HeaderText = "Description", DataField = "fld_Desc" });
+                gv.Columns.Add(new BoundField { HeaderText = "Amount", DataField = "fld_Amount" });
+
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("k");
+                dt.Columns.Add("fld_GL");
+                dt.Columns.Add("fld_VendorCode");
+                dt.Columns.Add("fld_Desc");
+                dt.Columns.Add("fld_Amount");
+
+
+
+
+                int flag = 1;
+                int flag1 = 0;
+                foreach (var krFlag in postingData.DistinctBy(s => s.fld_flag).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag))
+                {
+                    //dt.Rows.Add("Reference No. " + krFlag.fld_RefNo + "-" + flag);
+
+                    int i1 = 1;
+                    foreach (var GLtoVendorDetails in postingData.Where(x => x.fld_DocType == "KR" && x.fld_flag == flag).OrderBy(o => o.fld_ItemNo).Distinct())
+                    {
+
+                        if (flag != flag1)
+                        {
+                            dt.Rows.Add("Reference No. " + krFlag.fld_RefNo + "-" + flag, "SAP Document No " + (krFlag.fld_DocNoSAP == null ? "" : krFlag.fld_DocNoSAP.ToString()));
+                            dt.Rows.Add(i1, (GLtoVendorDetails.fld_GL == null ? "" : GLtoVendorDetails.fld_GL.ToString()), GLtoVendorDetails.fld_VendorCode == null ? "" : GLtoVendorDetails.fld_VendorCode.ToString(), GLtoVendorDetails.fld_Desc == null ? "" : GLtoVendorDetails.fld_Desc.ToString(), GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount) == null ? "" : GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount).ToString());
+                            flag1 = flag;
+                        }
+                        else
+                        {
+                            dt.Rows.Add(i1, (GLtoVendorDetails.fld_GL == null ? "" : GLtoVendorDetails.fld_GL.ToString()), GLtoVendorDetails.fld_VendorCode == null ? "" : GLtoVendorDetails.fld_VendorCode.ToString(), GLtoVendorDetails.fld_Desc == null ? "" : GLtoVendorDetails.fld_Desc.ToString(), GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount) == null ? "" : GetTriager.GetTotalForMoney(GLtoVendorDetails.fld_Amount).ToString());
+                            flag1 = flag;
+                        }
+
+                        k++;
+                        i1++;
+                        // flag1 = flag;
+                    }
+
+                    // j++;
+                    flag++;
+                }
+                gv.DataSource = dt;
+                //gv.DataSource = dt;
+                gv.DataBind();
+                //gv.DataBind();
+
+                Response.ClearContent();
+                Response.Buffer = true;
+                Response.AddHeader("content-disposition", "attachment; filename=GLtoVendor.xls");
+                Response.ContentType = "application/ms-excel";
+                Response.Charset = "";
+
+                var GLtoGL = postingData.DistinctBy(s => s.fld_SAPPostRefID).Where(x => x.fld_DocType == "A2").FirstOrDefault();
+                var postRefGuid = postingData.Where(x => x.fld_DocType == "A2").Select(s => s.fld_SAPPostRefID).Distinct().FirstOrDefault();
+                StringWriter sw = new StringWriter();
+                HtmlTextWriter htw = new HtmlTextWriter(sw);
+
+                gv.RenderControl(htw);
+
+
+                var GLtoVendor = postingData.DistinctBy(s => s.fld_SAPPostRefID).Where(x => x.fld_DocType == "KR").FirstOrDefault();
+
+                if (GLtoVendor == null)
+                { }
+                else
+                {
+                    string headerTable = @"<Table>            
+            <tr><td colspan=5 align =center style=font-size:medium>" + "GL To Vendor" + " </td></tr>" +
+                    "<tr><td align =right style=font-size:medium >Checkroll Group No::</td>" + "<td colspan = 2 align = left style=font-size:medium > " + (GLtoVendor.fld_RefNo == null ? "" : GLtoVendor.fld_RefNo.ToString()) + "</td>" +
+                   "<td colspan = 2 align =right style=font-size:medium ></td></tr> " +
+
+                     "<tr><td align =right style=font-size:medium >Date Generated:</td>" + "<td colspan=2 align=left style=font-size:medium > " + GLtoVendor.fld_DocDate.ToString() + "</td>" +
+                     "<td colspan = 2 align = center style = font-size:medium > </td></tr>" +
+                     "</ Table>";
+
+                    string headerTable2 = @"<Table>            
+         <tr><td align=right style=font-size:medium>Header Text:</td>" + "<td colspan=2 align=left style=font-size:medium > " + (GLtoVendor.fld_HeaderText == null ? "" : GLtoVendor.fld_HeaderText.ToString()) + "</td></tr>" +
+                 "<tr><td colspan =1 align =right style=font-size:medium >Document Type:</td>" + "<td colspan = 2 align = left style = font-size:medium > " + (GLtoVendor.fld_DocType == null ? "" : GLtoVendor.fld_DocType.ToString()) + "</td></tr>" +
+                 "</ Table>";
+
+                    string headerTable3 = @"<Table>            
+           <tr><td colspan =1 align =right style=font-size:medium >Posting Month:</td>" + "<td colspan = 2 align = left style = font-size:medium > " + GLtoVendor.fld_Month.ToString() + "</td>" +
+               "<td colspan =1 align =right style=font-size:medium >Posting Year:</td>" + "<td colspan = 1 align = left style = font-size:medium > " + GLtoVendor.fld_Year.ToString() + "</td></tr> " +
+
+               "<tr><td colspan =1 align =right style=font-size:medium >Posting Date:</td>" + "<td colspan = 2 align = left style = font-size:medium > " + GLtoVendor.fld_PostingDate.ToString() + "</td>" +
+               "</tr> " +
+               "</ Table>";
+
+                    Response.Write(headerTable);
+                    Response.Write(headerTable2);
+                    Response.Write(headerTable3);
+                }
+                Response.Output.Write(sw.ToString());
+                Response.Flush();
+                Response.End();
+
+            }
+        }
+
+        public void ExcelStatusRef(int? MonthList, int? YearList)
+        {
+            int Userid = GetIdentity.ID(User.Identity.Name);
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            MVC_SYSTEM_MasterModels MasterModel = new MVC_SYSTEM_MasterModels();
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            GridView gv = new GridView();
+            GridView gvk = new GridView();
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            var message = "";
+
+            //var postingRef = new List<tbl_SAPPostRef>();
+            var postingData = new List<tbl_SAPPostReturn>();
+            var Syarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID).FirstOrDefault();
+            ViewBag.NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
+            ViewBag.NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID).Select(s => s.fld_NoSyarikat).FirstOrDefault();
+            ViewBag.NamaWilayah = getwilyah.GetWilayahName2(WilayahID.Value);
+            ViewBag.NamaLadang = getLadang.GetLadangName(LadangID.Value, WilayahID.Value);
+            if (!String.IsNullOrEmpty(MonthList.ToString()) && !String.IsNullOrEmpty(YearList.ToString()))
+            {
+                var postingRef = dbr.tbl_SAPPostRef
+                    .Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
+                                x.fld_LadangID == LadangID).Select(x=>x.fld_ID).ToList();
+
+                postingData = dbr.tbl_SAPPostReturn
+                   .Where(x => postingRef.Contains(x.fld_SAPPostRefID.Value)).OrderBy(x=>x.fld_flag).ToList();
+            }
+            int dataCount = 1;
+
+            if (postingData.Count() > 0)
+            {
+
+                int k = 1; ;
+                gv.AutoGenerateColumns = false;
+                gv.Columns.Add(new BoundField { HeaderText = "Item No", DataField = "k" });
+                gv.Columns.Add(new BoundField { HeaderText = "Status", DataField = "fld_Type" });
+                gv.Columns.Add(new BoundField { HeaderText = "Message", DataField = "fld_Msg" });
+
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("k");
+                dt.Columns.Add("fld_Type");
+                dt.Columns.Add("fld_Msg");
+
+                int GLTOGL = 1;
+                k = 1;
+                foreach (var PD in postingData.Where(x => x.fld_flag == 0).OrderBy(x=>x.fld_Type))
+                {
+                    if (GLTOGL == 1)
+                    {
+                        dt.Rows.Add("GL to GL");
+                    }
+                    dt.Rows.Add( k , PD.fld_Type, PD.fld_Msg);
+                    GLTOGL++;
+                    k++;
+                }
+
+                int? GlToVendor = 1;
+                k = 1;
+                foreach (var PD in postingData.Where(x => x.fld_flag != 0).OrderBy(x => x.fld_Type))
+                {
+                    if (GlToVendor == 1)
+                    {
+                        dt.Rows.Add("GL to Vendor");
+                    }
+                    dt.Rows.Add(k, PD.fld_Type, PD.fld_Msg);
+                    GlToVendor++;
+                    k++;
+                }
+
+                gv.DataSource = dt;
+                gv.DataBind();
+
+                Response.ClearContent();
+                Response.Buffer = true;
+                Response.AddHeader("content-disposition", "attachment; filename=SAPDocStatus-"+ MonthList + "-" + YearList  + ".xls");
+                Response.ContentType = "application/ms-excel";
+                Response.Charset = "";
+
+                StringWriter sw = new StringWriter();
+                HtmlTextWriter htw = new HtmlTextWriter(sw);
+
+                gv.RenderControl(htw);
+
+                    string headerTable = @"<Table>           
+                    <tr><td colspan=3 align =center style=font-size:medium>" + "SAP Document Status" + "</td></tr>" +
+                    "<tr><td colspan=3 align=left style=font-size:medium>" + "Wilayah : " + ViewBag.NamaWilayah + "</td></tr> "+
+                    "<tr><td colspan=3 align=left style=font-size:medium>" + "Rancangan : " + ViewBag.NamaLadang + "</td></tr> " +
+                    "<tr><td colspan=3 align=left style=font-size:medium>"  + "Bulan/Tahun : " + MonthList + "/" + YearList + "</td></tr> " +
+                     "</ Table>";
+
+                Response.Write(headerTable);
+                Response.Output.Write(sw.ToString());
+                Response.Flush();
+                Response.End();
+
+            }
         }
     }
 }

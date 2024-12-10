@@ -124,6 +124,9 @@
                                                     </div>
                                                     <div class="col-sm-1">
                                                         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sapReturnModal1">Status</button>
+                                                        <button class="btn btn-default btn-sm" type="button" onclick="location.href='@Url.Action("ExcelStatusRef", "BizTransac", new { MonthList = @ViewBag.Month, YearList = @ViewBag.Year })'">
+                                                            <img alt="New" title="New" src="~/Asset/Images/excel-icon.png" width="20px" height="20px">
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -313,7 +316,8 @@
                                                     </div>
                                                 </div>
                                             }
-                                            foreach (var krFlag in Model.DistinctBy(s => s.fld_flag).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag))
+                                            //foreach (var krFlag in Model.DistinctBy(s => s.fld_flag).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag))
+                                            foreach (var krFlag in Model.DistinctBy(s => s.fld_flag).Where(x => x.fld_DocType == "KR").OrderBy(x=>x.fld_flag))
                                             {
                                                 var DocNo = Model.DistinctBy(s => s.fld_DocNoSAP).Where(x => x.fld_DocType == "KR" && x.fld_flag == flag).Select(s => s.fld_DocNoSAP).FirstOrDefault();
                                                 int bill = 0;
@@ -1001,6 +1005,19 @@
       PDFObject.embed("@Url.Action("exportPDFGLtoVendor", "BizTransac")" + param, "#tab2primary", { height: "400px" });
          return false;
     });
+
+
+
+        $("#downloadsapdoc").click(function () {
+           
+      var MonthList = '@ViewBag.Month';
+      var YearList = '@ViewBag.Year';
+      var param = '/?MonthList=' + MonthList + "&YearList=" + YearList;
+         debugger
+      PDFObject.embed("@Url.Action("SAPDocStatus", "BizTransac")" + param, "#tab2primary", { height: "400px" });
+         return false;
+    });
+
 
 
     })

@@ -3940,10 +3940,10 @@ namespace MVC_SYSTEM.Controllers
 
             List<SelectListItem> PilihAktiviti = new List<SelectListItem>();
             var estateCostCenter = GetLadang.GetLadangCostCenter(LadangID);
-            var tbl_UpahAktiviti = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == JnisAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).ToList();
-            PilihAktiviti = new SelectList(tbl_UpahAktiviti.OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt + " - " + s.fld_Desc + " (RM" + s.fld_Harga + ")" }), "Value", "Text").ToList();
+            var tbl_UpahAktiviti = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == JnisAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).OrderBy(o=>o.fld_ID).ToList();
+            PilihAktiviti = new SelectList(tbl_UpahAktiviti.OrderBy(o => o.fld_ID).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt + " - " + s.fld_Desc + " (RM" + s.fld_Harga + ")" }), "Value", "Text").ToList();
             PilihAktiviti.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
-            var AktivitiToolTip = tbl_UpahAktiviti.OrderBy(o => o.fld_KodAktvt).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
+            var AktivitiToolTip = tbl_UpahAktiviti.OrderBy(o => o.fld_ID).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
             var JenisAktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_DisabledFlag != 5 && x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
             string Lain2JnsAtvt = "";
             MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);

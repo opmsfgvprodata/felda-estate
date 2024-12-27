@@ -1982,84 +1982,71 @@ namespace MVC_SYSTEM.Controllers
 
             if (ClosingTransaction != null)
             {
-                //sepul comment filter no SKB 29/11/2021
-                //if (CheckSkbReg.fld_NoSkb != null)
-                //{
-                //if (CheckSkbReg.fld_GajiBersih == ClosingTransaction.fld_Credit)
-                //{
-                var estateClosingChecking_Result = new List<EstateClosingChecking_Result>();
-                decimal? jumgl2gl = 0m;
-                decimal? jumgl2vdDt = 0m;
-                decimal? jumgl2vdCt = 0m;
-                decimal? TL_Credit = 0m;
-                decimal? TL_Debit = 0m;
-                if (CloseOpen)
+                var kerjaDate = dbr.tbl_Kerja.Where(x => x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_Tarikh.Value.Month == Month && x.fld_Tarikh.Value.Year == Year).OrderByDescending(x => x.fld_CreatedDT).FirstOrDefault();
+                DateTime? KerjaTime = kerjaDate== null? null : kerjaDate.fld_CreatedDT;
+                DateTime? JanaTime = db.tbl_SevicesProcess.Where(x => x.fld_Year == Year && x.fld_Month == Month && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Flag==1).OrderByDescending(x => x.fld_DTProcess).Select(x=>x.fld_DTProcess).FirstOrDefault();
+                if (JanaTime == null)
                 {
-                    string constr = Connection.GetConnectionString(WilayahID.Value, SyarikatID.Value, NegaraID.Value);
-                    var con = new SqlConnection(constr);
-                    try
-                    {
-                        DynamicParameters parameters = new DynamicParameters();
-                        parameters.Add("LadangID", LadangID);
-                        parameters.Add("Month", Month);
-                        parameters.Add("Year", Year);
-                        con.Open();
-                        estateClosingChecking_Result = SqlMapper.Query<EstateClosingChecking_Result>(con, "sp_EstateClosingChecking", parameters).ToList();
-                        con.Close();
-                        jumgl2gl = estateClosingChecking_Result.Where(x => x.fld_purpose == 1).Select(s => s.jumgl2gl).FirstOrDefault();
-                        jumgl2vdDt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdDt).FirstOrDefault();
-                        jumgl2vdCt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdCt).FirstOrDefault();
-                        TL_Credit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Credit).FirstOrDefault();
-                        TL_Debit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Debit).FirstOrDefault();
-
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+                    JanaTime = db.tbl_SevicesProcessHistory.Where(x => x.fld_Year == Year && x.fld_Month == Month && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Flag==1).OrderByDescending(x=>x.fld_DTProcess).Select(x=>x.fld_DTProcess).FirstOrDefault();
                 }
-
-                if (jumgl2gl == 0 && jumgl2vdDt + jumgl2vdCt == 0 && TL_Credit - TL_Debit == 0)
+        
+                if ((JanaTime > KerjaTime && CloseOpen == true) || CloseOpen == false)
                 {
 
-                    if (ClosingTransaction.fld_Credit == ClosingTransaction.fld_Debit)
+                    //sepul comment filter no SKB 29/11/2021
+                    //if (CheckSkbReg.fld_NoSkb != null)
+                    //{
+                    //if (CheckSkbReg.fld_GajiBersih == ClosingTransaction.fld_Credit)
+                    //{
+                    var estateClosingChecking_Result = new List<EstateClosingChecking_Result>();
+                    decimal? jumgl2gl = 0m;
+                    decimal? jumgl2vdDt = 0m;
+                    decimal? jumgl2vdCt = 0m;
+                    decimal? TL_Credit = 0m;
+                    decimal? TL_Debit = 0m;
+                    if (CloseOpen)
                     {
-                        if (CloseOpen == true && ClosingTransaction.fld_StsTtpUrsNiaga == true)
+                        string constr = Connection.GetConnectionString(WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                        var con = new SqlConnection(constr);
+                        try
                         {
-                            msg = "Urus niaga telah ditutup";
-                            statusmsg = "warning";
+                            DynamicParameters parameters = new DynamicParameters();
+                            parameters.Add("LadangID", LadangID);
+                            parameters.Add("Month", Month);
+                            parameters.Add("Year", Year);
+                            con.Open();
+                            estateClosingChecking_Result = SqlMapper.Query<EstateClosingChecking_Result>(con, "sp_EstateClosingChecking", parameters).ToList();
+                            con.Close();
+                            jumgl2gl = estateClosingChecking_Result.Where(x => x.fld_purpose == 1).Select(s => s.jumgl2gl).FirstOrDefault();
+                            jumgl2vdDt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdDt).FirstOrDefault();
+                            jumgl2vdCt = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.jumgl2vdCt).FirstOrDefault();
+                            TL_Credit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Credit).FirstOrDefault();
+                            TL_Debit = estateClosingChecking_Result.Where(x => x.fld_purpose == 2).Select(s => s.TL_Debit).FirstOrDefault();
+
                         }
-                        else
+                        catch (Exception)
                         {
-                            //Added by Shazana 27/4/2023
-                            if (CloseOpen == false)
+                            throw;
+                        }
+                    }
+
+                    if (jumgl2gl == 0 && jumgl2vdDt + jumgl2vdCt == 0 && TL_Credit - TL_Debit == 0)
+                    {
+
+                        if (ClosingTransaction.fld_Credit == ClosingTransaction.fld_Debit)
+                        {
+                            if (CloseOpen == true && ClosingTransaction.fld_StsTtpUrsNiaga == true)
                             {
-                                //Added by Shazana 5/5/2023
-                                if (CheckPermohonanWang == null)
+                                msg = "Urus niaga telah ditutup";
+                                statusmsg = "warning";
+                            }
+                            else
+                            {
+                                //Added by Shazana 27/4/2023
+                                if (CloseOpen == false)
                                 {
-                                    //Close Added by Shazana 27/4/2023
-                                    AuditTrailStatus = CloseOpen == true ? 1 : 0;
-                                    ClosingTransaction.fld_StsTtpUrsNiaga = CloseOpen;
-                                    ClosingTransaction.fld_ModifiedDT = timezone.gettimezone();
-                                    ClosingTransaction.fld_ModifiedBy = getuserid;
-                                    dbr.Entry(ClosingTransaction).State = EntityState.Modified;
-                                    dbr.SaveChanges();
-                                    UpdateAuditTrail(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, AuditTrailStatus);
-
-                                    msg = "Urus niaga telah dibuka";
-                                    statusmsg = "success";
-                                }
-
-                                //Modified by Shazana 5/5/2023
-                                else if ((CheckPermohonanWang.fld_SemakWil_Status == 1 && CheckPermohonanWang.fld_SokongWilGM_Status == 1 && CheckPermohonanWang.fld_TerimaHQ_Status == 1) && (CheckPermohonanWang.fld_TolakWil_Status == 0 || CheckPermohonanWang.fld_TolakWilGM_Status == 0 || CheckPermohonanWang.fld_TolakHQ_Status == 0))
-                                {
-                                    msg = "Urus niaga tidak boleh dibuka. Maklumkan kepada HQ untuk membatalkan permohonan wang.";
-                                    statusmsg = "warning";
-                                }
-                                else
-                                {
-                                    //Added by Shazana 6/6/2023
-                                    if (PaySlipNegative.Count() == 0)
+                                    //Added by Shazana 5/5/2023
+                                    if (CheckPermohonanWang == null)
                                     {
                                         //Close Added by Shazana 27/4/2023
                                         AuditTrailStatus = CloseOpen == true ? 1 : 0;
@@ -2070,8 +2057,58 @@ namespace MVC_SYSTEM.Controllers
                                         dbr.SaveChanges();
                                         UpdateAuditTrail(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, AuditTrailStatus);
 
-                                        //    FinanceApplication(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, CloseOpen, CheckSkbReg.fld_GajiBersih, CheckSkbReg.fld_NoSkb, getuserid);
-                                        msg = GlobalResEstate.msgUpdate;
+                                        msg = "Urus niaga telah dibuka";
+                                        statusmsg = "success";
+                                    }
+
+                                    //Modified by Shazana 5/5/2023
+                                    else if ((CheckPermohonanWang.fld_SemakWil_Status == 1 && CheckPermohonanWang.fld_SokongWilGM_Status == 1 && CheckPermohonanWang.fld_TerimaHQ_Status == 1) && (CheckPermohonanWang.fld_TolakWil_Status == 0 || CheckPermohonanWang.fld_TolakWilGM_Status == 0 || CheckPermohonanWang.fld_TolakHQ_Status == 0))
+                                    {
+                                        msg = "Urus niaga tidak boleh dibuka. Maklumkan kepada HQ untuk membatalkan permohonan wang.";
+                                        statusmsg = "warning";
+                                    }
+                                    else
+                                    {
+                                        //Added by Shazana 6/6/2023
+                                        if (PaySlipNegative.Count() == 0)
+                                        {
+                                            //Close Added by Shazana 27/4/2023
+                                            AuditTrailStatus = CloseOpen == true ? 1 : 0;
+                                            ClosingTransaction.fld_StsTtpUrsNiaga = CloseOpen;
+                                            ClosingTransaction.fld_ModifiedDT = timezone.gettimezone();
+                                            ClosingTransaction.fld_ModifiedBy = getuserid;
+                                            dbr.Entry(ClosingTransaction).State = EntityState.Modified;
+                                            dbr.SaveChanges();
+                                            UpdateAuditTrail(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, AuditTrailStatus);
+
+                                            //    FinanceApplication(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, CloseOpen, CheckSkbReg.fld_GajiBersih, CheckSkbReg.fld_NoSkb, getuserid);
+                                            msg = GlobalResEstate.msgUpdate;
+                                            statusmsg = "success";
+
+                                            //Added by Shazana 6/6/2023
+                                        }
+                                        else
+                                        {
+                                            msg = "Urusniaga tidak boleh ditutup. " + nama;
+                                            statusmsg = "warning";
+                                        }
+                                        //Close Added by Shazana 6/6/2023
+                                    }
+                                }//Added by Shazana 27/4/2023
+                                 //Added by Shazana 3/5/2023
+                                else
+                                {
+                                    //Added by Shazana 6/6/2023
+                                    if (PaySlipNegative.Count() == 0)
+                                    {
+                                        AuditTrailStatus = CloseOpen == true ? 1 : 0;
+                                        ClosingTransaction.fld_StsTtpUrsNiaga = CloseOpen;
+                                        ClosingTransaction.fld_ModifiedDT = timezone.gettimezone();
+                                        ClosingTransaction.fld_ModifiedBy = getuserid;
+                                        dbr.Entry(ClosingTransaction).State = EntityState.Modified;
+                                        dbr.SaveChanges();
+                                        UpdateAuditTrail(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, AuditTrailStatus);
+                                        msg = "Urus niaga telah ditutup";
                                         statusmsg = "success";
 
                                         //Added by Shazana 6/6/2023
@@ -2084,69 +2121,52 @@ namespace MVC_SYSTEM.Controllers
                                     //Close Added by Shazana 6/6/2023
                                 }
                             }//Added by Shazana 27/4/2023
-                             //Added by Shazana 3/5/2023
-                            else
-                            {
-                                //Added by Shazana 6/6/2023
-                                if (PaySlipNegative.Count() == 0)
-                                {
-                                    AuditTrailStatus = CloseOpen == true ? 1 : 0;
-                                    ClosingTransaction.fld_StsTtpUrsNiaga = CloseOpen;
-                                    ClosingTransaction.fld_ModifiedDT = timezone.gettimezone();
-                                    ClosingTransaction.fld_ModifiedBy = getuserid;
-                                    dbr.Entry(ClosingTransaction).State = EntityState.Modified;
-                                    dbr.SaveChanges();
-                                    UpdateAuditTrail(NegaraID, SyarikatID, WilayahID, LadangID, Year, Month, AuditTrailStatus);
-                                    msg = "Urus niaga telah ditutup";
-                                    statusmsg = "success";
-
-                                    //Added by Shazana 6/6/2023
-                                }
-                                else
-                                {
-                                    msg = "Urusniaga tidak boleh ditutup. " + nama;
-                                    statusmsg = "warning";
-                                }
-                                //Close Added by Shazana 6/6/2023
-                            }
-                        }//Added by Shazana 27/4/2023
+                        }
+                        else
+                        {
+                            msg = GlobalResEstate.msgBalance;
+                            statusmsg = "warning";
+                        }
                     }
                     else
                     {
-                        msg = GlobalResEstate.msgBalance;
+                        msg = "PERHATIAN!!!<br/>Urusniaga tidak boleh ditutup!<br/>Transaction Listing (Debit) = RM" + TL_Debit + "<br/>Transaction Listing (Kredit)= RM" + TL_Credit + "<br/>Posting to SAP, GL to GL = RM" + jumgl2gl + "<br/>Posing to SAP, GL to Vendor (Debit) = RM" + jumgl2vdDt + "<br/>Posing to SAP, GL to Vendor (Kredit) = RM" + jumgl2vdCt;
                         statusmsg = "warning";
                     }
+                    //    }
+                    //    else
+                    //    {
+                    //        msg = "Sila pastikan nilai pemohonan sama seperti didaftar di No SKB sebelum urusniaga ditutup";
+                    //        statusmsg = "warning";
+                    //    }
+
+                    //}
+                    //else
+                    //{
+                    //    msg = "Sila daftar No SKB sebelum urusniaga ditutup";
+                    //    statusmsg = "warning";
+                    //}
                 }
+
                 else
                 {
-                    msg = "PERHATIAN!!!<br/>Urusniaga tidak boleh ditutup!<br/>Transaction Listing (Debit) = RM" + TL_Debit + "<br/>Transaction Listing (Kredit)= RM" + TL_Credit + "<br/>Posting to SAP, GL to GL = RM" + jumgl2gl + "<br/>Posing to SAP, GL to Vendor (Debit) = RM" + jumgl2vdDt + "<br/>Posing to SAP, GL to Vendor (Kredit) = RM" + jumgl2vdCt;
+                    msg = GlobalResEstate.msgGenSalary;
                     statusmsg = "warning";
                 }
-                //    }
-                //    else
-                //    {
-                //        msg = "Sila pastikan nilai pemohonan sama seperti didaftar di No SKB sebelum urusniaga ditutup";
-                //        statusmsg = "warning";
-                //    }
 
-                //}
-                //else
-                //{
-                //    msg = "Sila daftar No SKB sebelum urusniaga ditutup";
-                //    statusmsg = "warning";
-                //}
+
+                dbr.Dispose();
+                return Json(new { msg, statusmsg });
+
             }
             else
             {
+                dbr.Dispose();
                 msg = GlobalResEstate.msgGenSalary;
-                statusmsg = "warning";
+                return Json(new { msg, statusmsg });
             }
-
-
-            dbr.Dispose();
-            return Json(new { msg, statusmsg });
+       
         }
-
         public ActionResult AuditTrail()
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;

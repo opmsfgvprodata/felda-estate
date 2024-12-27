@@ -15,7 +15,7 @@ namespace MVC_SYSTEM.MasterModels
         [Key]
         public int fld_ID { get; set; }
 
-        [StringLength(4)]
+        [StringLength(5)]
         public string fld_KodAktvt { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(GlobalResEstate), ErrorMessageResourceName = "msgModelValidation")]

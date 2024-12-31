@@ -16,6 +16,11 @@
     var hardWorkDatasNew = ViewBag.HardWorkDatasNew as List<tbl_KerjaKesukaran>;
 }
 
+@{
+    var namasyarikat = GetConfig.GetSyarikatNo(ViewBag.costcenter);
+    var namapenuhsyarikat = GetConfig.GetSyarikatFullName(ViewBag.costcenter);
+}
+
 @if (Model.Count() > 0)
 {
     foreach (var pkj in Model.Select(s => s.fldNopkj).Distinct())
@@ -29,9 +34,9 @@
                         <th colspan="18" style="text-align: center; vertical-align: middle; border: none;">
                             <img src="~/Asset/Images/logo_FTPSB.jpg" height="60" width="60" />
                             <br />
-                            @ViewBag.NamaSyarikat
+                            @namapenuhsyarikat
                             <br />
-                            (@ViewBag.NoSyarikat)
+                            @namasyarikat
                             <br />
                             @ViewBag.NamaLadang
                             <br />
@@ -152,7 +157,7 @@
                                 var hardWorkCode = hardWorkData.Select(s => s.fld_KodKwsnSkar).FirstOrDefault();
                                 if (hardWorkCode == "**")
                                 {
-                                    foreach (var item2 in hardWorkDataNew.GroupBy(g => new { g.fld_KodKesukaran, g.fld_Kadar }).Select(s=> new { kod = s.Key.fld_KodKesukaran, kadar = s.Key.fld_Kadar, amount = s.Sum(am => am.fld_Jumlah)}).ToList())
+                                    foreach (var item2 in hardWorkDataNew.GroupBy(g => new { g.fld_KodKesukaran, g.fld_Kadar }).Select(s => new { kod = s.Key.fld_KodKesukaran, kadar = s.Key.fld_Kadar, amount = s.Sum(am => am.fld_Jumlah) }).ToList())
                                     {
                                         var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.kod).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
                                         var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.kod).Select(s => s.fld_HargaKesukaran).FirstOrDefault();

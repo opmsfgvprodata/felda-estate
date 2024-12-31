@@ -658,6 +658,7 @@ namespace MVC_SYSTEM.Controllers
             List<SelectListItem> PilihanPktHT = new List<SelectListItem>();
             List<SelectListItem> PilihanAktvtHT = new List<SelectListItem>();
             List<SelectListItem> PilihanMasaHT = new List<SelectListItem>();
+            List<SelectListItem> TrnsfrLvlHT = new List<SelectListItem>();
 
             //added by faeza 28.02.2021
             //LadangSelectionID = GetNSWL.GetEstateSelection(getuserid);
@@ -697,11 +698,15 @@ namespace MVC_SYSTEM.Controllers
             PilihanMasaHT.Add(new SelectListItem { Text = "Sepenuh Hari", Value = "penuh", Selected = true });
             PilihanMasaHT.Add(new SelectListItem { Text = "Separuh Hari", Value = "separuh", Selected = false });
 
+            TrnsfrLvlHT.Add(new SelectListItem { Text = "Tidak", Value = "0", Selected = true });
+            TrnsfrLvlHT.Add(new SelectListItem { Text = "Ya", Value = "1", Selected = false });
+
             ViewBag.JnisPktHT = JnisPktHT;
             ViewBag.PilihanPktHT = PilihanPktHT;
             ViewBag.PilihanAktvtHT = PilihanAktvtHT;
             ViewBag.JenisChargeHT = JenisChargeHT;
             ViewBag.PilihanMasaHT = PilihanMasaHT;
+            ViewBag.TrnsfrLvlHT = TrnsfrLvlHT;
             dbr.Dispose();
 
             return View();
@@ -732,6 +737,7 @@ namespace MVC_SYSTEM.Controllers
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
             List<tbl_Kerjahdr> tbl_Kerjahdrs = new List<tbl_Kerjahdr>();
             List<tbl_Kerja> tbl_Kerjas = new List<tbl_Kerja>();
             List<CustMod_WorkIdList> CustMod_WorkIdLists = new List<CustMod_WorkIdList>();
@@ -774,18 +780,61 @@ namespace MVC_SYSTEM.Controllers
                 {
                     try
                     {
+                        bool TransferPkt = false;
+                        int? NegaraID2 = NegaraID;
+                        int? SyarikatID2 = SyarikatID;
+                        int? WilayahID2 = WilayahID;
+                        int? LadangID2 = LadangID;
+
+                        if (CustMod_HariTerabai.TrnsfrLvlHT == 1)
+                        {
+                            TransferPkt = true;
+                        }
+                        else
+                        {
+                            TransferPkt = false;
+                        }
+
+                        int PinjampktTransferID = 0;//Added by Shazana 27/6/2024
+                        int transferLvlID = 0;
+                        var transferPktCode = "";
+                        var sapType = "";
+                        var PilihanPktID = 0;
+                        string PilihanPktAsal = CustMod_HariTerabai.PilihanPktHT; //Added by Shazana 5/2/2024
+                        if (TransferPkt)
+                        {
+                            PilihanPktID = int.Parse(CustMod_HariTerabai.PilihanPktHT);
+                            var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
+                            if (pktTransfer != null)
+                            {
+                                PinjampktTransferID = pktTransfer.fld_ID;//Added by Shazana 27/6/2024
+                                PilihanPktAsal = pktTransfer.fld_KodPkt; //Added by Shazana 5/2/2024
+                                NegaraID2 = pktTransfer.fld_NegaraIDAsal;
+                                SyarikatID2 = pktTransfer.fld_SyarikatIDAsal;
+                                WilayahID2 = pktTransfer.fld_WilayahIDAsal;
+                                LadangID2 = pktTransfer.fld_LadangIDAsal;
+                                transferLvlID = pktTransfer.fld_OriginPktID.Value;
+                                transferPktCode = pktTransfer.fld_KodPkt;
+                                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
+                                dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                                var tbl_PktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == pktTransfer.fld_OriginPktID).FirstOrDefault();
+                                CustMod_HariTerabai.PilihanPktHT = PilihanPktAsal;
+                                sapType = tbl_PktUtama.fld_SAPType;
+                            }
+                        }
+
                         if (estateCostCenter == "1000")
                         {
-                            if (EstateFunction.CheckSAPGLMap(dbr, CustMod_HariTerabai.JnisPktHT, CustMod_HariTerabai.PilihanPktHT, CustMod_HariTerabai.PilihanAktvtHT, NegaraID, SyarikatID, WilayahID, LadangID, true, CustMod_HariTerabai.JenisChargeHT, out GLCode, 0))
+                            if (EstateFunction.CheckSAPGLMap(dbrpkt, CustMod_HariTerabai.JnisPktHT, CustMod_HariTerabai.PilihanPktHT, CustMod_HariTerabai.PilihanAktvtHT, NegaraID2, SyarikatID2, WilayahID2, LadangID2, true, CustMod_HariTerabai.JenisChargeHT, out GLCode, transferLvlID))
                             {
-                                CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbr, CustMod_HariTerabai.dateseleted, NegaraID, SyarikatID, WilayahID, LadangID);
+                                CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbrpkt, CustMod_HariTerabai.dateseleted, NegaraID, SyarikatID, WilayahID, LadangID);
                                 if (!CutOfDateStatus)
                                 {
                                     if (CustMod_HariTerabai.SelectionCategory == 1)
                                     {
-                                        KumpulanID = dbr.tbl_KumpulanKerja.Where(x => x.fld_KodKumpulan.Trim() == CustMod_HariTerabai.SelectionData.Trim() && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KumpulanID).FirstOrDefault();
-                                        var pkjids = dbr.tbl_Pkjmast.Where(x => x.fld_KumpulanID == KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").Select(s => s.fld_Nopkj).ToList();
-                                        var datainkrjhdrs = dbr.tbl_Kerjahdr.Where(x => x.fld_Kum.Trim() == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                                        KumpulanID = dbrpkt.tbl_KumpulanKerja.Where(x => x.fld_KodKumpulan.Trim() == CustMod_HariTerabai.SelectionData.Trim() && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KumpulanID).FirstOrDefault();
+                                        var pkjids = dbrpkt.tbl_Pkjmast.Where(x => x.fld_KumpulanID == KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").Select(s => s.fld_Nopkj).ToList();
+                                        var datainkrjhdrs = dbrpkt.tbl_Kerjahdr.Where(x => x.fld_Kum.Trim() == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
                                         if (datainkrjhdrs.Count() == 0)
                                         {
                                             foreach (var pkjid in pkjids)
@@ -793,7 +842,7 @@ namespace MVC_SYSTEM.Controllers
                                                 tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_HariTerabai.SelectionData, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Kdhdct = CustMod_HariTerabai.WorkCode, fld_Hujan = CustMod_HariTerabai.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B" });
                                                 if (CustMod_HariTerabai.JenisChargeHT == "kong")
                                                 {
-                                                    var SalaryIncrement = dbr.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == pkjid && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
+                                                    var SalaryIncrement = dbrpkt.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == pkjid && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
                                                     if (SalaryIncrement != null)
                                                     {
                                                         GetKadarUpah2 = SalaryIncrement;
@@ -814,7 +863,7 @@ namespace MVC_SYSTEM.Controllers
                                                         Hasil = 1;
                                                     }
 
-                                                    tbl_Kerjas.Add(new tbl_Kerja() { fld_Amount = Amount, fld_Bonus = 0, fld_BrtGth = 0, fld_CreatedBy = getuserid, fld_CreatedDT = timezone.gettimezone(), fld_DataSource = "B", fld_JamOT = 0, fld_JnisAktvt = GetActvty.fld_KodJenisAktvt, fld_JnsPkt = CustMod_HariTerabai.JnisPktHT, fld_JumlahHasil = Hasil, fld_KadarByr = GetKadarUpah, fld_KdhMenuai = "-", fld_KodAktvt = CustMod_HariTerabai.PilihanAktvtHT, fld_KodGL = "602", fld_KodPkt = CustMod_HariTerabai.PilihanPktHT, fld_Kong = 0, fld_Kum = CustMod_HariTerabai.SelectionData, fld_LadangID = LadangID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_Nopkj = pkjid, fld_PerBrshGth = 0, fld_Quality = 0, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Unit = GetActvty.fld_Unit, fld_HrgaKwsnSkar = 0, fld_KodKwsnSkar = "-", fld_OverallAmount = Amount });
+                                                    tbl_Kerjas.Add(new tbl_Kerja() { fld_Amount = Amount, fld_Bonus = 0, fld_BrtGth = 0, fld_CreatedBy = getuserid, fld_CreatedDT = timezone.gettimezone(), fld_DataSource = "B", fld_JamOT = 0, fld_JnisAktvt = GetActvty.fld_KodJenisAktvt, fld_JnsPkt = CustMod_HariTerabai.JnisPktHT, fld_JumlahHasil = Hasil, fld_KadarByr = GetKadarUpah, fld_KdhMenuai = "-", fld_KodAktvt = CustMod_HariTerabai.PilihanAktvtHT, fld_KodGL = "602", fld_KodPkt = CustMod_HariTerabai.PilihanPktHT, fld_Kong = 0, fld_Kum = CustMod_HariTerabai.SelectionData, fld_LadangID = LadangID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_Nopkj = pkjid, fld_PerBrshGth = 0, fld_Quality = 0, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Unit = GetActvty.fld_Unit, fld_HrgaKwsnSkar = 0, fld_KodKwsnSkar = "-", fld_OverallAmount = Amount, fld_PinjamStatus = TransferPkt });
                                                 }
                                                 tbl_KerjaHariTerabais.Add(new tbl_KerjaHariTerabai() { fld_Nopkj = pkjid, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_JenisCharge = JenisCharge, fld_MasaKerja = MasaKerja, fld_ApprovedBy = pengurus.fldUserID, fld_ApprovedDT = timezone.gettimezone(), fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID });
                                             }
@@ -829,16 +878,16 @@ namespace MVC_SYSTEM.Controllers
                                     }
                                     else
                                     {
-                                        var datainkrjhdr = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj.Trim() == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+                                        var datainkrjhdr = dbrpkt.tbl_Kerjahdr.Where(x => x.fld_Nopkj.Trim() == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
 
                                         if (datainkrjhdr == null)
                                         {
-                                            var pkjdata = dbr.tbl_Pkjmast.Where(x => x.fld_Nopkj == CustMod_HariTerabai.SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Kdaktf == "1").Select(s => new { s.fld_Nopkj, s.fld_KumpulanID }).FirstOrDefault();
-                                            KumpulanKod = dbr.tbl_KumpulanKerja.Where(x => x.fld_KumpulanID == pkjdata.fld_KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KodKumpulan).FirstOrDefault();
+                                            var pkjdata = dbrpkt.tbl_Pkjmast.Where(x => x.fld_Nopkj == CustMod_HariTerabai.SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Kdaktf == "1").Select(s => new { s.fld_Nopkj, s.fld_KumpulanID }).FirstOrDefault();
+                                            KumpulanKod = dbrpkt.tbl_KumpulanKerja.Where(x => x.fld_KumpulanID == pkjdata.fld_KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KodKumpulan).FirstOrDefault();
                                             tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Kum = KumpulanKod.Trim(), fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Kdhdct = CustMod_HariTerabai.WorkCode, fld_Hujan = CustMod_HariTerabai.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B" });
                                             if (CustMod_HariTerabai.JenisChargeHT == "kong")
                                             {
-                                                var SalaryIncrement = dbr.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == pkjdata.fld_Nopkj && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
+                                                var SalaryIncrement = dbrpkt.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == pkjdata.fld_Nopkj && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
                                                 if (SalaryIncrement != null)
                                                 {
                                                     GetKadarUpah2 = SalaryIncrement;
@@ -859,7 +908,7 @@ namespace MVC_SYSTEM.Controllers
                                                     Hasil = 1;
                                                 }
 
-                                                tbl_Kerjas.Add(new tbl_Kerja() { fld_Amount = Amount, fld_Bonus = 0, fld_BrtGth = 0, fld_CreatedBy = getuserid, fld_CreatedDT = timezone.gettimezone(), fld_DataSource = "B", fld_JamOT = 0, fld_JnisAktvt = GetActvty.fld_KodJenisAktvt, fld_JnsPkt = CustMod_HariTerabai.JnisPktHT, fld_JumlahHasil = Hasil, fld_KadarByr = GetKadarUpah, fld_KdhMenuai = "-", fld_KodAktvt = CustMod_HariTerabai.PilihanAktvtHT, fld_KodGL = "602", fld_KodPkt = CustMod_HariTerabai.PilihanPktHT, fld_Kong = 0, fld_Kum = KumpulanKod, fld_LadangID = LadangID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_Nopkj = pkjdata.fld_Nopkj, fld_PerBrshGth = 0, fld_Quality = 0, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Unit = GetActvty.fld_Unit, fld_HrgaKwsnSkar = 0, fld_KodKwsnSkar = "-", fld_OverallAmount = Amount });
+                                                tbl_Kerjas.Add(new tbl_Kerja() { fld_Amount = Amount, fld_Bonus = 0, fld_BrtGth = 0, fld_CreatedBy = getuserid, fld_CreatedDT = timezone.gettimezone(), fld_DataSource = "B", fld_JamOT = 0, fld_JnisAktvt = GetActvty.fld_KodJenisAktvt, fld_JnsPkt = CustMod_HariTerabai.JnisPktHT, fld_JumlahHasil = Hasil, fld_KadarByr = GetKadarUpah, fld_KdhMenuai = "-", fld_KodAktvt = CustMod_HariTerabai.PilihanAktvtHT, fld_KodGL = "602", fld_KodPkt = CustMod_HariTerabai.PilihanPktHT, fld_Kong = 0, fld_Kum = KumpulanKod, fld_LadangID = LadangID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_Nopkj = pkjdata.fld_Nopkj, fld_PerBrshGth = 0, fld_Quality = 0, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Unit = GetActvty.fld_Unit, fld_HrgaKwsnSkar = 0, fld_KodKwsnSkar = "-", fld_OverallAmount = Amount, fld_PinjamStatus = TransferPkt });
                                             }
 
                                             tbl_KerjaHariTerabais.Add(new tbl_KerjaHariTerabai() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_JenisCharge = JenisCharge, fld_MasaKerja = MasaKerja, fld_ApprovedBy = pengurus.fldUserID, fld_ApprovedDT = timezone.gettimezone(), fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID });
@@ -876,15 +925,15 @@ namespace MVC_SYSTEM.Controllers
                                     {
                                         msg = GlobalResEstate.msgAdd;
                                         statusmsg = "success";
-                                        dbr.tbl_Kerjahdr.AddRange(tbl_Kerjahdrs);
+                                        dbrpkt.tbl_Kerjahdr.AddRange(tbl_Kerjahdrs);
 
                                         if (tbl_Kerjas.Count() > 0)
                                         {
-                                            dbr.tbl_Kerja.AddRange(tbl_Kerjas);
+                                            dbrpkt.tbl_Kerja.AddRange(tbl_Kerjas);
                                         }
-                                        dbr.tbl_KerjaHariTerabai.AddRange(tbl_KerjaHariTerabais);
-                                        dbr.SaveChanges();
-                                        EstateFunction.SaveDataKerjaSAP(dbr, dbr, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, false, "", 0, getuserid);
+                                        dbrpkt.tbl_KerjaHariTerabai.AddRange(tbl_KerjaHariTerabais);
+                                        dbrpkt.SaveChanges();
+                                        EstateFunction.SaveDataKerjaSAP(dbrpkt, dbrpkt, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, GLCode, false, "", 0, getuserid);
                                     }
                                 }
                                 else
@@ -902,42 +951,104 @@ namespace MVC_SYSTEM.Controllers
                         }
                         else
                         {
-                            CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbr, CustMod_HariTerabai.dateseleted, NegaraID, SyarikatID, WilayahID, LadangID);
-                            if (!CutOfDateStatus)
+                            if (EstateFunction.CheckSAPGLMapFPM(CustMod_HariTerabai.SelectionCategory, CustMod_HariTerabai.SelectionData, dbr, CustMod_HariTerabai.JnisPktHT, CustMod_HariTerabai.PilihanPktHT, CustMod_HariTerabai.PilihanAktvtHT, NegaraID2, SyarikatID2, WilayahID2, LadangID2, true, CustMod_HariTerabai.JenisChargeHT, out GLCode, transferLvlID, PinjampktTransferID, WilayahID, SyarikatID)) //Modified by Shazana 15/10
                             {
-                                var tbl_MapGL = db.tbl_MapGL.Where(x => x.fld_SyarikatID == 1 && (x.fld_Paysheet == "PT" || x.fld_Paysheet == "PA") && x.fld_Deleted == false).ToList();
-                                List<CustMod_Work> HadirData = new List<CustMod_Work>();
-                                if (CustMod_HariTerabai.SelectionCategory == 1)
+                                CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbrpkt, CustMod_HariTerabai.dateseleted, NegaraID, SyarikatID, WilayahID, LadangID);
+                                if (!CutOfDateStatus)
                                 {
-                                    KumpulanID = dbr.tbl_KumpulanKerja.Where(x => x.fld_KodKumpulan.Trim() == CustMod_HariTerabai.SelectionData.Trim() && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KumpulanID).FirstOrDefault();
-                                    var tbl_Pkjmast = dbr.tbl_Pkjmast.Where(x => x.fld_KumpulanID == KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").ToList();
-                                    var pkjids = tbl_Pkjmast.Select(s => s.fld_Nopkj).ToList();
-                                    var datainkrjhdrs = dbr.tbl_Kerjahdr.Where(x => x.fld_Kum.Trim() == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
-                                    if (datainkrjhdrs.Count() == 0)
+                                    var tbl_MapGL = db.tbl_MapGL.Where(x => x.fld_SyarikatID == 1 && (x.fld_Paysheet == "PT" || x.fld_Paysheet == "PA") && x.fld_Deleted == false).ToList();
+                                    List<CustMod_Work> HadirData = new List<CustMod_Work>();
+                                    if (CustMod_HariTerabai.SelectionCategory == 1)
                                     {
-                                        foreach (var pkjid in pkjids)
+                                        KumpulanID = dbrpkt.tbl_KumpulanKerja.Where(x => x.fld_KodKumpulan.Trim() == CustMod_HariTerabai.SelectionData.Trim() && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KumpulanID).FirstOrDefault();
+                                        var tbl_Pkjmast = dbrpkt.tbl_Pkjmast.Where(x => x.fld_KumpulanID == KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").ToList();
+                                        var pkjids = tbl_Pkjmast.Select(s => s.fld_Nopkj).ToList();
+                                        var datainkrjhdrs = dbrpkt.tbl_Kerjahdr.Where(x => x.fld_Kum.Trim() == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                                        if (datainkrjhdrs.Count() == 0)
                                         {
-
-                                            GLCode = "";
-                                            var paysheetID = "";
-                                            var checkatt = tbl_Pkjmast.Where(x => x.fld_Nopkj == pkjid).FirstOrDefault();
-                                            if (checkatt.fld_Kdrkyt == "MA")
+                                            foreach (var pkjid in pkjids)
                                             {
-                                                GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == CustMod_HariTerabai.PilihanAktvtHT && x.fld_Paysheet == "PT").Select(s => s.fld_KodGL).FirstOrDefault();
-                                                paysheetID = "PT";
-                                            }
-                                            else
-                                            {
-                                                GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == CustMod_HariTerabai.PilihanAktvtHT && x.fld_Paysheet == "PA").Select(s => s.fld_KodGL).FirstOrDefault();
-                                                paysheetID = "PA";
-                                            }
 
-                                            HadirData.Add(new CustMod_Work { nopkj = pkjid, GLCode = GLCode, PaysheetID = paysheetID });
+                                                GLCode = "";
+                                                var paysheetID = "";
+                                                var checkatt = tbl_Pkjmast.Where(x => x.fld_Nopkj == pkjid).FirstOrDefault();
+                                                if (checkatt.fld_Kdrkyt == "MA")
+                                                {
+                                                    GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == CustMod_HariTerabai.PilihanAktvtHT && x.fld_Paysheet == "PT").Select(s => s.fld_KodGL).FirstOrDefault();
+                                                    paysheetID = "PT";
+                                                }
+                                                else
+                                                {
+                                                    GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == CustMod_HariTerabai.PilihanAktvtHT && x.fld_Paysheet == "PA").Select(s => s.fld_KodGL).FirstOrDefault();
+                                                    paysheetID = "PA";
+                                                }
 
-                                            tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_HariTerabai.SelectionData, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Kdhdct = CustMod_HariTerabai.WorkCode, fld_Hujan = CustMod_HariTerabai.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B" });
+                                                HadirData.Add(new CustMod_Work { nopkj = pkjid, GLCode = GLCode, PaysheetID = paysheetID });
+
+                                                tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjid, fld_Kum = CustMod_HariTerabai.SelectionData, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Kdhdct = CustMod_HariTerabai.WorkCode, fld_Hujan = CustMod_HariTerabai.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B" });
+                                                if (CustMod_HariTerabai.JenisChargeHT == "kong")
+                                                {
+                                                    var SalaryIncrement = dbrpkt.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == pkjid && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
+                                                    if (SalaryIncrement != null)
+                                                    {
+                                                        GetKadarUpah2 = SalaryIncrement;
+                                                    }
+                                                    else
+                                                    {
+                                                        GetKadarUpah2 = 0;
+                                                    }
+
+                                                    if (CustMod_HariTerabai.PilihanMasaHT == "separuh")
+                                                    {
+                                                        Amount = (GetKadarUpah + GetKadarUpah2) / 2;
+                                                        Hasil = 0.5m;
+                                                    }
+                                                    else
+                                                    {
+                                                        Amount = (GetKadarUpah + GetKadarUpah2);
+                                                        Hasil = 1;
+                                                    }
+
+                                                    tbl_Kerjas.Add(new tbl_Kerja() { fld_Amount = Amount, fld_Bonus = 0, fld_BrtGth = 0, fld_CreatedBy = getuserid, fld_CreatedDT = timezone.gettimezone(), fld_DataSource = "B", fld_JamOT = 0, fld_JnisAktvt = GetActvty.fld_KodJenisAktvt, fld_JnsPkt = CustMod_HariTerabai.JnisPktHT, fld_JumlahHasil = Hasil, fld_KadarByr = GetKadarUpah, fld_KdhMenuai = "-", fld_KodAktvt = CustMod_HariTerabai.PilihanAktvtHT, fld_KodGL = "602", fld_KodPkt = CustMod_HariTerabai.PilihanPktHT, fld_Kong = 0, fld_Kum = CustMod_HariTerabai.SelectionData, fld_LadangID = LadangID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_Nopkj = pkjid, fld_PerBrshGth = 0, fld_Quality = 0, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Unit = GetActvty.fld_Unit, fld_HrgaKwsnSkar = 0, fld_KodKwsnSkar = "-", fld_OverallAmount = Amount, fld_PinjamStatus = TransferPkt });
+                                                }
+                                                tbl_KerjaHariTerabais.Add(new tbl_KerjaHariTerabai() { fld_Nopkj = pkjid, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_JenisCharge = JenisCharge, fld_MasaKerja = MasaKerja, fld_ApprovedBy = pengurus.fldUserID, fld_ApprovedDT = timezone.gettimezone(), fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID });
+                                            }
+                                            disablesavebtn = true;
+                                        }
+                                        else
+                                        {
+                                            msg = GlobalResEstate.msgDeleteAttnd;
+                                            statusmsg = "warning";
+                                            disablesavebtn = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var datainkrjhdr = dbrpkt.tbl_Kerjahdr.Where(x => x.fld_Nopkj.Trim() == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
+
+                                        if (datainkrjhdr == null)
+                                        {
+                                            var pkjdata = dbrpkt.tbl_Pkjmast.Where(x => x.fld_Nopkj == CustMod_HariTerabai.SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Kdaktf == "1").Select(s => new { s.fld_Nopkj, s.fld_KumpulanID, s.fld_Kdrkyt }).FirstOrDefault();
+                                            KumpulanKod = dbrpkt.tbl_KumpulanKerja.Where(x => x.fld_KumpulanID == pkjdata.fld_KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KodKumpulan).FirstOrDefault();
+                                            tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Kum = KumpulanKod.Trim(), fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Kdhdct = CustMod_HariTerabai.WorkCode, fld_Hujan = CustMod_HariTerabai.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B" });
                                             if (CustMod_HariTerabai.JenisChargeHT == "kong")
                                             {
-                                                var SalaryIncrement = dbr.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == pkjid && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
+                                                GLCode = "";
+                                                var paysheetID = "";
+                                                if (pkjdata.fld_Kdrkyt == "MA")
+                                                {
+                                                    GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == CustMod_HariTerabai.PilihanAktvtHT && x.fld_Paysheet == "PT").Select(s => s.fld_KodGL).FirstOrDefault();
+                                                    paysheetID = "PT";
+                                                }
+                                                else
+                                                {
+                                                    GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == CustMod_HariTerabai.PilihanAktvtHT && x.fld_Paysheet == "PA").Select(s => s.fld_KodGL).FirstOrDefault();
+                                                    paysheetID = "PA";
+                                                }
+
+                                                HadirData.Add(new CustMod_Work { nopkj = pkjdata.fld_Nopkj, GLCode = GLCode, PaysheetID = paysheetID });
+
+                                                var SalaryIncrement = dbrpkt.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == pkjdata.fld_Nopkj && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
                                                 if (SalaryIncrement != null)
                                                 {
                                                     GetKadarUpah2 = SalaryIncrement;
@@ -958,99 +1069,45 @@ namespace MVC_SYSTEM.Controllers
                                                     Hasil = 1;
                                                 }
 
-                                                tbl_Kerjas.Add(new tbl_Kerja() { fld_Amount = Amount, fld_Bonus = 0, fld_BrtGth = 0, fld_CreatedBy = getuserid, fld_CreatedDT = timezone.gettimezone(), fld_DataSource = "B", fld_JamOT = 0, fld_JnisAktvt = GetActvty.fld_KodJenisAktvt, fld_JnsPkt = CustMod_HariTerabai.JnisPktHT, fld_JumlahHasil = Hasil, fld_KadarByr = GetKadarUpah, fld_KdhMenuai = "-", fld_KodAktvt = CustMod_HariTerabai.PilihanAktvtHT, fld_KodGL = "602", fld_KodPkt = CustMod_HariTerabai.PilihanPktHT, fld_Kong = 0, fld_Kum = CustMod_HariTerabai.SelectionData, fld_LadangID = LadangID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_Nopkj = pkjid, fld_PerBrshGth = 0, fld_Quality = 0, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Unit = GetActvty.fld_Unit, fld_HrgaKwsnSkar = 0, fld_KodKwsnSkar = "-", fld_OverallAmount = Amount });
+                                                tbl_Kerjas.Add(new tbl_Kerja() { fld_Amount = Amount, fld_Bonus = 0, fld_BrtGth = 0, fld_CreatedBy = getuserid, fld_CreatedDT = timezone.gettimezone(), fld_DataSource = "B", fld_JamOT = 0, fld_JnisAktvt = GetActvty.fld_KodJenisAktvt, fld_JnsPkt = CustMod_HariTerabai.JnisPktHT, fld_JumlahHasil = Hasil, fld_KadarByr = GetKadarUpah, fld_KdhMenuai = "-", fld_KodAktvt = CustMod_HariTerabai.PilihanAktvtHT, fld_KodGL = "602", fld_KodPkt = CustMod_HariTerabai.PilihanPktHT, fld_Kong = 0, fld_Kum = KumpulanKod, fld_LadangID = LadangID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_Nopkj = pkjdata.fld_Nopkj, fld_PerBrshGth = 0, fld_Quality = 0, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Unit = GetActvty.fld_Unit, fld_HrgaKwsnSkar = 0, fld_KodKwsnSkar = "-", fld_OverallAmount = Amount, fld_PinjamStatus = TransferPkt });
                                             }
-                                            tbl_KerjaHariTerabais.Add(new tbl_KerjaHariTerabai() { fld_Nopkj = pkjid, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_JenisCharge = JenisCharge, fld_MasaKerja = MasaKerja, fld_ApprovedBy = pengurus.fldUserID, fld_ApprovedDT = timezone.gettimezone(), fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID });
+
+                                            tbl_KerjaHariTerabais.Add(new tbl_KerjaHariTerabai() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_JenisCharge = JenisCharge, fld_MasaKerja = MasaKerja, fld_ApprovedBy = pengurus.fldUserID, fld_ApprovedDT = timezone.gettimezone(), fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID });
                                         }
-                                        disablesavebtn = true;
+                                        else
+                                        {
+                                            msg = GlobalResEstate.msgDeleteAttnd;
+                                            statusmsg = "warning";
+                                            disablesavebtn = true;
+                                        }
                                     }
-                                    else
+
+                                    if (tbl_Kerjahdrs.Count() != 0)
                                     {
-                                        msg = GlobalResEstate.msgDeleteAttnd;
-                                        statusmsg = "warning";
-                                        disablesavebtn = true;
+                                        msg = GlobalResEstate.msgAdd;
+                                        statusmsg = "success";
+                                        dbrpkt.tbl_Kerjahdr.AddRange(tbl_Kerjahdrs);
+
+                                        if (tbl_Kerjas.Count() > 0)
+                                        {
+                                            dbrpkt.tbl_Kerja.AddRange(tbl_Kerjas);
+                                        }
+                                        dbrpkt.tbl_KerjaHariTerabai.AddRange(tbl_KerjaHariTerabais);
+                                        dbrpkt.SaveChanges();
+                                        EstateFunction.SaveDataKerjaSAPFPM(dbrpkt, dbrpkt, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, "", PilihanPktID, getuserid);
                                     }
                                 }
                                 else
                                 {
-                                    var datainkrjhdr = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj.Trim() == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).FirstOrDefault();
-
-                                    if (datainkrjhdr == null)
-                                    {
-                                        var pkjdata = dbr.tbl_Pkjmast.Where(x => x.fld_Nopkj == CustMod_HariTerabai.SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Kdaktf == "1").Select(s => new { s.fld_Nopkj, s.fld_KumpulanID, s.fld_Kdrkyt }).FirstOrDefault();
-                                        KumpulanKod = dbr.tbl_KumpulanKerja.Where(x => x.fld_KumpulanID == pkjdata.fld_KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KodKumpulan).FirstOrDefault();
-                                        tbl_Kerjahdrs.Add(new tbl_Kerjahdr() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Kum = KumpulanKod.Trim(), fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Kdhdct = CustMod_HariTerabai.WorkCode, fld_Hujan = CustMod_HariTerabai.Rainning, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = date, fld_DataSource = "B" });
-                                        if (CustMod_HariTerabai.JenisChargeHT == "kong")
-                                        {
-                                            GLCode = "";
-                                            var paysheetID = "";
-                                            if (pkjdata.fld_Kdrkyt == "MA")
-                                            {
-                                                GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == CustMod_HariTerabai.PilihanAktvtHT && x.fld_Paysheet == "PT").Select(s => s.fld_KodGL).FirstOrDefault();
-                                                paysheetID = "PT";
-                                            }
-                                            else
-                                            {
-                                                GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == CustMod_HariTerabai.PilihanAktvtHT && x.fld_Paysheet == "PA").Select(s => s.fld_KodGL).FirstOrDefault();
-                                                paysheetID = "PA";
-                                            }
-
-                                            HadirData.Add(new CustMod_Work { nopkj = pkjdata.fld_Nopkj, GLCode = GLCode, PaysheetID = paysheetID });
-
-                                            var SalaryIncrement = dbr.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == pkjdata.fld_Nopkj && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
-                                            if (SalaryIncrement != null)
-                                            {
-                                                GetKadarUpah2 = SalaryIncrement;
-                                            }
-                                            else
-                                            {
-                                                GetKadarUpah2 = 0;
-                                            }
-
-                                            if (CustMod_HariTerabai.PilihanMasaHT == "separuh")
-                                            {
-                                                Amount = (GetKadarUpah + GetKadarUpah2) / 2;
-                                                Hasil = 0.5m;
-                                            }
-                                            else
-                                            {
-                                                Amount = (GetKadarUpah + GetKadarUpah2);
-                                                Hasil = 1;
-                                            }
-
-                                            tbl_Kerjas.Add(new tbl_Kerja() { fld_Amount = Amount, fld_Bonus = 0, fld_BrtGth = 0, fld_CreatedBy = getuserid, fld_CreatedDT = timezone.gettimezone(), fld_DataSource = "B", fld_JamOT = 0, fld_JnisAktvt = GetActvty.fld_KodJenisAktvt, fld_JnsPkt = CustMod_HariTerabai.JnisPktHT, fld_JumlahHasil = Hasil, fld_KadarByr = GetKadarUpah, fld_KdhMenuai = "-", fld_KodAktvt = CustMod_HariTerabai.PilihanAktvtHT, fld_KodGL = "602", fld_KodPkt = CustMod_HariTerabai.PilihanPktHT, fld_Kong = 0, fld_Kum = KumpulanKod, fld_LadangID = LadangID, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_Nopkj = pkjdata.fld_Nopkj, fld_PerBrshGth = 0, fld_Quality = 0, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_Unit = GetActvty.fld_Unit, fld_HrgaKwsnSkar = 0, fld_KodKwsnSkar = "-", fld_OverallAmount = Amount });
-                                        }
-
-                                        tbl_KerjaHariTerabais.Add(new tbl_KerjaHariTerabai() { fld_Nopkj = pkjdata.fld_Nopkj, fld_Tarikh = CustMod_HariTerabai.dateseleted, fld_JenisCharge = JenisCharge, fld_MasaKerja = MasaKerja, fld_ApprovedBy = pengurus.fldUserID, fld_ApprovedDT = timezone.gettimezone(), fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID });
-                                    }
-                                    else
-                                    {
-                                        msg = GlobalResEstate.msgDeleteAttnd;
-                                        statusmsg = "warning";
-                                        disablesavebtn = true;
-                                    }
-                                }
-
-                                if (tbl_Kerjahdrs.Count() != 0)
-                                {
-                                    msg = GlobalResEstate.msgAdd;
-                                    statusmsg = "success";
-                                    dbr.tbl_Kerjahdr.AddRange(tbl_Kerjahdrs);
-
-                                    if (tbl_Kerjas.Count() > 0)
-                                    {
-                                        dbr.tbl_Kerja.AddRange(tbl_Kerjas);
-                                    }
-                                    dbr.tbl_KerjaHariTerabai.AddRange(tbl_KerjaHariTerabais);
-                                    dbr.SaveChanges();
-                                    EstateFunction.SaveDataKerjaSAPFPM(dbr, dbr, tbl_Kerjas, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, false, "", 0, getuserid);
+                                    msg = GlobalResEstate.msgError;
+                                    statusmsg = "warning";
+                                    disablesavebtn = true;
                                 }
                             }
                             else
                             {
-                                msg = GlobalResEstate.msgError;
+                                msg = GlobalResEstate.msgKodGLnotFound;
                                 statusmsg = "warning";
-                                disablesavebtn = true;
                             }
                         }
 
@@ -1058,12 +1115,12 @@ namespace MVC_SYSTEM.Controllers
                         List<tbl_Kerja> tbl_KerjaList = new List<tbl_Kerja>();
                         if (CustMod_HariTerabai.SelectionCategory == 1)
                         {
-                            var datainpkjmast = dbr.tbl_Pkjmast.Where(x => x.fld_KumpulanID == KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").Select(s => s.fld_Nopkj.Trim()).ToList();
-                            tbl_KerjaList = dbr.tbl_Kerja.Where(x => x.fld_Kum == CustMod_HariTerabai.SelectionData && datainpkjmast.Contains(x.fld_Nopkj) && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Distinct().ToList();
+                            var datainpkjmast = dbrpkt.tbl_Pkjmast.Where(x => x.fld_KumpulanID == KumpulanID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").Select(s => s.fld_Nopkj.Trim()).ToList();
+                            tbl_KerjaList = dbrpkt.tbl_Kerja.Where(x => x.fld_Kum == CustMod_HariTerabai.SelectionData && datainpkjmast.Contains(x.fld_Nopkj) && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Distinct().ToList();
                         }
                         else
                         {
-                            tbl_KerjaList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Distinct().ToList();
+                            tbl_KerjaList = dbrpkt.tbl_Kerja.Where(x => x.fld_Nopkj == CustMod_HariTerabai.SelectionData && x.fld_Tarikh == CustMod_HariTerabai.dateseleted && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Distinct().ToList();
                         }
                         foreach (var tbl_KerjaData in tbl_KerjaList)
                         {
@@ -1088,10 +1145,10 @@ namespace MVC_SYSTEM.Controllers
                                 //if (fld_LsPktUtama == null) { fld_LsPktUtama = 0; }
 
                                 //Added by Shazana 5/2/2024
-                                int? NegaraID2 = NegaraID;
-                                int? SyarikatID2 = SyarikatID;
-                                int? WilayahID2 = WilayahID;
-                                int? LadangID2 = LadangID;
+                                NegaraID2 = NegaraID;
+                                SyarikatID2 = SyarikatID;
+                                WilayahID2 = WilayahID;
+                                LadangID2 = LadangID;
 
                                 string fld_KodPkt = "0";
                                 fld_LsPktUtama = 0;
@@ -1103,7 +1160,6 @@ namespace MVC_SYSTEM.Controllers
                                     LadangID2 = PinjamDetails.fld_LadangIDAsal;
                                     //Connection to db pinjam
                                     Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
-                                    MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
                                     dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
                                     string str = tbl_KerjaData.fld_KodPkt;
                                     str = str.Substring(0, (str.Length - 2));
@@ -1328,6 +1384,7 @@ namespace MVC_SYSTEM.Controllers
             {
                 TransferPkt = false;
             }
+            int PinjampktTransferID = 0;//Added by Shazana 27/6/2024
             int transferLvlID = 0;
             var transferPktCode = "";
             var sapType = "";
@@ -1339,6 +1396,7 @@ namespace MVC_SYSTEM.Controllers
                 var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
                 if (pktTransfer != null)
                 {
+                    PinjampktTransferID = pktTransfer.fld_ID;//Added by Shazana 27/6/2024
                     PilihanPktAsal = pktTransfer.fld_KodPkt; //Added by Shazana 5/2/2024
                     JnisPkt = byte.Parse(pktTransfer.fld_JenisPkt.ToString());
                     NegaraID2 = pktTransfer.fld_NegaraIDAsal;
@@ -1359,7 +1417,6 @@ namespace MVC_SYSTEM.Controllers
             int JumlahKadarHargaBerbeza = 0;
             if (estateCostCenter == "1000")
             {
-
                 if (EstateFunction.CheckSAPGLMap(dbrpkt, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID))
                 {
                     if (HadirData != null)
@@ -1841,480 +1898,236 @@ namespace MVC_SYSTEM.Controllers
             }
             else
             {
-                if (HadirData != null)
+                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData, dbrpkt, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID, PinjampktTransferID,WilayahID,SyarikatID))
                 {
-                    decimal? kadarbayarLast = 0;
-                    CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbr, SelectDate, NegaraID, SyarikatID, WilayahID, LadangID);
-                    if (!CutOfDateStatus)
+                    if (HadirData != null)
                     {
-                        checksameactvt = SelectionCategory == 1 ? dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Kum == SelectionData && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count()
-                        :
-                        dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count();
-
-                        var getJenisActvtDetails = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3 && x.fld_Deleted == false).FirstOrDefault();
-
-                        checkkongactvt = SelectionCategory == 1 ? dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Kum == SelectionData && x.fld_JnisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count()
-                        :
-                        dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_JnisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count();
-
-                        if (getJenisActvtDetails.fld_KodJnsAktvt == JnisAktvt)
+                        decimal? kadarbayarLast = 0;
+                        CutOfDateStatus = EstateFunction.GetStatusCutProcess(dbr, SelectDate, NegaraID, SyarikatID, WilayahID, LadangID);
+                        if (!CutOfDateStatus)
                         {
-                            checksameactvt = SelectionCategory == 1 ? dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Kum == SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count()
+                            checksameactvt = SelectionCategory == 1 ? dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Kum == SelectionData && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count()
                             :
-                            dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count();
-                        }
+                            dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count();
 
-                        //Added by Shazana 9/10/2023 
-                        decimal? fld_LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == PilihanPkt && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID2).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                        //Added by Shazana 29/11/2023 
-                        if (fld_LsPktUtama == null)
-                        {
-                            fld_LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == PilihanPkt && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID2).Select(x => x.fld_LsPkt).FirstOrDefault();
-                        }
-                        //Added by Shazana 5/2/2024
-                        if (fld_LsPktUtama == null)
-                        {
-                            string str = PilihanPkt;
-                            str = str.Substring(0, (str.Length - 2));
-                            fld_LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == str && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                            var getJenisActvtDetails = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3 && x.fld_Deleted == false).FirstOrDefault();
+
+                            checkkongactvt = SelectionCategory == 1 ? dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Kum == SelectionData && x.fld_JnisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count()
+                            :
+                            dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_JnisAktvt == getJenisActvtDetails.fld_KodJnsAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count();
+
+                            if (getJenisActvtDetails.fld_KodJnsAktvt == JnisAktvt)
+                            {
+                                checksameactvt = SelectionCategory == 1 ? dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Kum == SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count()
+                                :
+                                dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Count();
+                            }
+
+                            //Added by Shazana 9/10/2023 
+                            decimal? fld_LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == PilihanPkt && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID2).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                            //Added by Shazana 29/11/2023 
                             if (fld_LsPktUtama == null)
                             {
-                                fld_LsPktUtama = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == str && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
+                                fld_LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == PilihanPkt && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID2).Select(x => x.fld_LsPkt).FirstOrDefault();
                             }
-
-                        }
-
-                        var repeatingAktivitiPeringkat = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodPkt == PilihanPktAsal && x.fld_KodAktvt == PilihanAktvt).ToList();
-                        var namajenisaktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJnsAktvt == JnisAktvt).FirstOrDefault();
-
-                        //Added by Shazana 22/12/2023
-                        decimal? upahAktivitiSekarangDisable3_ = 0M;
-                        decimal? upahAktivitiSekarangDisable3 = 0M;
-                        upahAktivitiSekarangDisable3_ = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodAktvt == PilihanAktvt && x.fld_DisabledFlag == 3).Select(x => x.fld_Harga).FirstOrDefault();
-                        if (upahAktivitiSekarangDisable3_ == null)
-                        { upahAktivitiSekarangDisable3 = 0M; }
-                        else
-                        {
-                            { upahAktivitiSekarangDisable3 = upahAktivitiSekarangDisable3_; }
-                        }
-                        //var upahAktivitiPrevious = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID).ToList();
-
-                        //Modified by Shazana 22/11/2023 -Hanya kong yg tiada luas je tak boleh disimpan
-                        int? DisabledFlag = db.tbl_JenisAktiviti.Where(x => x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).Select(x => x.fld_DisabledFlag).FirstOrDefault();
-                        var ListJenisAktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && x.fld_DisabledFlag == 3).ToList();
-
-                        var ListAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID).Select(x => x.fld_JnisAktvt).ToList();
-
-                        int? AktivitiDisable3 = 0;
-                        int? AktivitiDisableBukan3 = 0;
-                        int? AktivitiDisableSekarang = 0;
-                        decimal? kodaktivitiPrevious = 0;
-                        decimal? KadarBayrUpahAktivitiKeyIn = 0;
-                        //Added by Shazana 8/1/2024
-
-                        int? UpahAktivitiDisableBukan3 = 0;
-                        int? UpahAktivitiDisableSekarang = 0;
-                        decimal? LsPktUtama = 0; //Added by Shazana 5/2/2024
-                        if (SelectionCategory == 1) //Kumpulan
-                        {
-                            ListAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Kum == SelectionData).Select(x => x.fld_JnisAktvt).ToList();
-                            //Modified by Shazana 8/1/2024
-                            //KadarBayrUpahAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Kum == SelectionData).Select(x => x.fld_KadarByr).FirstOrDefault();
-                            KodUpahAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Kum == SelectionData).Select(x => x.fld_KodAktvt).FirstOrDefault();
-                            if (KodUpahAktivitiKeyIn == null)
-                            { KadarBayrUpahAktivitiKeyIn = 0M; }
-                            else
+                            //Added by Shazana 5/2/2024
+                            if (fld_LsPktUtama == null)
                             {
-                                KadarBayrUpahAktivitiKeyIn = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodAktvt == KodUpahAktivitiKeyIn).Select(x => x.fld_Harga).FirstOrDefault();
-                            }
-                            AktivitiDisable3 = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListAktivitiKeyIn.Contains(x.fld_KodJnsAktvt) && x.fld_DisabledFlag == 3).ToList().Count();
-                            AktivitiDisableBukan3 = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListAktivitiKeyIn.Contains(x.fld_KodJnsAktvt) && x.fld_DisabledFlag != 3).ToList().Count();
-                            AktivitiDisableSekarang = db.tbl_JenisAktiviti.Where(x => x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).Select(x => x.fld_DisabledFlag).FirstOrDefault();
-
-
-                            //Added by Shazana on 8/1/2024 -Semakan sekiranya terdapat kadar bayaran berbeza dalam kong
-                            var ListUpahAktiviti = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Kum == SelectionData).Select(x => x.fld_KodAktvt).ToList();
-                            var ListUpahAktivitiDisable3 = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListUpahAktiviti.Contains(x.fld_KodAktvt) && x.fld_DisabledFlag == 3).ToList();
-                            if (ListUpahAktivitiDisable3 != null)
-                            {
-                                kodaktivitiPrevious = ListUpahAktivitiDisable3.Where(x => x.fld_Harga != upahAktivitiSekarangDisable3).Select(x => x.fld_Harga).FirstOrDefault();
-                            }
-                            else
-                            { kodaktivitiPrevious = 0; }
-
-                        }
-                        else
-                        {
-                            ListAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Nopkj == SelectionData).Select(x => x.fld_JnisAktvt).ToList();
-                            //Modified by Shazana 8/1/2024
-                            //KadarBayrUpahAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Nopkj == SelectionData).Select(x => x.fld_KadarByr).FirstOrDefault();
-                            KodUpahAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Nopkj == SelectionData).Select(x => x.fld_KodAktvt).FirstOrDefault();
-                            if (KodUpahAktivitiKeyIn == null)
-                            { KadarBayrUpahAktivitiKeyIn = 0M; }
-                            else
-                            {
-                                KadarBayrUpahAktivitiKeyIn = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodAktvt == KodUpahAktivitiKeyIn).Select(x => x.fld_Harga).FirstOrDefault();
-                            }
-                            AktivitiDisable3 = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListAktivitiKeyIn.Contains(x.fld_KodJnsAktvt) && x.fld_DisabledFlag == 3).ToList().Count();
-                            AktivitiDisableBukan3 = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListAktivitiKeyIn.Contains(x.fld_KodJnsAktvt) && x.fld_DisabledFlag != 3).ToList().Count();
-                            AktivitiDisableSekarang = db.tbl_JenisAktiviti.Where(x => x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).Select(x => x.fld_DisabledFlag).FirstOrDefault();
-
-                            //Modified by Shazana 8/1/2024
-                            kodaktivitiPrevious = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodAktvt == KodUpahAktivitiKeyIn && x.fld_Harga != upahAktivitiSekarangDisable3).Select(x => x.fld_Harga).FirstOrDefault();
-                            if (kodaktivitiPrevious == null)
-                            { kodaktivitiPrevious = 0M; }
-                        }
-
-                        if (AktivitiDisableBukan3 > 0 && AktivitiDisableSekarang == 3)
-                        {
-                            msg = GlobalResEstate.msgExistKadaran;
-                            statusmsg = "warning";
-                        }
-                        else if (AktivitiDisable3 > 0 && AktivitiDisableSekarang != 3)
-                        {
-                            msg = GlobalResEstate.msgExistKong;
-                            statusmsg = "warning";
-                        }
-                        else if (AktivitiDisable3 > 0 && AktivitiDisableSekarang == 3 && KadarBayrUpahAktivitiKeyIn != upahAktivitiSekarangDisable3)
-                        {
-                            msg = GlobalResEstate.msgDifferentKong;
-                            statusmsg = "warning";
-                        }
-                        //Added by Shazana 9/10/2023 -Tambah validaton untuk tiada nilai luas dalam peringkat dan kodaktiviti dan peringkat yang sama telah wujud
-                        //Added by Shazana 22/11/2023 - add paparan validation luas untuk kong sahaja
-                        else if ((fld_LsPktUtama == null || fld_LsPktUtama == 0) && namajenisaktiviti.fld_DisabledFlag == 3)
-                        {
-                            msg = GlobalResEstate.msgLuasNull + " (" + PilihanPkt + ") ";
-                            statusmsg = "warning";
-                        }
-                        else if (repeatingAktivitiPeringkat.Count() != 0)
-                        {
-                            msg = GlobalResEstate.msgSimilarAktivitiPeringkat;
-                            statusmsg = "warning";
-                        }
-                        //Adedd by Shazana 22/12/2023 //Checking different type of kong
-                        //Modified by Shazana 8/1/2024
-                        else if ((upahAktivitiSekarangDisable3 != 0) && kodaktivitiPrevious != 0 && kodaktivitiPrevious != null && kodaktivitiPrevious != 0)
-                        {
-                            msg = GlobalResEstate.msgDifferentKong;
-                            statusmsg = "warning";
-                        }
-                        //Modified by Shazana 9/10/2023 -modified jadi else if
-                        else if (checksameactvt == 0 && HadirData.Count() != 0)
-                        {
-                            using (var transaction = dbr.Database.BeginTransaction())
-                            {
-                                foreach (var datakerja in HadirData)
+                                string str = PilihanPkt;
+                                str = str.Substring(0, (str.Length - 2));
+                                fld_LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == str && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                                if (fld_LsPktUtama == null)
                                 {
-                                    switch (datakerja.checkpurpose)
-                                    {
-                                        case 1:
-
-                                            break;
-                                        case 2:
-                                            datakerja.kdhmnuai = "-";
-                                            break;
-                                        case 3:
-                                            datakerja.kdhmnuai = "-";
-                                            datakerja.kualiti = 0;
-                                            datakerja.hasil = 1;
-                                            datakerja.bonus = 0;
-                                            break;
-                                    }
-                                    datakerja.jumlah = datakerja.hasil == null ? datakerja.kadar : datakerja.jumlah;
-                                    datakerja.kdhmnuai = datakerja.kdhmnuai == null ? "-" : datakerja.kdhmnuai;
-                                    datakerja.kualiti = datakerja.kualiti == null ? 0 : datakerja.kualiti;
-                                    datakerja.hasil = datakerja.hasil == null ? 0 : datakerja.hasil;
-                                    datakerja.bonus = datakerja.bonus == null ? 0 : datakerja.bonus;
-                                    //masukkan looping checking esk
-                                    kodkumpulan = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_Kum).FirstOrDefault();
-                                    unitcode = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == JnisAktvt && x.fld_KodAktvt == PilihanAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).Select(s => s.fld_Unit).FirstOrDefault();
-                                    HrgaKwsnSkr = HrgaKwsnSkr2 * datakerja.hasil * datakerja.gandaankadar;
-                                    var OTHour = datakerja.ot == null ? 0 : datakerja.ot;
-                                    if (TransferPkt)
-                                    {
-                                        PilihanPkt = transferPktCode;
-                                    }
-                                    //Modified by Shazana 2/2/2024 Validation if exist do not insert into kerjaList
-                                    var semakanexist = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == datakerja.nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt).ToList();
-                                    //Filter pilihan peringkat dan kodaktiviti yang sama 
-                                    if (semakanexist.Count() == 0)
-                                    {
-                                        tbl_KerjaList.Add(new tbl_Kerja() { fld_Nopkj = datakerja.nopkj, fld_Kum = kodkumpulan, fld_Tarikh = SelectDate, fld_KodPkt = PilihanPkt, fld_Amount = datakerja.jumlah, fld_JnsPkt = JnisPkt, fld_JumlahHasil = datakerja.hasil, fld_KadarByr = datakerja.kadar, fld_KodGL = Lejar, fld_KodAktvt = PilihanAktvt, fld_JamOT = OTHour, fld_DataSource = "B", fld_BrtGth = 0, fld_PerBrshGth = 0, fld_Kong = kong, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = DTCreated, fld_JnisAktvt = JnisAktvt, fld_KdhMenuai = datakerja.kdhmnuai, fld_Bonus = datakerja.bonus, fld_Unit = unitcode, fld_Quality = datakerja.kualiti, fld_HrgaKwsnSkar = HrgaKwsnSkr, fld_KodKwsnSkar = KdKwsnSkr, fld_ApprovalKwsnSkarDT = AppKwnsSkrLainDT, fld_ApprovalKwsnSkarLainBy = AppKwnsSkrLainID, fld_OverallAmount = datakerja.jumlahOA, fld_PinjamStatus = TransferPkt });
-                                    }
-                                    else
-                                    {
-                                        msg = GlobalResEstate.msgSimilarAktivitiPeringkat;
-                                        statusmsg = "warning";
-                                    }
+                                    fld_LsPktUtama = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == str && x.fld_LadangID == LadangID2 && x.fld_WilayahID == WilayahID2 && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
                                 }
-                                dbr.tbl_Kerja.AddRange(tbl_KerjaList);
-                                dbr.SaveChanges();
 
-                                var resultSaveDataKerjaKesukaran = 1;
-                                var resultSaveDataKerjaSAP = 1;
+                            }
 
-                                resultSaveDataKerjaKesukaran = EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID, getuserid);
-                                resultSaveDataKerjaSAP = EstateFunction.SaveDataKerjaSAPFPM(dbr, dbrpkt, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode, PilihanPktID, getuserid);
+                            var repeatingAktivitiPeringkat = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == SelectionData && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodPkt == PilihanPktAsal && x.fld_KodAktvt == PilihanAktvt).ToList();
+                            var namajenisaktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJnsAktvt == JnisAktvt).FirstOrDefault();
 
-                                if (resultSaveDataKerjaKesukaran == 1 && resultSaveDataKerjaSAP == 1)
-                                {
-                                    transaction.Commit();
+                            //Added by Shazana 22/12/2023
+                            decimal? upahAktivitiSekarangDisable3_ = 0M;
+                            decimal? upahAktivitiSekarangDisable3 = 0M;
+                            upahAktivitiSekarangDisable3_ = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodAktvt == PilihanAktvt && x.fld_DisabledFlag == 3).Select(x => x.fld_Harga).FirstOrDefault();
+                            if (upahAktivitiSekarangDisable3_ == null)
+                            { upahAktivitiSekarangDisable3 = 0M; }
+                            else
+                            {
+                                { upahAktivitiSekarangDisable3 = upahAktivitiSekarangDisable3_; }
+                            }
+                            //var upahAktivitiPrevious = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID).ToList();
 
-                                    //Added by Shazana 9/11/2023
-                                    var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
+                            //Modified by Shazana 22/11/2023 -Hanya kong yg tiada luas je tak boleh disimpan
+                            int? DisabledFlag = db.tbl_JenisAktiviti.Where(x => x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).Select(x => x.fld_DisabledFlag).FirstOrDefault();
+                            var ListJenisAktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && x.fld_DisabledFlag == 3).ToList();
 
-                                    foreach (var datakerja in HadirData)
-                                    {
-                                        var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
-                                        var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
-                                        kadarbayarLast = datakerja.kadar;// Modified by Shazana 22/12/2023 db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
-                                        var JenisHadir = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_Kdhdct).FirstOrDefault();
-                                        if (JenisHadir == "H02")
-                                        {
-                                            kadarbayarLast = kadarbayarLast * 2;
-                                        }
-                                        else if (JenisHadir == "H03")
-                                        {
-                                            kadarbayarLast = kadarbayarLast * 3;
-                                        }
-                                        List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
-                                        decimal? LuasKong = 0;
+                            var ListAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID).Select(x => x.fld_JnisAktvt).ToList();
 
-                                        //Dapatkan jumlah keseluruhan luas peringkat utama
-                                        foreach (var detailKong in KongList)
-                                        {
-                                            //Commented by Shazana 5/2/2024
-                                            //var LuasList = dbrpkt.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && PktList.Contains(x.fld_PktUtama)).Select(x => x.fld_LsPktUtama).Sum();
-                                            //decimal? LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                                            //Added by Shazana 29/11/2023
+                            int? AktivitiDisable3 = 0;
+                            int? AktivitiDisableBukan3 = 0;
+                            int? AktivitiDisableSekarang = 0;
+                            decimal? kodaktivitiPrevious = 0;
+                            decimal? KadarBayrUpahAktivitiKeyIn = 0;
+                            //Added by Shazana 8/1/2024
 
-                                            //if (fld_LsPktUtama == null)
-                                            //{
-                                            //    fld_LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
-                                            //}
-                                            //if (fld_LsPktUtama == null)
-                                            //{
-                                            //    fld_LsPktUtama = 0;
-                                            //}
-                                            //Added by Shazana 5/2/2024
-                                            string fld_KodPkt = "0";
-                                            LsPktUtama = 0;
-                                            if (detailKong.fld_PinjamStatus == true)
-                                            {
-                                                var PinjamDetails = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID).FirstOrDefault();
-                                                SyarikatID2 = PinjamDetails.fld_SyarikatIDAsal;
-                                                WilayahID2 = PinjamDetails.fld_WilayahIDAsal;
-                                                LadangID2 = PinjamDetails.fld_LadangIDAsal;
-                                                //Connection to db pinjam
-                                                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
-                                                dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
-                                                string str = detailKong.fld_KodPkt;
-                                                str = str.Substring(0, (str.Length - 2));
-                                                if (PinjamDetails.fld_JenisPkt == 1)
-                                                {
-                                                    LsPktUtama = (dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == str && x.fld_ID == PinjamDetails.fld_OriginPktID)).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                                                }
-                                                else if (PinjamDetails.fld_JenisPkt == 2)
-                                                {
-                                                    LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == str && x.fld_ID == PinjamDetails.fld_OriginPktID).Select(x => x.fld_LsPkt).FirstOrDefault();
-                                                }
-                                            }
-                                            else
-                                            {
-                                                fld_KodPkt = detailKong.fld_KodPkt;
-                                                LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-
-                                                if (LsPktUtama == null)
-                                                {
-                                                    LsPktUtama = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
-                                                }
-                                            }
-                                            if (LsPktUtama == null)
-                                            {
-                                                LsPktUtama = 0;
-                                            }
-                                            LuasKong = LuasKong + LsPktUtama;
-                                        }
-
-                                        int i = 0;
-                                        decimal? valueLs = 0;
-                                        //Added by Shazana 9/11/2023
-                                        //decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
-
-                                        foreach (var detaildatakerja in KongList)
-                                        {
-                                            //Commented by Shazana 5/2/2024
-                                            ////Modified by Shazana 9/11/2023
-                                            ////decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
-                                            //LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                                            //if (LsPktUtama == null)
-                                            //{
-                                            //    LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
-                                            //}
-                                            //if (LsPktUtama == null)
-                                            //{
-                                            //    LsPktUtama = 0;
-                                            //}
-                                            //Added by Shazana 5/2/2024
-                                            string fld_KodPkt = "0";
-                                            LsPktUtama = 0;
-                                            if (detaildatakerja.fld_PinjamStatus == true)
-                                            {
-                                                var PinjamDetails = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID).FirstOrDefault();
-                                                SyarikatID2 = PinjamDetails.fld_SyarikatIDAsal;
-                                                WilayahID2 = PinjamDetails.fld_WilayahIDAsal;
-                                                LadangID2 = PinjamDetails.fld_LadangIDAsal;
-                                                //Connection to db pinjam
-                                                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
-                                                dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
-                                                string str = detaildatakerja.fld_KodPkt;
-                                                str = str.Substring(0, (str.Length - 2));
-                                                if (PinjamDetails.fld_JenisPkt == 1)
-                                                {
-                                                    LsPktUtama = (dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == str && x.fld_ID == PinjamDetails.fld_OriginPktID)).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                                                }
-                                                else if (PinjamDetails.fld_JenisPkt == 2)
-                                                {
-                                                    LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == str && x.fld_ID == PinjamDetails.fld_OriginPktID).Select(x => x.fld_LsPkt).FirstOrDefault();
-                                                }
-                                            }
-                                            else
-                                            {
-                                                fld_KodPkt = detaildatakerja.fld_KodPkt;
-                                                LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-
-                                                if (LsPktUtama == null)
-                                                {
-                                                    LsPktUtama = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
-                                                }
-                                            }
-                                            if (LsPktUtama == null)
-                                            { LsPktUtama = 0; }
-
-                                            //Modified by Shazana 9/11/2023
-                                            decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * kadarbayarLast), 2);
-
-                                            i = i + 1;
-                                            int? dd = KongList.Count();
-                                            if (dd == i)
-                                            {
-                                                ValuePkt = kadarbayarLast - valueLs;
-                                                detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
-                                                detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
-                                                //Added by Shazana 9/10/2023
-                                                detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
-                                                dbr.Entry(detaildatakerja).State = EntityState.Modified;
-                                                dbr.SaveChanges();
-                                            }
-                                            else
-                                            {
-                                                valueLs = valueLs + ValuePkt;
-                                                detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
-                                                detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
-                                                //Added by Shazana 9/10/2023
-                                                detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
-                                                dbr.Entry(detaildatakerja).State = EntityState.Modified;
-                                                dbr.SaveChanges();
-
-                                            }
-                                        }
-
-                                    }
-
-                                    msg = GlobalResEstate.msgAdd;
-                                    statusmsg = "success";
-                                }
+                            int? UpahAktivitiDisableBukan3 = 0;
+                            int? UpahAktivitiDisableSekarang = 0;
+                            decimal? LsPktUtama = 0; //Added by Shazana 5/2/2024
+                            if (SelectionCategory == 1) //Kumpulan
+                            {
+                                ListAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Kum == SelectionData).Select(x => x.fld_JnisAktvt).ToList();
+                                //Modified by Shazana 8/1/2024
+                                //KadarBayrUpahAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Kum == SelectionData).Select(x => x.fld_KadarByr).FirstOrDefault();
+                                KodUpahAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Kum == SelectionData).Select(x => x.fld_KodAktvt).FirstOrDefault();
+                                if (KodUpahAktivitiKeyIn == null)
+                                { KadarBayrUpahAktivitiKeyIn = 0M; }
                                 else
                                 {
-                                    transaction.Rollback();
-                                    msg = "Sila simpan data sekali lagi.";
-                                    statusmsg = "warning";
+                                    KadarBayrUpahAktivitiKeyIn = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodAktvt == KodUpahAktivitiKeyIn).Select(x => x.fld_Harga).FirstOrDefault();
                                 }
+                                AktivitiDisable3 = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListAktivitiKeyIn.Contains(x.fld_KodJnsAktvt) && x.fld_DisabledFlag == 3).ToList().Count();
+                                AktivitiDisableBukan3 = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListAktivitiKeyIn.Contains(x.fld_KodJnsAktvt) && x.fld_DisabledFlag != 3).ToList().Count();
+                                AktivitiDisableSekarang = db.tbl_JenisAktiviti.Where(x => x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).Select(x => x.fld_DisabledFlag).FirstOrDefault();
+
+
+                                //Added by Shazana on 8/1/2024 -Semakan sekiranya terdapat kadar bayaran berbeza dalam kong
+                                var ListUpahAktiviti = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Kum == SelectionData).Select(x => x.fld_KodAktvt).ToList();
+                                var ListUpahAktivitiDisable3 = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListUpahAktiviti.Contains(x.fld_KodAktvt) && x.fld_DisabledFlag == 3).ToList();
+                                if (ListUpahAktivitiDisable3 != null)
+                                {
+                                    kodaktivitiPrevious = ListUpahAktivitiDisable3.Where(x => x.fld_Harga != upahAktivitiSekarangDisable3).Select(x => x.fld_Harga).FirstOrDefault();
+                                }
+                                else
+                                { kodaktivitiPrevious = 0; }
+
                             }
-                        }
-                        //Added by Shazana 9/10/2023
-                        //Jika ulangan aktiviti , ada hadir data dan jenis aktiviti adalah kong  //kumpulan,dah pernah ada data aktiviti sebelum ni
-                        else if (checksameactvt != 0 && HadirData.Count() != 0 && namajenisaktiviti.fld_DisabledFlag == 3)
-                        {
-                            using (var transaction = dbr.Database.BeginTransaction())
+                            else
                             {
-                                foreach (var datakerja in HadirData)
+                                ListAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Nopkj == SelectionData).Select(x => x.fld_JnisAktvt).ToList();
+                                //Modified by Shazana 8/1/2024
+                                //KadarBayrUpahAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Nopkj == SelectionData).Select(x => x.fld_KadarByr).FirstOrDefault();
+                                KodUpahAktivitiKeyIn = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Nopkj == SelectionData).Select(x => x.fld_KodAktvt).FirstOrDefault();
+                                if (KodUpahAktivitiKeyIn == null)
+                                { KadarBayrUpahAktivitiKeyIn = 0M; }
+                                else
                                 {
-                                    switch (datakerja.checkpurpose)
-                                    {
-                                        case 1:
-
-                                            break;
-                                        case 2:
-                                            datakerja.kdhmnuai = "-";
-                                            break;
-                                        case 3:
-                                            datakerja.kdhmnuai = "-";
-                                            datakerja.kualiti = 0;
-                                            datakerja.hasil = 1;
-                                            datakerja.bonus = 0;
-                                            break;
-                                    }
-
-                                    datakerja.jumlah = datakerja.hasil == null ? datakerja.kadar : datakerja.jumlah;
-                                    datakerja.kdhmnuai = datakerja.kdhmnuai == null ? "-" : datakerja.kdhmnuai;
-                                    datakerja.kualiti = datakerja.kualiti == null ? 0 : datakerja.kualiti;
-                                    datakerja.hasil = datakerja.hasil == null ? 0 : datakerja.hasil;
-                                    datakerja.bonus = datakerja.bonus == null ? 0 : datakerja.bonus;
-                                    //masukkan looping checking esk
-                                    kodkumpulan = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_Kum).FirstOrDefault();
-                                    unitcode = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == JnisAktvt && x.fld_KodAktvt == PilihanAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).Select(s => s.fld_Unit).FirstOrDefault();
-                                    HrgaKwsnSkr = HrgaKwsnSkr2 * datakerja.hasil * datakerja.gandaankadar;
-                                    var OTHour = datakerja.ot == null ? 0 : datakerja.ot;
-                                    if (TransferPkt)
-                                    {
-                                        PilihanPkt = transferPktCode;
-                                    }
-
-                                    var semakanexist = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == datakerja.nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt).ToList();
-
-                                    //Filter pilihan peringkat dan kodaktiviti yang sama 
-                                    if (semakanexist.Count() == 0)
-                                    {
-                                        tbl_KerjaList.Add(new tbl_Kerja() { fld_Nopkj = datakerja.nopkj, fld_Kum = kodkumpulan, fld_Tarikh = SelectDate, fld_KodPkt = PilihanPkt, fld_Amount = datakerja.jumlah, fld_JnsPkt = JnisPkt, fld_JumlahHasil = datakerja.hasil, fld_KadarByr = datakerja.jumlah, fld_KodGL = Lejar, fld_KodAktvt = PilihanAktvt, fld_JamOT = OTHour, fld_DataSource = "B", fld_BrtGth = 0, fld_PerBrshGth = 0, fld_Kong = kong, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = DTCreated, fld_JnisAktvt = JnisAktvt, fld_KdhMenuai = datakerja.kdhmnuai, fld_Bonus = datakerja.bonus, fld_Unit = unitcode, fld_Quality = datakerja.kualiti, fld_HrgaKwsnSkar = HrgaKwsnSkr, fld_KodKwsnSkar = KdKwsnSkr, fld_ApprovalKwsnSkarDT = AppKwnsSkrLainDT, fld_ApprovalKwsnSkarLainBy = AppKwnsSkrLainID, fld_OverallAmount = datakerja.jumlahOA, fld_PinjamStatus = TransferPkt });
-                                    }
-                                    else
-                                    {
-                                        msg = GlobalResEstate.msgSimilarAktivitiPeringkat;
-                                        statusmsg = "warning";
-                                    }
+                                    KadarBayrUpahAktivitiKeyIn = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodAktvt == KodUpahAktivitiKeyIn).Select(x => x.fld_Harga).FirstOrDefault();
                                 }
+                                AktivitiDisable3 = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListAktivitiKeyIn.Contains(x.fld_KodJnsAktvt) && x.fld_DisabledFlag == 3).ToList().Count();
+                                AktivitiDisableBukan3 = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false && ListAktivitiKeyIn.Contains(x.fld_KodJnsAktvt) && x.fld_DisabledFlag != 3).ToList().Count();
+                                AktivitiDisableSekarang = db.tbl_JenisAktiviti.Where(x => x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).Select(x => x.fld_DisabledFlag).FirstOrDefault();
 
-                                var resultSaveDataKerjaKesukaran = 1;
-                                var resultSaveDataKerjaSAP = 1;
-                                //Filter pilihan peringkat dan kodaktiviti yang sama 
-                                if (tbl_KerjaList.Count() != 0)
+                                //Modified by Shazana 8/1/2024
+                                kodaktivitiPrevious = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodAktvt == KodUpahAktivitiKeyIn && x.fld_Harga != upahAktivitiSekarangDisable3).Select(x => x.fld_Harga).FirstOrDefault();
+                                if (kodaktivitiPrevious == null)
+                                { kodaktivitiPrevious = 0M; }
+                            }
+
+                            if (AktivitiDisableBukan3 > 0 && AktivitiDisableSekarang == 3)
+                            {
+                                msg = GlobalResEstate.msgExistKadaran;
+                                statusmsg = "warning";
+                            }
+                            else if (AktivitiDisable3 > 0 && AktivitiDisableSekarang != 3)
+                            {
+                                msg = GlobalResEstate.msgExistKong;
+                                statusmsg = "warning";
+                            }
+                            else if (AktivitiDisable3 > 0 && AktivitiDisableSekarang == 3 && KadarBayrUpahAktivitiKeyIn != upahAktivitiSekarangDisable3)
+                            {
+                                msg = GlobalResEstate.msgDifferentKong;
+                                statusmsg = "warning";
+                            }
+                            //Added by Shazana 9/10/2023 -Tambah validaton untuk tiada nilai luas dalam peringkat dan kodaktiviti dan peringkat yang sama telah wujud
+                            //Added by Shazana 22/11/2023 - add paparan validation luas untuk kong sahaja
+                            else if ((fld_LsPktUtama == null || fld_LsPktUtama == 0) && namajenisaktiviti.fld_DisabledFlag == 3)
+                            {
+                                msg = GlobalResEstate.msgLuasNull + " (" + PilihanPkt + ") ";
+                                statusmsg = "warning";
+                            }
+                            else if (repeatingAktivitiPeringkat.Count() != 0)
+                            {
+                                msg = GlobalResEstate.msgSimilarAktivitiPeringkat;
+                                statusmsg = "warning";
+                            }
+                            //Adedd by Shazana 22/12/2023 //Checking different type of kong
+                            //Modified by Shazana 8/1/2024
+                            else if ((upahAktivitiSekarangDisable3 != 0) && kodaktivitiPrevious != 0 && kodaktivitiPrevious != null && kodaktivitiPrevious != 0)
+                            {
+                                msg = GlobalResEstate.msgDifferentKong;
+                                statusmsg = "warning";
+                            }
+                            //Modified by Shazana 9/10/2023 -modified jadi else if
+                            else if (checksameactvt == 0 && HadirData.Count() != 0)
+                            {
+                                using (var transaction = dbr.Database.BeginTransaction())
                                 {
+                                    foreach (var datakerja in HadirData)
+                                    {
+                                        switch (datakerja.checkpurpose)
+                                        {
+                                            case 1:
+
+                                                break;
+                                            case 2:
+                                                datakerja.kdhmnuai = "-";
+                                                break;
+                                            case 3:
+                                                datakerja.kdhmnuai = "-";
+                                                datakerja.kualiti = 0;
+                                                datakerja.hasil = 1;
+                                                datakerja.bonus = 0;
+                                                break;
+                                        }
+                                        datakerja.jumlah = datakerja.hasil == null ? datakerja.kadar : datakerja.jumlah;
+                                        datakerja.kdhmnuai = datakerja.kdhmnuai == null ? "-" : datakerja.kdhmnuai;
+                                        datakerja.kualiti = datakerja.kualiti == null ? 0 : datakerja.kualiti;
+                                        datakerja.hasil = datakerja.hasil == null ? 0 : datakerja.hasil;
+                                        datakerja.bonus = datakerja.bonus == null ? 0 : datakerja.bonus;
+                                        //masukkan looping checking esk
+                                        kodkumpulan = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_Kum).FirstOrDefault();
+                                        unitcode = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == JnisAktvt && x.fld_KodAktvt == PilihanAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).Select(s => s.fld_Unit).FirstOrDefault();
+                                        HrgaKwsnSkr = HrgaKwsnSkr2 * datakerja.hasil * datakerja.gandaankadar;
+                                        var OTHour = datakerja.ot == null ? 0 : datakerja.ot;
+                                        if (TransferPkt)
+                                        {
+                                            PilihanPkt = transferPktCode;
+                                        }
+                                        //Modified by Shazana 2/2/2024 Validation if exist do not insert into kerjaList
+                                        var semakanexist = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == datakerja.nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt).ToList();
+                                        //Filter pilihan peringkat dan kodaktiviti yang sama 
+                                        if (semakanexist.Count() == 0)
+                                        {
+                                            tbl_KerjaList.Add(new tbl_Kerja() { fld_Nopkj = datakerja.nopkj, fld_Kum = kodkumpulan, fld_Tarikh = SelectDate, fld_KodPkt = PilihanPkt, fld_Amount = datakerja.jumlah, fld_JnsPkt = JnisPkt, fld_JumlahHasil = datakerja.hasil, fld_KadarByr = datakerja.kadar, fld_KodGL = Lejar, fld_KodAktvt = PilihanAktvt, fld_JamOT = OTHour, fld_DataSource = "B", fld_BrtGth = 0, fld_PerBrshGth = 0, fld_Kong = kong, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = DTCreated, fld_JnisAktvt = JnisAktvt, fld_KdhMenuai = datakerja.kdhmnuai, fld_Bonus = datakerja.bonus, fld_Unit = unitcode, fld_Quality = datakerja.kualiti, fld_HrgaKwsnSkar = HrgaKwsnSkr, fld_KodKwsnSkar = KdKwsnSkr, fld_ApprovalKwsnSkarDT = AppKwnsSkrLainDT, fld_ApprovalKwsnSkarLainBy = AppKwnsSkrLainID, fld_OverallAmount = datakerja.jumlahOA, fld_PinjamStatus = TransferPkt });
+                                        }
+                                        else
+                                        {
+                                            msg = GlobalResEstate.msgSimilarAktivitiPeringkat;
+                                            statusmsg = "warning";
+                                        }
+                                    }
                                     dbr.tbl_Kerja.AddRange(tbl_KerjaList);
                                     dbr.SaveChanges();
-                                    dbr.SaveChanges();
-                                    //Added by Shazana 9/11/2023
+
+                                    var resultSaveDataKerjaKesukaran = 1;
+                                    var resultSaveDataKerjaSAP = 1;
+
                                     resultSaveDataKerjaKesukaran = EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID, getuserid);
                                     resultSaveDataKerjaSAP = EstateFunction.SaveDataKerjaSAPFPM(dbr, dbrpkt, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode, PilihanPktID, getuserid);
 
-                                }
-                                else
-                                {
-                                    msg = GlobalResEstate.msgSimilarAktivitiPeringkat;
-                                    statusmsg = "warning";
-                                }
-
-                                if (resultSaveDataKerjaKesukaran == 1 && resultSaveDataKerjaSAP == 1)
-                                {
-                                    transaction.Commit();
-                                    if (tbl_KerjaList.Count() != 0)
+                                    if (resultSaveDataKerjaKesukaran == 1 && resultSaveDataKerjaSAP == 1)
                                     {
-                                        //Added by Shazana 9/10/2023
+                                        transaction.Commit();
+
+                                        //Added by Shazana 9/11/2023
                                         var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
+
                                         foreach (var datakerja in HadirData)
                                         {
-                                            kadarbayarLast = datakerja.kadar;//Modified by Shazana 22/12/2023 db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                                            var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                                            var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
+                                            kadarbayarLast = datakerja.kadar;// Modified by Shazana 22/12/2023 db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
                                             var JenisHadir = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_Kdhdct).FirstOrDefault();
                                             if (JenisHadir == "H02")
                                             {
@@ -2324,10 +2137,6 @@ namespace MVC_SYSTEM.Controllers
                                             {
                                                 kadarbayarLast = kadarbayarLast * 3;
                                             }
-                                            var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
-                                            //decimal? kadarbayarLast = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).OrderByDescending(x=>x.fld_CreatedDT).Select(x=>x.fld_KadarByr).FirstOrDefault();
-                                            var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
-
                                             List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
                                             decimal? LuasKong = 0;
 
@@ -2336,15 +2145,16 @@ namespace MVC_SYSTEM.Controllers
                                             {
                                                 //Commented by Shazana 5/2/2024
                                                 //var LuasList = dbrpkt.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && PktList.Contains(x.fld_PktUtama)).Select(x => x.fld_LsPktUtama).Sum();
-                                                //decimal? LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                                                ////Added by Shazana 29/11/2023
-                                                //if (LsPktUtama == null)
+                                                //decimal? LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                                                //Added by Shazana 29/11/2023
+
+                                                //if (fld_LsPktUtama == null)
                                                 //{
-                                                //    LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
+                                                //    fld_LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
                                                 //}
-                                                //if (LsPktUtama == null)
+                                                //if (fld_LsPktUtama == null)
                                                 //{
-                                                //    LsPktUtama = 0;
+                                                //    fld_LsPktUtama = 0;
                                                 //}
                                                 //Added by Shazana 5/2/2024
                                                 string fld_KodPkt = "0";
@@ -2379,21 +2189,24 @@ namespace MVC_SYSTEM.Controllers
                                                         LsPktUtama = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
                                                     }
                                                 }
+                                                if (LsPktUtama == null)
+                                                {
+                                                    LsPktUtama = 0;
+                                                }
                                                 LuasKong = LuasKong + LsPktUtama;
                                             }
 
                                             int i = 0;
                                             decimal? valueLs = 0;
                                             //Added by Shazana 9/11/2023
-                                            // decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                                            //decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
 
                                             foreach (var detaildatakerja in KongList)
                                             {
                                                 //Commented by Shazana 5/2/2024
                                                 ////Modified by Shazana 9/11/2023
                                                 ////decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
-                                                ////decimal? LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
-                                                ////Added by Shazana 29/11/2023
+                                                //LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
                                                 //if (LsPktUtama == null)
                                                 //{
                                                 //    LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
@@ -2402,7 +2215,6 @@ namespace MVC_SYSTEM.Controllers
                                                 //{
                                                 //    LsPktUtama = 0;
                                                 //}
-
                                                 //Added by Shazana 5/2/2024
                                                 string fld_KodPkt = "0";
                                                 LsPktUtama = 0;
@@ -2436,6 +2248,8 @@ namespace MVC_SYSTEM.Controllers
                                                         LsPktUtama = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
                                                     }
                                                 }
+                                                if (LsPktUtama == null)
+                                                { LsPktUtama = 0; }
 
                                                 //Modified by Shazana 9/11/2023
                                                 decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * kadarbayarLast), 2);
@@ -2478,26 +2292,278 @@ namespace MVC_SYSTEM.Controllers
                                     }
                                 }
                             }
+                            //Added by Shazana 9/10/2023
+                            //Jika ulangan aktiviti , ada hadir data dan jenis aktiviti adalah kong  //kumpulan,dah pernah ada data aktiviti sebelum ni
+                            else if (checksameactvt != 0 && HadirData.Count() != 0 && namajenisaktiviti.fld_DisabledFlag == 3)
+                            {
+                                using (var transaction = dbr.Database.BeginTransaction())
+                                {
+                                    foreach (var datakerja in HadirData)
+                                    {
+                                        switch (datakerja.checkpurpose)
+                                        {
+                                            case 1:
 
+                                                break;
+                                            case 2:
+                                                datakerja.kdhmnuai = "-";
+                                                break;
+                                            case 3:
+                                                datakerja.kdhmnuai = "-";
+                                                datakerja.kualiti = 0;
+                                                datakerja.hasil = 1;
+                                                datakerja.bonus = 0;
+                                                break;
+                                        }
+
+                                        datakerja.jumlah = datakerja.hasil == null ? datakerja.kadar : datakerja.jumlah;
+                                        datakerja.kdhmnuai = datakerja.kdhmnuai == null ? "-" : datakerja.kdhmnuai;
+                                        datakerja.kualiti = datakerja.kualiti == null ? 0 : datakerja.kualiti;
+                                        datakerja.hasil = datakerja.hasil == null ? 0 : datakerja.hasil;
+                                        datakerja.bonus = datakerja.bonus == null ? 0 : datakerja.bonus;
+                                        //masukkan looping checking esk
+                                        kodkumpulan = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(s => s.fld_Kum).FirstOrDefault();
+                                        unitcode = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == JnisAktvt && x.fld_KodAktvt == PilihanAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).Select(s => s.fld_Unit).FirstOrDefault();
+                                        HrgaKwsnSkr = HrgaKwsnSkr2 * datakerja.hasil * datakerja.gandaankadar;
+                                        var OTHour = datakerja.ot == null ? 0 : datakerja.ot;
+                                        if (TransferPkt)
+                                        {
+                                            PilihanPkt = transferPktCode;
+                                        }
+
+                                        var semakanexist = dbr.tbl_Kerja.Where(x => x.fld_Tarikh == SelectDate && x.fld_Nopkj == datakerja.nopkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_KodPkt == PilihanPkt && x.fld_KodAktvt == PilihanAktvt).ToList();
+
+                                        //Filter pilihan peringkat dan kodaktiviti yang sama 
+                                        if (semakanexist.Count() == 0)
+                                        {
+                                            tbl_KerjaList.Add(new tbl_Kerja() { fld_Nopkj = datakerja.nopkj, fld_Kum = kodkumpulan, fld_Tarikh = SelectDate, fld_KodPkt = PilihanPkt, fld_Amount = datakerja.jumlah, fld_JnsPkt = JnisPkt, fld_JumlahHasil = datakerja.hasil, fld_KadarByr = datakerja.jumlah, fld_KodGL = Lejar, fld_KodAktvt = PilihanAktvt, fld_JamOT = OTHour, fld_DataSource = "B", fld_BrtGth = 0, fld_PerBrshGth = 0, fld_Kong = kong, fld_NegaraID = NegaraID, fld_SyarikatID = SyarikatID, fld_WilayahID = WilayahID, fld_LadangID = LadangID, fld_CreatedBy = getuserid, fld_CreatedDT = DTCreated, fld_JnisAktvt = JnisAktvt, fld_KdhMenuai = datakerja.kdhmnuai, fld_Bonus = datakerja.bonus, fld_Unit = unitcode, fld_Quality = datakerja.kualiti, fld_HrgaKwsnSkar = HrgaKwsnSkr, fld_KodKwsnSkar = KdKwsnSkr, fld_ApprovalKwsnSkarDT = AppKwnsSkrLainDT, fld_ApprovalKwsnSkarLainBy = AppKwnsSkrLainID, fld_OverallAmount = datakerja.jumlahOA, fld_PinjamStatus = TransferPkt });
+                                        }
+                                        else
+                                        {
+                                            msg = GlobalResEstate.msgSimilarAktivitiPeringkat;
+                                            statusmsg = "warning";
+                                        }
+                                    }
+
+                                    var resultSaveDataKerjaKesukaran = 1;
+                                    var resultSaveDataKerjaSAP = 1;
+                                    //Filter pilihan peringkat dan kodaktiviti yang sama 
+                                    if (tbl_KerjaList.Count() != 0)
+                                    {
+                                        dbr.tbl_Kerja.AddRange(tbl_KerjaList);
+                                        dbr.SaveChanges();
+                                        dbr.SaveChanges();
+                                        //Added by Shazana 9/11/2023
+                                        resultSaveDataKerjaKesukaran = EstateFunction.SaveDataKerjaKesukaran(dbr, tbl_KerjaList, kesukaran, NegaraID, SyarikatID, getuserid);
+                                        resultSaveDataKerjaSAP = EstateFunction.SaveDataKerjaSAPFPM(dbr, dbrpkt, tbl_KerjaList, NegaraID, SyarikatID, WilayahID, LadangID, HadirData, TransferPkt, transferPktCode, PilihanPktID, getuserid);
+
+                                    }
+                                    else
+                                    {
+                                        msg = GlobalResEstate.msgSimilarAktivitiPeringkat;
+                                        statusmsg = "warning";
+                                    }
+
+                                    if (resultSaveDataKerjaKesukaran == 1 && resultSaveDataKerjaSAP == 1)
+                                    {
+                                        transaction.Commit();
+                                        if (tbl_KerjaList.Count() != 0)
+                                        {
+                                            //Added by Shazana 9/10/2023
+                                            var senaraiJenisKong = db.tbl_JenisAktiviti.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_DisabledFlag == 3).Select(x => x.fld_KodJnsAktvt).ToList();
+                                            foreach (var datakerja in HadirData)
+                                            {
+                                                kadarbayarLast = datakerja.kadar;//Modified by Shazana 22/12/2023 db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+                                                var JenisHadir = dbr.tbl_Kerjahdr.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_Kdhdct).FirstOrDefault();
+                                                if (JenisHadir == "H02")
+                                                {
+                                                    kadarbayarLast = kadarbayarLast * 2;
+                                                }
+                                                else if (JenisHadir == "H03")
+                                                {
+                                                    kadarbayarLast = kadarbayarLast * 3;
+                                                }
+                                                var KongList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).ToList();
+                                                //decimal? kadarbayarLast = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).OrderByDescending(x=>x.fld_CreatedDT).Select(x=>x.fld_KadarByr).FirstOrDefault();
+                                                var PktList = dbr.tbl_Kerja.Where(x => x.fld_Nopkj == datakerja.nopkj && x.fld_Tarikh == SelectDate && senaraiJenisKong.Contains(x.fld_JnisAktvt) && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID).Select(x => x.fld_KodPkt).ToList();
+
+                                                List<string> datainpkjmastexldatainkrjhdrs = PktList.ToList();
+                                                decimal? LuasKong = 0;
+
+                                                //Dapatkan jumlah keseluruhan luas peringkat utama
+                                                foreach (var detailKong in KongList)
+                                                {
+                                                    //Commented by Shazana 5/2/2024
+                                                    //var LuasList = dbrpkt.tbl_PktUtama.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && PktList.Contains(x.fld_PktUtama)).Select(x => x.fld_LsPktUtama).Sum();
+                                                    //decimal? LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                                                    ////Added by Shazana 29/11/2023
+                                                    //if (LsPktUtama == null)
+                                                    //{
+                                                    //    LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
+                                                    //}
+                                                    //if (LsPktUtama == null)
+                                                    //{
+                                                    //    LsPktUtama = 0;
+                                                    //}
+                                                    //Added by Shazana 5/2/2024
+                                                    string fld_KodPkt = "0";
+                                                    LsPktUtama = 0;
+                                                    if (detailKong.fld_PinjamStatus == true)
+                                                    {
+                                                        var PinjamDetails = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == detailKong.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID).FirstOrDefault();
+                                                        SyarikatID2 = PinjamDetails.fld_SyarikatIDAsal;
+                                                        WilayahID2 = PinjamDetails.fld_WilayahIDAsal;
+                                                        LadangID2 = PinjamDetails.fld_LadangIDAsal;
+                                                        //Connection to db pinjam
+                                                        Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
+                                                        dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                                                        string str = detailKong.fld_KodPkt;
+                                                        str = str.Substring(0, (str.Length - 2));
+                                                        if (PinjamDetails.fld_JenisPkt == 1)
+                                                        {
+                                                            LsPktUtama = (dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == str && x.fld_ID == PinjamDetails.fld_OriginPktID)).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                                                        }
+                                                        else if (PinjamDetails.fld_JenisPkt == 2)
+                                                        {
+                                                            LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == str && x.fld_ID == PinjamDetails.fld_OriginPktID).Select(x => x.fld_LsPkt).FirstOrDefault();
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        fld_KodPkt = detailKong.fld_KodPkt;
+                                                        LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+
+                                                        if (LsPktUtama == null)
+                                                        {
+                                                            LsPktUtama = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
+                                                        }
+                                                    }
+                                                    LuasKong = LuasKong + LsPktUtama;
+                                                }
+
+                                                int i = 0;
+                                                decimal? valueLs = 0;
+                                                //Added by Shazana 9/11/2023
+                                                // decimal? kadarbayarLast = db.tbl_GajiMinimaLdg.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(x => x.fld_NilaiGajiMinima).FirstOrDefault();
+
+                                                foreach (var detaildatakerja in KongList)
+                                                {
+                                                    //Commented by Shazana 5/2/2024
+                                                    ////Modified by Shazana 9/11/2023
+                                                    ////decimal? kadarbayarLast = detaildatakerja.fld_KadarByr;
+                                                    ////decimal? LsPktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                                                    ////Added by Shazana 29/11/2023
+                                                    //if (LsPktUtama == null)
+                                                    //{
+                                                    //    LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
+                                                    //}
+                                                    //if (LsPktUtama == null)
+                                                    //{
+                                                    //    LsPktUtama = 0;
+                                                    //}
+
+                                                    //Added by Shazana 5/2/2024
+                                                    string fld_KodPkt = "0";
+                                                    LsPktUtama = 0;
+                                                    if (detaildatakerja.fld_PinjamStatus == true)
+                                                    {
+                                                        var PinjamDetails = dbr.tbl_PktPinjam.Where(x => x.fld_KodPkt == detaildatakerja.fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID).FirstOrDefault();
+                                                        SyarikatID2 = PinjamDetails.fld_SyarikatIDAsal;
+                                                        WilayahID2 = PinjamDetails.fld_WilayahIDAsal;
+                                                        LadangID2 = PinjamDetails.fld_LadangIDAsal;
+                                                        //Connection to db pinjam
+                                                        Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
+                                                        dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                                                        string str = detaildatakerja.fld_KodPkt;
+                                                        str = str.Substring(0, (str.Length - 2));
+                                                        if (PinjamDetails.fld_JenisPkt == 1)
+                                                        {
+                                                            LsPktUtama = (dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == str && x.fld_ID == PinjamDetails.fld_OriginPktID)).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+                                                        }
+                                                        else if (PinjamDetails.fld_JenisPkt == 2)
+                                                        {
+                                                            LsPktUtama = dbrpkt.tbl_SubPkt.Where(x => x.fld_Pkt == str && x.fld_ID == PinjamDetails.fld_OriginPktID).Select(x => x.fld_LsPkt).FirstOrDefault();
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        fld_KodPkt = detaildatakerja.fld_KodPkt;
+                                                        LsPktUtama = dbr.tbl_PktUtama.Where(x => x.fld_PktUtama == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPktUtama).FirstOrDefault();
+
+                                                        if (LsPktUtama == null)
+                                                        {
+                                                            LsPktUtama = dbr.tbl_SubPkt.Where(x => x.fld_Pkt == fld_KodPkt && x.fld_LadangID == LadangID && x.fld_WilayahID == WilayahID && x.fld_SyarikatID == SyarikatID).Select(x => x.fld_LsPkt).FirstOrDefault();
+                                                        }
+                                                    }
+
+                                                    //Modified by Shazana 9/11/2023
+                                                    decimal? ValuePkt = Math.Round((Decimal)(LsPktUtama / LuasKong * kadarbayarLast), 2);
+
+                                                    i = i + 1;
+                                                    int? dd = KongList.Count();
+                                                    if (dd == i)
+                                                    {
+                                                        ValuePkt = kadarbayarLast - valueLs;
+                                                        detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
+                                                        detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                                        //Added by Shazana 9/10/2023
+                                                        detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
+                                                        dbr.Entry(detaildatakerja).State = EntityState.Modified;
+                                                        dbr.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        valueLs = valueLs + ValuePkt;
+                                                        detaildatakerja.fld_Amount = ValuePkt == null ? 0 : ValuePkt;
+                                                        detaildatakerja.fld_OverallAmount = ValuePkt == null ? 0 : ValuePkt;
+                                                        //Added by Shazana 9/10/2023
+                                                        detaildatakerja.fld_KadarByr = ValuePkt == null ? 0 : ValuePkt;
+                                                        dbr.Entry(detaildatakerja).State = EntityState.Modified;
+                                                        dbr.SaveChanges();
+
+                                                    }
+                                                }
+
+                                            }
+
+                                            msg = GlobalResEstate.msgAdd;
+                                            statusmsg = "success";
+                                        }
+                                        else
+                                        {
+                                            transaction.Rollback();
+                                            msg = "Sila simpan data sekali lagi.";
+                                            statusmsg = "warning";
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            else
+                            {
+                                msg = GlobalResEstate.msgDataExist;
+                                statusmsg = "warning";
+                            }
                         }
-
                         else
                         {
-                            msg = GlobalResEstate.msgDataExist;
+                            msg = GlobalResEstate.msgError;
                             statusmsg = "warning";
                         }
                     }
                     else
                     {
-                        msg = GlobalResEstate.msgError;
+                        msg = GlobalResEstate.msgNoRecord;
                         statusmsg = "warning";
                     }
                 }
                 else
                 {
-                    msg = GlobalResEstate.msgNoRecord;
+                    msg = GlobalResEstate.msgKodGLnotFound;
                     statusmsg = "warning";
                 }
+
             }
 
             bodyview = RenderRazorViewToString("WorkRecordList", EstateFunction.RecordWorkingList(dbr, SelectionCategory, SelectionData, SelectDate, NegaraID, SyarikatID, WilayahID, LadangID), false);
@@ -2577,6 +2643,74 @@ namespace MVC_SYSTEM.Controllers
             dbr.Dispose();
 
             return Json(new { PilihPeringkat, kesukaran });
+        }
+
+        public JsonResult GetPktTrnsfrHT(byte JnsPkt, byte TrnsfrLvl)
+        {
+            string host, catalog, user, pass = "";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            DateTime? CurrentDate = timezone.gettimezone().Date;
+            List<SelectListItem> PilihPeringkat = new List<SelectListItem>();
+            string[] jenisKesukaran = new string[] { "HargaKesukaran", "HargaTambahan" };
+            var kesukaranList = getConfig.GetWebConfigFlag2Filter(jenisKesukaran, NegaraID, SyarikatID);
+
+            MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            var SelectPkt = dbr.tbl_PktPinjam.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_JenisPkt == JnsPkt && x.fld_EndDT >= CurrentDate).ToList();
+            PilihPeringkat = new SelectList(SelectPkt.Select(s => new SelectListItem { Value = s.fld_ID.ToString(), Text = s.fld_KodPkt + " - " + s.fld_NamaPkt + " - (" + s.fld_SAPCode + ")" }), "Value", "Text").ToList();
+
+            if (PilihPeringkat.Count == 0)
+            {
+                PilihPeringkat.Insert(0, (new SelectListItem { Text = "No Data", Value = "-" }));
+            }
+
+            dynamic kesukaran = new ExpandoObject();
+            var tbl_PktHargaKesukaran = new List<tbl_PktHargaKesukaran>();
+
+            if (SelectPkt.Count() > 0)
+            {
+                var PilihanPktID = SelectPkt.FirstOrDefault().fld_ID;
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID && x.fld_EndDT >= CurrentDate).FirstOrDefault();
+                var PilihanPkt = "";
+                if (pktTransfer != null)
+                {
+                    NegaraID = pktTransfer.fld_NegaraIDAsal;
+                    SyarikatID = pktTransfer.fld_SyarikatIDAsal;
+                    WilayahID = pktTransfer.fld_WilayahIDAsal;
+                    LadangID = pktTransfer.fld_LadangIDAsal;
+
+                    Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                    dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                    PilihanPkt = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == pktTransfer.fld_OriginPktID).Select(s => s.fld_PktUtama).FirstOrDefault();
+                }
+                switch (JnsPkt)
+                {
+                    case 1:
+                        var SelectPkt1 = dbrpkt.tbl_PktUtama.Where(x => x.fld_PktUtama == PilihanPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).ToList();
+                        var firstSelectPkt = SelectPkt1.FirstOrDefault();
+
+                        break;
+                    case 2:
+                        var SelectPkt2 = dbrpkt.tbl_SubPkt.Where(x => x.fld_KodPktUtama == PilihanPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).ToList();
+                        var firstSelectPkt2 = SelectPkt2.FirstOrDefault();
+
+                        break;
+                    case 3:
+                        var SelectPkt3 = dbrpkt.tbl_Blok.Where(x => x.fld_KodPktutama == PilihanPkt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).ToList();
+                        //PilihPeringkat = new SelectList(SelectPkt3.Select(s => new SelectListItem { Value = s.fld_Blok, Text = s.fld_Blok + " - " + s.fld_NamaBlok }), "Value", "Text").ToList();
+                        var firstSelectPkt3 = SelectPkt3.FirstOrDefault();
+
+                        break;
+                }
+            }
+
+            dbr.Dispose();
+
+            return Json(new { PilihPeringkat });
         }
         public JsonResult DeleteAttInfo(Guid Data, int SelectionCategory, string SelectionData, DateTime SelectDate)
         {
@@ -3692,6 +3826,27 @@ namespace MVC_SYSTEM.Controllers
             return Json(new { PilihPeringkat, kesukaran });
         }//end modified
 
+        public JsonResult GetPktHT(string JnisAktvt, byte TrnsfrLvl)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            string[] jenisKesukaran = new string[] { "HargaKesukaran", "HargaTambahan" };
+            var kesukaranList = getConfig.GetWebConfigFlag2Filter(jenisKesukaran, NegaraID, SyarikatID);
+
+            List<SelectListItem> PilihPeringkat = new List<SelectListItem>();
+
+            PilihPeringkat = new SelectList(dbr.tbl_PktUtama.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false).Select(s => new SelectListItem { Value = s.fld_PktUtama, Text = s.fld_PktUtama + " - " + s.fld_NamaPktUtama }), "Value", "Text").ToList();
+
+            dbr.Dispose();
+            return Json(new { PilihPeringkat });
+        }//end modified
+
         public JsonResult GetPlhnPkt(string PilihanPkt, int JnisPkt, string JnisAktvt, byte TrnsfrLvl)
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
@@ -3785,10 +3940,10 @@ namespace MVC_SYSTEM.Controllers
 
             List<SelectListItem> PilihAktiviti = new List<SelectListItem>();
             var estateCostCenter = GetLadang.GetLadangCostCenter(LadangID);
-            var tbl_UpahAktiviti = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == JnisAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).ToList();
-            PilihAktiviti = new SelectList(tbl_UpahAktiviti.OrderBy(o => o.fld_KodAktvt).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt + " - " + s.fld_Desc + " (RM" + s.fld_Harga + ")" }), "Value", "Text").ToList();
+            var tbl_UpahAktiviti = db.tbl_UpahAktiviti.Where(x => x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJenisAktvt == JnisAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).OrderBy(o=>o.fld_ID).ToList();
+            PilihAktiviti = new SelectList(tbl_UpahAktiviti.OrderBy(o => o.fld_ID).Select(s => new SelectListItem { Value = s.fld_KodAktvt, Text = s.fld_KodAktvt + " - " + s.fld_Desc + " (RM" + s.fld_Harga + ")" }), "Value", "Text").ToList();
             PilihAktiviti.Insert(0, (new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "0" }));
-            var AktivitiToolTip = tbl_UpahAktiviti.OrderBy(o => o.fld_KodAktvt).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
+            var AktivitiToolTip = tbl_UpahAktiviti.OrderBy(o => o.fld_ID).Select(s => new { Label = s.fld_KodAktvt + " - " + s.fld_Desc + " - RM" + s.fld_Harga }).ToList();
             var JenisAktiviti = db.tbl_JenisAktiviti.Where(x => x.fld_DisabledFlag != 5 && x.fld_KodJnsAktvt == JnisAktvt && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_Deleted == false).FirstOrDefault();
             string Lain2JnsAtvt = "";
             MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
@@ -3920,7 +4075,7 @@ namespace MVC_SYSTEM.Controllers
             //end faeza            
         }
 
-        public JsonResult GetGLSAP(byte JnisPkt, string PilihanPkt, string PilihanAktvt)
+        public JsonResult GetGLSAP(byte JnisPkt, string PilihanPkt, string PilihanAktvt, int? TrnsfrLvl)
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             string host, catalog, user, pass = "";
@@ -3930,12 +4085,57 @@ namespace MVC_SYSTEM.Controllers
             GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
             Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
             MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            MVC_SYSTEM_Models dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
             string GLCode = "";
             var estateCostCenter = GetLadang.GetLadangCostCenter(LadangID);
+            var TransferPkt = false;
+
+            int? NegaraID2 = NegaraID;
+            int? SyarikatID2 = SyarikatID;
+            int? WilayahID2 = WilayahID;
+            int? LadangID2 = LadangID;
+
+            if (TrnsfrLvl == 1)
+            {
+                TransferPkt = true;
+            }
+            else
+            {
+                TransferPkt = false;
+            }
+
+            int PinjampktTransferID = 0;//Added by Shazana 27/6/2024
+            int transferLvlID = 0;
+            var transferPktCode = "";
+            var sapType = "";
+            var PilihanPktID = 0;
+            string PilihanPktAsal = PilihanPkt; //Added by Shazana 5/2/2024
+            if (TransferPkt)
+            {
+                PilihanPktID = int.Parse(PilihanPkt);
+                var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
+                if (pktTransfer != null)
+                {
+                    PinjampktTransferID = pktTransfer.fld_ID;//Added by Shazana 27/6/2024
+                    PilihanPktAsal = pktTransfer.fld_KodPkt; //Added by Shazana 5/2/2024
+                    JnisPkt = byte.Parse(pktTransfer.fld_JenisPkt.ToString());
+                    NegaraID2 = pktTransfer.fld_NegaraIDAsal;
+                    SyarikatID2 = pktTransfer.fld_SyarikatIDAsal;
+                    WilayahID2 = pktTransfer.fld_WilayahIDAsal;
+                    LadangID2 = pktTransfer.fld_LadangIDAsal;
+                    transferLvlID = pktTransfer.fld_OriginPktID.Value;
+                    transferPktCode = pktTransfer.fld_KodPkt;
+                    Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID2.Value, SyarikatID2.Value, NegaraID2.Value);
+                    dbrpkt = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                    var tbl_PktUtama = dbrpkt.tbl_PktUtama.Where(x => x.fld_ID == pktTransfer.fld_OriginPktID).FirstOrDefault();
+                    PilihanPkt = tbl_PktUtama.fld_PktUtama;
+                    sapType = tbl_PktUtama.fld_SAPType;
+                }
+            }
 
             if (estateCostCenter == "1000")
             {
-                if (EstateFunction.CheckSAPGLMap(dbr, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID, SyarikatID, WilayahID, LadangID, false, "-", out GLCode, 0))
+                if (EstateFunction.CheckSAPGLMap(dbr, JnisPkt, PilihanPkt, PilihanAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID))
                 {
 
                 }
@@ -4081,6 +4281,7 @@ namespace MVC_SYSTEM.Controllers
             int? SyarikatID2 = SyarikatID;
             int? WilayahID2 = WilayahID;
             int? LadangID2 = LadangID;
+            int PinjampktTransferID = 0;
             var IOCC = "";
             int transferLvlID = 0;
             if (TrnsfrLvl == 0)
@@ -4109,6 +4310,7 @@ namespace MVC_SYSTEM.Controllers
                 var pktTransfer = dbr.tbl_PktPinjam.Where(x => x.fld_ID == PilihanPktID && x.fld_LadangID == LadangID).FirstOrDefault();
                 if (pktTransfer != null)
                 {
+                    PinjampktTransferID = pktTransfer.fld_ID;
                     IOCC = pktTransfer.fld_SAPCode;
                     JnisPkt = byte.Parse(pktTransfer.fld_JenisPkt.ToString());
                     NegaraID2 = pktTransfer.fld_NegaraIDAsal;
@@ -4246,8 +4448,10 @@ namespace MVC_SYSTEM.Controllers
             }
             else
             {
-                var tbl_MapGL = db.tbl_MapGL.Where(x => x.fld_SyarikatID == 1 && (x.fld_Paysheet == "PA" || x.fld_Paysheet == "PT") && x.fld_Deleted == false).ToList();
-                var tbl_JenisAktiviti = db.tbl_JenisAktiviti.Join(db.tbl_UpahAktiviti,
+                if (EstateFunction.CheckSAPGLMapFPM(SelectionCategory, SelectionData, dbrpkt, JnisPkt, PilihanPkt, KodAktvt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, false, "-", out GLCode, transferLvlID, PinjampktTransferID, WilayahID,SyarikatID))
+                {
+                    var tbl_MapGL = db.tbl_MapGL.Where(x => x.fld_SyarikatID == 1 && (x.fld_Paysheet == "PA" || x.fld_Paysheet == "PT") && x.fld_Deleted == false).ToList();
+                    var tbl_JenisAktiviti = db.tbl_JenisAktiviti.Join(db.tbl_UpahAktiviti,
                         j => new { j.fld_NegaraID, j.fld_SyarikatID, KodJnsAktvt = j.fld_KodJnsAktvt },
                         k => new { k.fld_NegaraID, k.fld_SyarikatID, KodJnsAktvt = k.fld_KodJenisAktvt },
                         (j, k) => new
@@ -4265,48 +4469,78 @@ namespace MVC_SYSTEM.Controllers
                             k.fld_compcode
                         })
                             .Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_KodJnsAktvt == JnisAktvt && x.fld_KodAktvt == KodAktvt && x.fld_Deleted == false && x.fld_compcode == estateCostCenter).FirstOrDefault();
-                //tbl_JenisAktiviti.fld_DisabledFlag - 1 = kong box & kualiti box xde, 2 = kong je xde, 3 = kong je kluar
+                    //tbl_JenisAktiviti.fld_DisabledFlag - 1 = kong box & kualiti box xde, 2 = kong je xde, 3 = kong je kluar
 
-                if (tbl_JenisAktiviti.fld_DisabledFlag != 3)
-                {
-                    if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
-                        kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbrpkt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
-                    else
+                    if (tbl_JenisAktiviti.fld_DisabledFlag != 3)
                     {
-                        kadarharga = tbl_JenisAktiviti.fld_Harga;
-                        openRate = true;
-                    }
-                }
-                else
-                {
-                    if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
-                    {
-                        //Modified line by kamalia 30/4/2021
-                        kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbrpkt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
-                        //Modified line by kamalia 23/8/2021
-                        //Modified by Shazana 22/12/2023
-                        //var getgajiminima = db.tbl_GajiMinimaLdg.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
-                        //kadarharga = getgajiminima != null ? getgajiminima.fld_NilaiGajiMinima : kadarharga1;
-                        var getgajiminima = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID2 && x.fld_SyarikatID == SyarikatID2 && x.fld_KodAktvt == KodAktvt && x.fld_Deleted == false).FirstOrDefault();
-                        kadarharga = getgajiminima != null ? getgajiminima.fld_Harga : kadarharga1;
-
-                    }
-                    else
-                    {
-                        kadarharga = tbl_JenisAktiviti.fld_Harga;
-                        openRate = true;
-                    }
-                }
-
-                kadarharga2 = kadarharga;
-                if (kadarharga != 0)
-                {
-                    var paysheetID = "";
-                    if (SelectionCategory == 1)
-                    {
-                        var checkatts = dbr.tbl_Kerjahdr.Join(dbr.tbl_Pkjmast, j => new { j.fld_Nopkj, j.fld_NegaraID, j.fld_SyarikatID, j.fld_WilayahID, j.fld_LadangID }, k => new { k.fld_Nopkj, k.fld_NegaraID, k.fld_SyarikatID, k.fld_WilayahID, k.fld_LadangID }, (j, k) => new { j.fld_Kum, j.fld_Tarikh, j.fld_NegaraID, j.fld_SyarikatID, j.fld_WilayahID, j.fld_LadangID, k.fld_Nama, j.fld_Nopkj, j.fld_Kdhdct, k.fld_StatusApproved, k.fld_Kdaktf, k.fld_Kdrkyt }).Where(x => x.fld_Kum == SelectionData && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").ToList();
-                        foreach (var checkatt in checkatts)
+                        if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
+                            kadarharga = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbrpkt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                        else
                         {
+                            kadarharga = tbl_JenisAktiviti.fld_Harga;
+                            openRate = true;
+                        }
+                    }
+                    else
+                    {
+                        if (tbl_JenisAktiviti.fld_KdhByr == "B" || tbl_JenisAktiviti.fld_KdhByr == "A")
+                        {
+                            //Modified line by kamalia 30/4/2021
+                            kadarharga1 = tbl_JenisAktiviti.fld_KdhByr == "B" ? tbl_JenisAktiviti.fld_Harga : EstateFunction.YieldBracket(SelectDate, JnisPkt, PilihanPkt, "A", dbrpkt, NegaraID2, SyarikatID2, WilayahID2, LadangID2, out YieldBracketFullMonth);
+                            //Modified line by kamalia 23/8/2021
+                            //Modified by Shazana 22/12/2023
+                            //var getgajiminima = db.tbl_GajiMinimaLdg.Where(x => x.fld_LadangID == LadangID && x.fld_Deleted == false).FirstOrDefault();
+                            //kadarharga = getgajiminima != null ? getgajiminima.fld_NilaiGajiMinima : kadarharga1;
+                            var getgajiminima = db.tbl_UpahAktiviti.Where(x => x.fld_NegaraID == NegaraID2 && x.fld_SyarikatID == SyarikatID2 && x.fld_KodAktvt == KodAktvt && x.fld_Deleted == false).FirstOrDefault();
+                            kadarharga = getgajiminima != null ? getgajiminima.fld_Harga : kadarharga1;
+
+                        }
+                        else
+                        {
+                            kadarharga = tbl_JenisAktiviti.fld_Harga;
+                            openRate = true;
+                        }
+                    }
+
+                    kadarharga2 = kadarharga;
+                    if (kadarharga != 0)
+                    {
+                        var paysheetID = "";
+                        if (SelectionCategory == 1)
+                        {
+                            var checkatts = dbr.tbl_Kerjahdr.Join(dbr.tbl_Pkjmast, j => new { j.fld_Nopkj, j.fld_NegaraID, j.fld_SyarikatID, j.fld_WilayahID, j.fld_LadangID }, k => new { k.fld_Nopkj, k.fld_NegaraID, k.fld_SyarikatID, k.fld_WilayahID, k.fld_LadangID }, (j, k) => new { j.fld_Kum, j.fld_Tarikh, j.fld_NegaraID, j.fld_SyarikatID, j.fld_WilayahID, j.fld_LadangID, k.fld_Nama, j.fld_Nopkj, j.fld_Kdhdct, k.fld_StatusApproved, k.fld_Kdaktf, k.fld_Kdrkyt }).Where(x => x.fld_Kum == SelectionData && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").ToList();
+                            foreach (var checkatt in checkatts)
+                            {
+                                GLCode = "";
+                                if (checkatt.fld_Kdrkyt == "MA")
+                                {
+                                    GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == KodAktvt && x.fld_Paysheet == "PT").Select(s => s.fld_KodGL).FirstOrDefault();
+                                    paysheetID = "PT";
+                                }
+                                else
+                                {
+                                    GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == KodAktvt && x.fld_Paysheet == "PA").Select(s => s.fld_KodGL).FirstOrDefault();
+                                    paysheetID = "PA";
+                                }
+                                GetConfig.GetCutiDesc(checkatt.fld_Kdhdct, "cuti", out keteranganhdr, out statushdr, out KadarByrn, NegaraID, SyarikatID);
+                                if (tbl_JenisAktiviti.fld_DisabledFlag == 3)
+                                {
+                                    var SalaryIncrement = dbr.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == checkatt.fld_Nopkj && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
+                                    if (SalaryIncrement != null)
+                                    {
+                                        kadarharga = SalaryIncrement + kadarharga2;
+                                    }
+                                    else
+                                    {
+                                        kadarharga = kadarharga2;
+                                    }
+                                }
+                                CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = paysheetID, OpenRate = openRate });
+                            }
+                        }
+                        else
+                        {
+                            var checkatt = dbr.tbl_Kerjahdr.Join(dbr.tbl_Pkjmast, j => new { j.fld_Nopkj, j.fld_NegaraID, j.fld_SyarikatID, j.fld_WilayahID, j.fld_LadangID }, k => new { k.fld_Nopkj, k.fld_NegaraID, k.fld_SyarikatID, k.fld_WilayahID, k.fld_LadangID }, (j, k) => new { j.fld_Kum, j.fld_Tarikh, j.fld_NegaraID, j.fld_SyarikatID, j.fld_WilayahID, j.fld_LadangID, k.fld_Nama, j.fld_Nopkj, j.fld_Kdhdct, k.fld_StatusApproved, k.fld_Kdaktf, k.fld_Kdrkyt }).Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").FirstOrDefault();
                             GLCode = "";
                             if (checkatt.fld_Kdrkyt == "MA")
                             {
@@ -4333,54 +4567,31 @@ namespace MVC_SYSTEM.Controllers
                             }
                             CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = paysheetID, OpenRate = openRate });
                         }
+                        msg = GlobalResEstate.msgWorkInfo;
+                        statusmsg = "success";
+                        closeform = false;
                     }
                     else
                     {
-                        var checkatt = dbr.tbl_Kerjahdr.Join(dbr.tbl_Pkjmast, j => new { j.fld_Nopkj, j.fld_NegaraID, j.fld_SyarikatID, j.fld_WilayahID, j.fld_LadangID }, k => new { k.fld_Nopkj, k.fld_NegaraID, k.fld_SyarikatID, k.fld_WilayahID, k.fld_LadangID }, (j, k) => new { j.fld_Kum, j.fld_Tarikh, j.fld_NegaraID, j.fld_SyarikatID, j.fld_WilayahID, j.fld_LadangID, k.fld_Nama, j.fld_Nopkj, j.fld_Kdhdct, k.fld_StatusApproved, k.fld_Kdaktf, k.fld_Kdrkyt }).Where(x => x.fld_Nopkj == SelectionData && x.fld_Tarikh == SelectDate && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1 && x.fld_Kdaktf == "1").FirstOrDefault();
-                        GLCode = "";
-                        if (checkatt.fld_Kdrkyt == "MA")
+                        if (!YieldBracketFullMonth)
                         {
-                            GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == KodAktvt && x.fld_Paysheet == "PT").Select(s => s.fld_KodGL).FirstOrDefault();
-                            paysheetID = "PT";
+                            msg = GlobalResEstate.msgYieldBracket;
                         }
                         else
                         {
-                            GLCode = tbl_MapGL.Where(x => x.fld_KodAktvt == KodAktvt && x.fld_Paysheet == "PA").Select(s => s.fld_KodGL).FirstOrDefault();
-                            paysheetID = "PA";
+                            msg = GlobalResEstate.msgErrorData;
                         }
-                        GetConfig.GetCutiDesc(checkatt.fld_Kdhdct, "cuti", out keteranganhdr, out statushdr, out KadarByrn, NegaraID, SyarikatID);
-                        if (tbl_JenisAktiviti.fld_DisabledFlag == 3)
-                        {
-                            var SalaryIncrement = dbr.tbl_PkjIncrmntSalary.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Nopkj == checkatt.fld_Nopkj && x.fld_AppStatus == true).Select(s => s.fld_IncrmntSalary).FirstOrDefault();
-                            if (SalaryIncrement != null)
-                            {
-                                kadarharga = SalaryIncrement + kadarharga2;
-                            }
-                            else
-                            {
-                                kadarharga = kadarharga2;
-                            }
-                        }
-                        CustMod_AttWorkList.Add(new CustMod_AttWork() { Nopkj = checkatt.fld_Nopkj, Namapkj = checkatt.fld_Nama, Keteranganhdr = keteranganhdr, statushdr = statushdr, disabletextbox = tbl_JenisAktiviti.fld_DisabledFlag, Kadar = kadarharga, KadarByrn = KadarByrn, KdhByr = tbl_JenisAktiviti.fld_KdhByr, Unit = tbl_JenisAktiviti.fld_Unit, MaximumHsl = tbl_JenisAktiviti.fld_MaxProduktiviti, EstateCostCenter = estateCostCenter, GLCode = GLCode, PaysheetID = paysheetID, OpenRate = openRate });
+                        statusmsg = "warning";
+                        closeform = true;
                     }
-                    msg = GlobalResEstate.msgWorkInfo;
-                    statusmsg = "success";
-                    closeform = false;
+                    bodyview = RenderRazorViewToString("WorkingDetailsForm", CustMod_AttWorkList, false);
                 }
                 else
                 {
-                    if (!YieldBracketFullMonth)
-                    {
-                        msg = GlobalResEstate.msgYieldBracket;
-                    }
-                    else
-                    {
-                        msg = GlobalResEstate.msgErrorData;
-                    }
+                    msg = GlobalResEstate.msgKodGLnotFound;
                     statusmsg = "warning";
                     closeform = true;
                 }
-                bodyview = RenderRazorViewToString("WorkingDetailsForm", CustMod_AttWorkList, false);
             }
             dbr.Dispose();
             return Json(new { tablelisting = bodyview, msg, statusmsg, closeform, GLCode, IOCC });

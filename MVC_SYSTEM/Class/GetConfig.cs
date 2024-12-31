@@ -13,7 +13,6 @@ namespace MVC_SYSTEM.Class
     public class GetConfig
     {
         MVC_SYSTEM_MasterModels db = new MVC_SYSTEM_MasterModels();
-
         Connection Connection = new Connection();
 
         ChangeTimeZone changeTimeZone = new ChangeTimeZone();
@@ -559,5 +558,30 @@ namespace MVC_SYSTEM.Class
             return kerjaPktCount;
         }
         //end
+        public string GetSyarikatNo(string costcentre)
+    {
+        var SyarikatNo = "";
+        var SyarikatNoInfo = db.tbl_Syarikat.Where(x => x.fld_SAPComCode == costcentre && x.fld_Deleted == false).Select(s => s.fld_NoSyarikat).FirstOrDefault();
+        if (SyarikatNoInfo == null)
+        { SyarikatNo = ""; }
+        else
+        { SyarikatNo = SyarikatNoInfo; }
+
+        return SyarikatNo;
     }
+
+    public string GetSyarikatFullName(string costcentre)
+    {
+      
+    var SyarikatFullName = "";
+        var syarikatInfo =  db.tbl_Syarikat.Where(x => x.fld_SAPComCode == costcentre && x.fld_Deleted == false).Select(x => x.fld_NamaSyarikat).FirstOrDefault();
+        if (syarikatInfo == null)
+        { SyarikatFullName = ""; }
+        else
+        { SyarikatFullName = syarikatInfo; }
+
+        return SyarikatFullName;
+    }
+    }
+  
 }

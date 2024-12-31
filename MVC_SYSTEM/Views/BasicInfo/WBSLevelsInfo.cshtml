@@ -3,6 +3,28 @@
     ViewBag.Title = "LevelsInfo";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
+
+@{
+    GetTriager GetTriager = new GetTriager();
+
+    int? month = ViewBag.MonthList;
+    int? year = ViewBag.YearList;
+    int bil = 0;
+    decimal? debit = 0;
+    decimal? credit = 0;
+
+    ChangeTimeZone ChangeTimeZone = new ChangeTimeZone();
+
+    int year1 = ChangeTimeZone.gettimezone().Year;
+    int month1 = ChangeTimeZone.gettimezone().Month;
+    int day = ChangeTimeZone.gettimezone().Day;
+    int hour = ChangeTimeZone.gettimezone().Hour;
+    int minute = ChangeTimeZone.gettimezone().Minute;
+    int second = ChangeTimeZone.gettimezone().Second;
+    string uniquefilename = "Asas_Peringkat_WBS_" + ViewBag.UserID + "_" + year1.ToString() + month1.ToString() + day.ToString() + hour.ToString() + minute.ToString() + second.ToString();
+
+}
+
 <div id="UpdateProgress1" style="display:none;">
     <div class="progressTest">
         <label>
@@ -45,8 +67,11 @@
             <div class="modal-footer" style="margin-top: -18px">
                 @* comment by fatin - 11/04/2023 *@
                 @*<a class="btn btn-success" data-modal="" href="@Url.Action("_SLPDataPeringkat", "BasicInfo")" id="btnIO" onclick="return DisplayProgressMessage2(this);">
-                        Data SLP
-                    </a>*@
+        Data SLP
+        </a>*@
+                <a class="btn btn-default btn-sm" href="#" onclick="HTMLtoExcel('@(uniquefilename)')">
+                    <span><img src="~/Asset/Images/excel-icon.png" width="20px" height="20px" /></span> @GlobalResEstate.btnDownloadExcel
+                </a>
                 <a class="btn btn-success" data-modal="" href="@Url.Action("WBSLevelsPktCreate", "BasicInfo")" id="btnPkt" onclick="return DisplayProgressMessage2(this);">
                     Daftar Peringkat
                 </a>
@@ -57,6 +82,7 @@
                     Daftar Blok
                 </a>
                 <a class="btn btn-warning" href="@Url.Action("Index", "BasicInfo")" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnBack</a>
+
             </div>
         </div>
     }

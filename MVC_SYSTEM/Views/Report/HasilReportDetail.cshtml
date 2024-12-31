@@ -105,6 +105,11 @@
 
                     @foreach (var item in Model.Where(x => x.fld_Nopkj == pkj.fld_Nopkj))
                     {
+                        //fatin added - 16/10/2024
+                        if (item.fld_HrgaKwsnSkar == null)
+                        {
+                            item.fld_HrgaKwsnSkar = 0;
+                        }
                         //string Amt = @GetTriager.GetTotalForMoney(item.fldKredit);
                         bill = bill + 1;
                         JumlahKadar = JumlahKadar + item.fld_Amount.Value;
@@ -117,58 +122,58 @@
                         JumlahAmount = JumlahAmount + item.fld_Amount.Value;
                         JumlahOverall = JumlahOverall + item.fld_OverallAmount.Value;
 
-                        <tr>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @bill
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_Tarikh.Value.ToString("dd/MM/yyyy")
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @pkj.fld_Nopkj
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @nama
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @GetConfig.GetGLDesc(item.fld_KodGL, item.fld_NegaraID.Value, item.fld_SyarikatID.Value)
+                    <tr>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @bill
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_Tarikh.Value.ToString("dd/MM/yyyy")
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @pkj.fld_Nopkj
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @nama
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetConfig.GetGLDesc(item.fld_KodGL, item.fld_NegaraID.Value, item.fld_SyarikatID.Value)
 
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_KodAktvt
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @GetConfig.GetAktvt(item.fld_KodAktvt, item.fld_NegaraID.Value, item.fld_SyarikatID.Value)
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_KodPkt
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_KadarByr
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_JumlahHasil
-                            </td>
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_KodAktvt
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @GetConfig.GetAktvt(item.fld_KodAktvt, item.fld_NegaraID.Value, item.fld_SyarikatID.Value)
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_KodPkt
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_KadarByr
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_JumlahHasil
+                        </td>
 
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @Convert.ToInt32(@item.fld_JamOT)
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @Triager.GetTotalForMoney(@kadar.mul(Convert.ToDecimal(@item.fld_JamOT), OTRate))
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_HrgaKwsnSkar
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_Bonus
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_Amount
-                            </td>
-                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
-                                @item.fld_OverallAmount
-                            </td>
-                        </tr>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @Convert.ToInt32(@item.fld_JamOT)
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @Triager.GetTotalForMoney(@kadar.mul(Convert.ToDecimal(@item.fld_JamOT), OTRate))
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_HrgaKwsnSkar
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_Bonus
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_Amount
+                        </td>
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @item.fld_OverallAmount
+                        </td>
+                    </tr>
                     }
 
                 </tbody>

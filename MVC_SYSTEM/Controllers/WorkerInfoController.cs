@@ -30,6 +30,7 @@ using System.Data.Entity.Validation;
 using tbl_Produktiviti = MVC_SYSTEM.Models.tbl_Produktiviti;
 using System.Web.UI;
 using System.Drawing;
+using System.Web.Services.Description;
 
 
 namespace MVC_SYSTEM.Controllers
@@ -5216,6 +5217,8 @@ namespace MVC_SYSTEM.Controllers
                 }
                 else
                 {
+                    getdata.fld_StatusKwspSocso = tbl_Pkjmast.fld_StatusKwspSocso;
+                    getdata.fld_KodSocso = tbl_Pkjmast.fld_KodSocso;
                     getdata.fld_Noperkeso = tbl_Pkjmast.fld_Noperkeso;
                 }
                 dbr.SaveChanges();
@@ -5904,9 +5907,23 @@ namespace MVC_SYSTEM.Controllers
 
             foreach (var wage in getWageBelow1000)
             {
+                //Modified by Shazana 28/5/2024
+                //var hadirHariBiasaByBulan = dbview.tbl_Kerjahdr
+                //    .Count(x => x.fld_Kdhdct == "H01" && x.fld_Nopkj == wage.fld_Nopkj &&
+                //                x.fld_Tarikh.Value.Month == MonthList &&
+                //                x.fld_Tarikh.Value.Year == YearList &&
+                //                x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
+                //                x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID);
+                decimal? gajibulanlatest = 0;
+                gajibulanlatest = dbview.tbl_GajiBulanan.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID
+                && x.fld_Month == MonthList && x.fld_Year == YearList && x.fld_Nopkj == wage.fld_Nopkj).Select(x => x.fld_GajiKasar).FirstOrDefault();
+                if (gajibulanlatest == null) { gajibulanlatest = 0; }
+
+                string[] listCuti = db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag2 == "kategoricuti" && x.fldOptConfFlag1 != "kodCutiKuarantin" && x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fldDeleted == false).Select(x => x.fldOptConfValue).ToArray();
+
                 var hadirHariBiasaByBulan = dbview.tbl_Kerjahdr
-                    .Count(x => x.fld_Kdhdct == "H01" && x.fld_Nopkj == wage.fld_Nopkj &&
-                                x.fld_Tarikh.Value.Month == MonthList &&
+                    .Count(x => x.fld_Nopkj == wage.fld_Nopkj && (x.fld_Kdhdct == "H01" || x.fld_Kdhdct == "H02" || x.fld_Kdhdct == "H03" || listCuti.Contains(x.fld_Kdhdct))
+                                && x.fld_Tarikh.Value.Month == MonthList &&
                                 x.fld_Tarikh.Value.Year == YearList &&
                                 x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID &&
                                 x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID);
@@ -5921,7 +5938,7 @@ namespace MVC_SYSTEM.Controllers
                 minimumWage.TarikhSahJawatan = wage.fld_Trshjw;
                 minimumWage.KategoriKerja = wage.fld_Ktgpkj;
                 minimumWage.JumlahHariBekerja = hadirHariBiasaByBulan;
-                minimumWage.GajiBulanan = wage.fld_ByrKerja;
+                minimumWage.GajiBulanan = gajibulanlatest;
                 minimumWage.Sebab = wage.fld_Sebab;
                 minimumWage.PelanTindakan = wage.fld_Tindakan;
                 minimumWage.NegaraID = NegaraID;
@@ -5932,12 +5949,13 @@ namespace MVC_SYSTEM.Controllers
             }
 
             records.Content = GajiMinimaList
+                .Where(x=>x.GajiBulanan <= 1500)
                 .OrderBy(sort + " " + sortdir)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
-            records.TotalRecords = GajiMinimaList
+            records.TotalRecords = GajiMinimaList.Where(x => x.GajiBulanan <= 1500)
                 .Count();
 
             records.CurrentPage = page;
@@ -9616,6 +9634,381 @@ namespace MVC_SYSTEM.Controllers
                     false,
                     JsonRequestBehavior.AllowGet);
             }
-        }   
+        }
+
+        public ActionResult BuruhKontraktor(string filter, int page = 1, string sort = "fld_CreatedDT", string sortdir = "ASC")
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+           
+            ViewBag.WorkerInfo = "class = active";
+            return View();
+        }
+
+        public ActionResult _BuruhKontraktor(int page = 1, string sort = "fld_CreatedDT", string sortdir = "ASC")
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+
+            int pageSize = int.Parse(GetConfig.GetData("paging"));
+            var records = new PagedList<Models.tbl_BuruhKontrak>();
+            int role = getidentity.RoleID(getuserid).Value;
+
+            var message = "";
+
+            var buruhKontrakData = dbr.tbl_BuruhKontrak
+                .Where(x =>x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_Deleted == false);
+
+
+            records.Content = buruhKontrakData.OrderBy(sort + " " + sortdir)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            records.TotalRecords = buruhKontrakData
+                .Count();
+
+
+            records.CurrentPage = page;
+            records.PageSize = pageSize;
+            ViewBag.RoleID = role;
+            ViewBag.pageSize = 1;
+
+            
+            if(buruhKontrakData.Count() == 0)
+            {
+                message = GlobalResEstate.msgNoRecord;
+            }
+
+      
+            return View(records);
+        }
+
+        public ActionResult _BuruhKontraktorCreate()
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+
+
+            List<SelectListItem> jawatan = new List<SelectListItem>();
+            jawatan = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "designation" && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc }), "Value", "Text").ToList();
+            jawatan.Insert(0, new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "" });
+            ViewBag.JawatanList = jawatan;
+
+            int drpyear = 0;
+            int drprangeyear = 0;
+
+            drpyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
+            drprangeyear = timezone.gettimezone().Year;
+
+            var yearlist = new List<SelectListItem>();
+            for (var i = drpyear; i <= drprangeyear; i++)
+            {
+                if (i == timezone.gettimezone().Year)
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                }
+            }
+            yearlist.Insert(0, new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "" });
+            ViewBag.YearList = yearlist;
+
+
+            return PartialView();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult _BuruhKontraktorCreate(Models.tbl_BuruhKontrakModelViewCreate buruhKontrakModelViewCreate)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            GetLadang GetLadang = new GetLadang();
+            DateTime getDT = timezone.gettimezone();
+
+
+            try
+            {
+                //if (ModelState.IsValid)
+                //{
+
+                    Models.tbl_BuruhKontrak buruhKontraktor = new Models.tbl_BuruhKontrak();
+
+                    PropertyCopy.Copy(buruhKontraktor, buruhKontrakModelViewCreate);
+
+                    int ldgid = LadangID.Value;
+                    int wlyhid = WilayahID.Value;
+                    buruhKontraktor.fld_LadangCode = GetLadang.GetLadangCode(ldgid);
+                    buruhKontraktor.fld_LadangName = GetLadang.GetLadangName(ldgid, wlyhid);
+                    buruhKontraktor.fld_NegaraID = NegaraID;
+                    buruhKontraktor.fld_SyarikatID = SyarikatID;
+                    buruhKontraktor.fld_WilayahID = WilayahID;
+                    buruhKontraktor.fld_LadangID = LadangID;
+                    buruhKontraktor.fld_CreatedBy = getuserid;
+                    buruhKontraktor.fld_CreatedDT = getDT;
+                    buruhKontraktor.fld_ModifiedBy = getuserid;
+                    buruhKontraktor.fld_ModifiedDT = getDT;
+                    buruhKontraktor.fld_Deleted = false;
+
+                    dbr.tbl_BuruhKontrak.Add(buruhKontraktor);
+                    dbr.SaveChanges();
+
+                    string appname = Request.ApplicationPath;
+                    string domain = Request.Url.GetLeftPart(UriPartial.Authority);
+                    var lang = Request.RequestContext.RouteData.Values["lang"];
+
+                    if (appname != "/")
+                    {
+                        domain = domain + appname;
+                    }
+
+                    return Json(new
+                    {
+                        success = true,
+                        msg = GlobalResEstate.msgAdd,
+                        status = "success",
+                        checkingdata = "0",
+                        method = "2",
+                        div = "BuruhKontraktorDetails",
+                        rootUrl = domain,
+                        action = "_BuruhKontraktor",
+                        controller = "WorkerInfo"
+                    });
+
+                //}
+
+                //else
+                //{
+                //    return Json(new
+                //    {
+                //        success = false,
+                //        msg = GlobalResEstate.msgErrorData,
+                //        status = "danger",
+                //        checkingdata = "0"
+                //    });
+                //}
+            }
+
+            catch (Exception ex)
+            {
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                return Json(new
+                {
+                    success = false,
+                    msg = GlobalResEstate.msgError,
+                    status = "danger",
+                    checkingdata = "0"
+                });
+            }
+
+            finally
+            {
+                db.Dispose();
+            }
+        }
+
+        public ActionResult _BuruhKontraktorEdit(int id, int? WilayahList)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahList, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            var buruhKontraktorData = dbr.tbl_BuruhKontrak.SingleOrDefault(x =>
+                x.fld_ID == id);
+
+            Models.tbl_BuruhKontrakModelViewEdit buruhKontraktorModeViewEdit = new tbl_BuruhKontrakModelViewEdit();
+
+            PropertyCopy.Copy(buruhKontraktorModeViewEdit, buruhKontraktorData);
+
+            List<SelectListItem> jawatan = new List<SelectListItem>();
+            jawatan = new SelectList(db.tblOptionConfigsWebs.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldOptConfFlag1 == "designation" && x.fldDeleted == false).OrderBy(o => o.fldOptConfValue).Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc }), "Value", "Text").ToList();
+            jawatan.Insert(0, new SelectListItem { Text = GlobalResEstate.lblChoose, Value = "" });
+            ViewBag.JawatanList = jawatan;
+
+            return PartialView(buruhKontraktorModeViewEdit);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult _BuruhKontraktorEdit(Models.tbl_BuruhKontrakModelViewEdit buruhKontraktorModelViewEdit)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            DateTime getDT = timezone.gettimezone();
+
+            try
+            {
+                //if (ModelState.IsValid)
+                //{
+                    Connection.GetConnection(out host, out catalog, out user, out pass, buruhKontraktorModelViewEdit.fld_WilayahID, SyarikatID.Value, NegaraID.Value);
+                    MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+                    var buruhKontraktorData = dbr.tbl_BuruhKontrak.SingleOrDefault(x =>
+                        x.fld_ID == buruhKontraktorModelViewEdit.fld_ID);
+
+                    buruhKontraktorData.fld_Designation = buruhKontraktorModelViewEdit.fld_Designation;
+                    buruhKontraktorData.fld_JumlahBuruh = buruhKontraktorModelViewEdit.fld_JumlahBuruh;
+                    buruhKontraktorData.fld_ModifiedBy = getuserid;
+                    buruhKontraktorData.fld_ModifiedDT = getDT;
+
+                 
+                    dbr.Entry(buruhKontraktorData).State = EntityState.Modified;
+                    dbr.SaveChanges();
+
+                    string appname = Request.ApplicationPath;
+                    string domain = Request.Url.GetLeftPart(UriPartial.Authority);
+                    var lang = Request.RequestContext.RouteData.Values["lang"];
+
+                    if (appname != "/")
+                    {
+                        domain = domain + appname;
+                    }
+
+                
+                    return Json(new
+                    {
+                        success = true,
+                        msg = GlobalResEstate.msgUpdate,
+                        status = "success",
+                        checkingdata = "0",
+                        method = "1",
+                        div = "BuruhKontraktorDetails",
+                        rootUrl = domain,
+                        action = "_BuruhKontraktor",
+                        controller = "WorkerInfo"
+                    });
+                //}
+
+                //else
+                //{
+                //    return Json(new
+                //    {
+                //        success = false,
+                //        msg = GlobalResCorp.msgErrorData,
+                //        status = "danger",
+                //        checkingdata = "0"
+                //    });
+                //}
+            }
+
+            catch (Exception ex)
+            {
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                return Json(new
+                {
+                    success = false,
+                    msg = GlobalResEstate.msgError,
+                    status = "danger",
+                    checkingdata = "0"
+                });
+            }
+
+            finally
+            {
+                db.Dispose();
+            }
+        }
+
+        public ActionResult _BuruhKontraktorDelete(int id, int? WilayahList)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahList, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            var buruhKontraktorData = dbr.tbl_BuruhKontrak.SingleOrDefault(x => x.fld_ID == id);
+
+            return PartialView(buruhKontraktorData);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult _BuruhKontraktorDelete(Models.tbl_BuruhKontrak buruhKontrak)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+
+            try
+            {
+                Connection.GetConnection(out host, out catalog, out user, out pass, buruhKontrak.fld_WilayahID, SyarikatID.Value, NegaraID.Value);
+                MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+                var buruhKontraktorData =
+                    dbr.tbl_BuruhKontrak.SingleOrDefault(x => x.fld_ID == buruhKontrak.fld_ID);
+
+                buruhKontraktorData.fld_Deleted = true;
+
+                dbr.SaveChanges();
+
+                string appname = Request.ApplicationPath;
+                string domain = Request.Url.GetLeftPart(UriPartial.Authority);
+                var lang = Request.RequestContext.RouteData.Values["lang"];
+
+                if (appname != "/")
+                {
+                    domain = domain + appname;
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    msg = GlobalResEstate.msgDelete2,
+                    status = "success",
+                    checkingdata = "0",
+                    method = "1",
+                    div = "BuruhKontraktorDetails",
+                    rootUrl = domain,
+                    action = "_BuruhKontraktor",
+                    controller = "WorkerInfo"
+                });
+
+            }
+
+            catch (Exception ex)
+            {
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                return Json(new
+                {
+                    success = false,
+                    msg = GlobalResEstate.msgError,
+                    status = "danger",
+                    checkingdata = "0"
+                });
+            }
+
+            finally
+            {
+                db.Dispose();
+            }
+        }
     }
 }

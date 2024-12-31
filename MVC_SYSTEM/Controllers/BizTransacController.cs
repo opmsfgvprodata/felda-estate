@@ -497,13 +497,20 @@ namespace MVC_SYSTEM.Controllers
 
                 if (statusProceedA2 != null)
                 {
-                    ViewBag.statusProceedA2 = statusProceedA2.fld_StatusProceed;
+                    ViewBag.statusProceedA2 = statusProceedA2.fld_StatusProceed; 
+                    if (statusProceedA2.fld_StatusProceed == true)
+                    { ViewBag.statusA2 = "1"; }
+                    else
+                    { ViewBag.statusA2 = "0"; }
                 }
                 else
                 {
                     ViewBag.statusProceedA2 = null;
+                    ViewBag.statusA2 = "0";
                 }
 
+               
+               
                 var statusProceedKR = dbr.tbl_SAPPostRef.Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
                                 x.fld_NegaraID == NegaraID &&
                                 x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
@@ -512,12 +519,19 @@ namespace MVC_SYSTEM.Controllers
                 if (statusProceedKR != null)
                 {
                     ViewBag.statusProceedKR = statusProceedKR.fld_StatusProceed;
+                    if (statusProceedKR.fld_StatusProceed == true)
+                    { ViewBag.statusKR = "1"; }
+                    else
+                    { ViewBag.statusKR = "0"; }
                 }
                 else
                 {
                     ViewBag.statusProceedKR = null;
+                    ViewBag.statusKR = "0";
                 }
                 //end by farahin
+
+               
 
                 //added by sarah 23/11/2022
                 if (statusProceedA2 != null)

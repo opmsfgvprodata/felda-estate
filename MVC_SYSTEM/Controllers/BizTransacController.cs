@@ -497,13 +497,20 @@ namespace MVC_SYSTEM.Controllers
 
                 if (statusProceedA2 != null)
                 {
-                    ViewBag.statusProceedA2 = statusProceedA2.fld_StatusProceed;
+                    ViewBag.statusProceedA2 = statusProceedA2.fld_StatusProceed; 
+                    if (statusProceedA2.fld_StatusProceed == true)
+                    { ViewBag.statusA2 = "1"; }
+                    else
+                    { ViewBag.statusA2 = "0"; }
                 }
                 else
                 {
                     ViewBag.statusProceedA2 = null;
+                    ViewBag.statusA2 = "0";
                 }
 
+               
+               
                 var statusProceedKR = dbr.tbl_SAPPostRef.Where(x => x.fld_Month == MonthList && x.fld_Year == YearList &&
                                 x.fld_NegaraID == NegaraID &&
                                 x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID &&
@@ -512,12 +519,19 @@ namespace MVC_SYSTEM.Controllers
                 if (statusProceedKR != null)
                 {
                     ViewBag.statusProceedKR = statusProceedKR.fld_StatusProceed;
+                    if (statusProceedKR.fld_StatusProceed == true)
+                    { ViewBag.statusKR = "1"; }
+                    else
+                    { ViewBag.statusKR = "0"; }
                 }
                 else
                 {
                     ViewBag.statusProceedKR = null;
+                    ViewBag.statusKR = "0";
                 }
                 //end by farahin
+
+               
 
                 //added by sarah 23/11/2022
                 if (statusProceedA2 != null)
@@ -4027,7 +4041,7 @@ namespace MVC_SYSTEM.Controllers
         }
 
         //Added by Shazana 23/6/2023
-        public ActionResult _EditSAPDataDetail(int? ItemID, Guid SAPPostRefID)
+        public ActionResult _EditSAPDataDetail(int? ItemID, Guid SAPPostRefID, string MonthList, string YearList)
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = GetIdentity.ID(User.Identity.Name);
@@ -4053,12 +4067,17 @@ namespace MVC_SYSTEM.Controllers
             tbl_SAPPostDataDetails tbl_SAPPostDataDetails = new tbl_SAPPostDataDetails();
             tbl_SAPPostDataDetails = SapModel.tbl_SAPPostDataDetails.Find(fld_ID);
 
-            if (tbl_SAPPostDataDetails.fld_GL != null)
+            if(fld_GL != null && fld_GL =="")
+            {
+                tbl_SAPPostDataDetails.fld_GL = "";
+            }
+            else if (fld_GL != null)
             {
                 tbl_SAPPostDataDetails.fld_GL = fld_GL.PadLeft(10, '0');
             }
             try
             {
+                tbl_SAPPostDataDetails.fld_GL = tbl_SAPPostDataDetails.fld_GL;
                 SapModel.Entry(tbl_SAPPostDataDetails).State = EntityState.Modified;
                 SapModel.SaveChanges();
                 msg = GlobalResEstate.msgUpdate;

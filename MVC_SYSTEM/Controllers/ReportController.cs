@@ -1532,7 +1532,7 @@ namespace MVC_SYSTEM.Controllers
             success = true;
             status = "success";
 
-            return Json(new { success = success, id = tblHtmlReport.fldID, msg = msg, status = status, link = Url.Action("GetPDF", "Report", null, "http") + "/" + tblHtmlReport.fldID });
+            return Json(new { success = success, id = tblHtmlReport.fldID, msg = msg, status = status, link = Url.Action("GetPDF", "Report", null, "https") + "/" + tblHtmlReport.fldID });
         }
 
         //public ActionResult GetPDF(int id)
@@ -6837,7 +6837,7 @@ namespace MVC_SYSTEM.Controllers
             success = true;
             status = "success";
 
-            return Json(new { success = success, id = tblHtmlReport.fldID, msg = msg, status = status, link = Url.Action("GetPDF", "Report", null, "http") + "/" + tblHtmlReport.fldID });
+            return Json(new { success = success, id = tblHtmlReport.fldID, msg = msg, status = status, link = Url.Action("GetPDF", "Report", null, "https") + "/" + tblHtmlReport.fldID });
         }
 
         //farahin edit whole function - 23/02/2021
@@ -6908,7 +6908,7 @@ namespace MVC_SYSTEM.Controllers
             success = true;
             status = "success";
 
-            return Json(new { success = success, id = tblHtmlReport.fldID, msg = msg, status = status, link = Url.Action("GetPDF3", "Report", null, "http") + "/" + tblHtmlReport.fldID });
+            return Json(new { success = success, id = tblHtmlReport.fldID, msg = msg, status = status, link = Url.Action("GetPDF3", "Report", null, "https") + "/" + tblHtmlReport.fldID });
         }
 
         //farahin-23/02/2021 - tambah function getpdf3 utk cater download PDF report passport
@@ -6979,7 +6979,7 @@ namespace MVC_SYSTEM.Controllers
             success = true;
             status = "success";
 
-            return Json(new { success = success, id = tblHtmlReport.fldID, msg = msg, status = status, link = Url.Action("GetPDF4", "Report", null, "http") + "/" + tblHtmlReport.fldID });
+            return Json(new { success = success, id = tblHtmlReport.fldID, msg = msg, status = status, link = Url.Action("GetPDF4", "Report", null, "https") + "/" + tblHtmlReport.fldID });
         }
         //farahin-23/2/2021 - tambah function getpdf4 untuk vater report kehadiran pekerja
         public ActionResult GetPDF4(int id)

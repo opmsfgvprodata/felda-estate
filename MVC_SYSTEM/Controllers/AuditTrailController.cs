@@ -84,7 +84,8 @@ namespace MVC_SYSTEM.Controllers
         }
 
         //aini add datatable audit trail 31052023
-        public ActionResult DatatableAuditTrail(int month, int year)
+        // Modified By Hazim - 10/01/2025
+        public ActionResult DatatableAuditTrail(int year)
         {
             int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
             int? getuserid = Getidentity.ID(User.Identity.Name);
@@ -96,25 +97,25 @@ namespace MVC_SYSTEM.Controllers
 
             GetNSWL.GetSyarikat(out SyarikatID, getuserid, User.Identity.Name);
 
-            if(month == 0 && year == 0)
+            if(year == 0 )
             {
-                int cmonth = DateTime.Now.Month - 1;
+                //int cmonth = DateTime.Now.Month - 1;
                 int cyear = DateTime.Now.Year;
 
-                List<sp_DashStatusAkaun_Result> dashStatusAkaun = new List<sp_DashStatusAkaun_Result>();
+                List<sp_AuditStatusAkaun_Result> dashStatusAkaun = new List<sp_AuditStatusAkaun_Result>();
 
-                dashStatusAkaun = dbsp.sp_DashStatusAkaun(SyarikatID, cyear, cmonth, WilayahID, LadangID).ToList();
+                dashStatusAkaun = dbsp.sp_AuditStatusAkaun(SyarikatID, cyear, WilayahID, LadangID).ToList();
 
                 return Json(dashStatusAkaun);
-            }
-            else
+            } else
             {
-                List<sp_DashStatusAkaun_Result> dashStatusAkaun = new List<sp_DashStatusAkaun_Result>();
+                List<sp_AuditStatusAkaun_Result> dashStatusAkaun = new List<sp_AuditStatusAkaun_Result>();
 
-                dashStatusAkaun = dbsp.sp_DashStatusAkaun(SyarikatID, year, month, WilayahID, LadangID).ToList();
+                dashStatusAkaun = dbsp.sp_AuditStatusAkaun(SyarikatID, year, WilayahID, LadangID).ToList();
 
                 return Json(dashStatusAkaun);
             }
+         
         }
     }
 }

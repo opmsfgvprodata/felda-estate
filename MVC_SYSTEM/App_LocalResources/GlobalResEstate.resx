@@ -465,6 +465,12 @@
   <data name="lblGroupSelection" xml:space="preserve">
     <value>Pilihan Kumpulan</value>
   </data>
+	<data name="lblIncentiveSelection" xml:space="preserve">
+    <value>Pilihan Insentif</value>
+  </data>
+    <data name="lblIncentives" xml:space="preserve">
+    <value>Insentif</value>
+  </data>
   <data name="lblHarvestType" xml:space="preserve">
     <value>Jenis Menuai</value>
   </data>

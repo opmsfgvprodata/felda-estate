@@ -38,6 +38,12 @@
           <Parameter Name="Year" Type="int" Mode="In" />
           <Parameter Name="Month" Type="int" Mode="In" />
         </Function>
+        <Function Name="sp_AuditStatusAkaun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SyarikatID" Type="int" Mode="In" />
+          <Parameter Name="Year" Type="int" Mode="In" />
+          <Parameter Name="Wilayah" Type="int" Mode="In" />
+          <Parameter Name="LadangID" Type="int" Mode="In" />
+        </Function>
         <Function Name="sp_DashAllKerakyatan" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SyarikatID" Type="int" Mode="In" />
           <Parameter Name="LadangID" Type="int" Mode="In" />
@@ -49,7 +55,6 @@
         <Function Name="sp_DashStatusAkaun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SyarikatID" Type="int" Mode="In" />
           <Parameter Name="Year" Type="int" Mode="In" />
-          <Parameter Name="Month" Type="int" Mode="In" />
           <Parameter Name="Wilayah" Type="int" Mode="In" />
           <Parameter Name="LadangID" Type="int" Mode="In" />
         </Function>
@@ -151,6 +156,7 @@
           <Parameter Name="Year" Type="int" Mode="In" />
           <Parameter Name="Month" Type="int" Mode="In" />
           <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="CompCode" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_RptProduktiviti" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="NegaraID" Type="int" Mode="In" />
@@ -182,6 +188,7 @@
           <Parameter Name="LevelAccess" Type="nvarchar" Mode="In" />
           <Parameter Name="UserID" Type="int" Mode="In" />
           <Parameter Name="SelectionCategory" Type="smallint" Mode="In" />
+          <Parameter Name="CompCode" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_RptSkb" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="NegaraID" Type="int" Mode="In" />
@@ -241,7 +248,6 @@
           <FunctionImport Name="sp_DashStatusAkaun" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_DashStatusAkaun_Result)">
             <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
             <Parameter Name="Year" Mode="In" Type="Int32" />
-            <Parameter Name="Month" Mode="In" Type="Int32" />
             <Parameter Name="Wilayah" Mode="In" Type="Int32" />
             <Parameter Name="LadangID" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -338,6 +344,7 @@
             <Parameter Name="Year" Mode="In" Type="Int32" />
             <Parameter Name="Month" Mode="In" Type="Int32" />
             <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="CompCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_RptProduktiviti" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_RptProduktiviti_Result)">
             <Parameter Name="NegaraID" Mode="In" Type="Int32" />
@@ -369,6 +376,7 @@
             <Parameter Name="LevelAccess" Mode="In" Type="String" />
             <Parameter Name="UserID" Mode="In" Type="Int32" />
             <Parameter Name="SelectionCategory" Mode="In" Type="Int16" />
+            <Parameter Name="CompCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_RptSkb" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_RptSkb_Result)">
             <Parameter Name="NegaraID" Mode="In" Type="Int32" />
@@ -415,6 +423,12 @@
             <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
             <Parameter Name="LadangID" Mode="In" Type="Int32" />
             <Parameter Name="Year" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_AuditStatusAkaun" ReturnType="Collection(OPMSESTFELKUANTANModel.sp_AuditStatusAkaun_Result)">
+            <Parameter Name="SyarikatID" Mode="In" Type="Int32" />
+            <Parameter Name="Year" Mode="In" Type="Int32" />
+            <Parameter Name="Wilayah" Mode="In" Type="Int32" />
+            <Parameter Name="LadangID" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="sp_DashAllKerakyatan_Result">
@@ -580,6 +594,22 @@
           <Property Type="Int32" Name="fld_NegaraID" Nullable="true" />
           <Property Type="Int32" Name="fld_SyarikatID" Nullable="true" />
           <Property Type="Int32" Name="fld_Month2" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_AuditStatusAkaun_Result">
+          <Property Type="Int32" Name="fld_SyarikatID" Nullable="true" />
+          <Property Type="Int32" Name="fld_WilayahID" Nullable="true" />
+          <Property Type="Int32" Name="fld_LadangID" Nullable="true" />
+          <Property Type="String" Name="fld_LdgName" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="fld_Month" Nullable="true" />
+          <Property Type="Int32" Name="fld_Year" Nullable="true" />
+          <Property Type="Int32" Name="TutupUrusNiaga" Nullable="true" />
+          <Property Type="Int32" Name="Verify" Nullable="true" />
+          <Property Type="Int32" Name="KelulusanPengurus" Nullable="true" />
+          <Property Type="Int32" Name="KelulusanPegKewangan" Nullable="true" />
+          <Property Type="Int32" Name="KelulusanPegWilayahFelda" Nullable="true" />
+          <Property Type="Int32" Name="GLToGL" Nullable="true" />
+          <Property Type="Int32" Name="GLToVendor" Nullable="true" />
+          <Property Type="Int32" Name="progress" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -805,6 +835,26 @@
                 <ScalarProperty Name="fld_NegaraID" ColumnName="fld_NegaraID" />
                 <ScalarProperty Name="fld_SyarikatID" ColumnName="fld_SyarikatID" />
                 <ScalarProperty Name="fld_Month2" ColumnName="fld_Month2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_AuditStatusAkaun" FunctionName="OPMSESTFELKUANTANModel.Store.sp_AuditStatusAkaun">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="OPMSESTFELKUANTANModel.sp_AuditStatusAkaun_Result">
+                <ScalarProperty Name="fld_SyarikatID" ColumnName="fld_SyarikatID" />
+                <ScalarProperty Name="fld_WilayahID" ColumnName="fld_WilayahID" />
+                <ScalarProperty Name="fld_LadangID" ColumnName="fld_LadangID" />
+                <ScalarProperty Name="fld_LdgName" ColumnName="fld_LdgName" />
+                <ScalarProperty Name="fld_Month" ColumnName="fld_Month" />
+                <ScalarProperty Name="fld_Year" ColumnName="fld_Year" />
+                <ScalarProperty Name="TutupUrusNiaga" ColumnName="TutupUrusNiaga" />
+                <ScalarProperty Name="Verify" ColumnName="Verify" />
+                <ScalarProperty Name="KelulusanPengurus" ColumnName="KelulusanPengurus" />
+                <ScalarProperty Name="KelulusanPegKewangan" ColumnName="KelulusanPegKewangan" />
+                <ScalarProperty Name="KelulusanPegWilayahFelda" ColumnName="KelulusanPegWilayahFelda" />
+                <ScalarProperty Name="GLToGL" ColumnName="GLToGL" />
+                <ScalarProperty Name="GLToVendor" ColumnName="GLToVendor" />
+                <ScalarProperty Name="progress" ColumnName="progress" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

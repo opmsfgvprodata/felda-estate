@@ -4273,6 +4273,24 @@ namespace MVC_SYSTEM.App_LocalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insentif.
+        /// </summary>
+        public static string lblIncentives {
+            get {
+                return ResourceManager.GetString("lblIncentives", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pilihan Insentif.
+        /// </summary>
+        public static string lblIncentiveSelection {
+            get {
+                return ResourceManager.GetString("lblIncentiveSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Jenis Insentif.
         /// </summary>
         public static string lblIncentiveType {

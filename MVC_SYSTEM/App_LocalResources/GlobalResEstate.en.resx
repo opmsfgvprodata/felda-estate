@@ -600,6 +600,12 @@
   <data name="lblGroupSelection" xml:space="preserve">
     <value>Group Selection</value>
   </data>
+	<data name="lblIncentiveSelection" xml:space="preserve">
+    <value>Incentive Selection</value>
+  </data>
+	<data name="lblIncentives" xml:space="preserve">
+    <value>Incentive</value>
+  </data>
   <data name="lblHarvestMethod" xml:space="preserve">
     <value>Harvest Method</value>
   </data>

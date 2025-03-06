@@ -999,6 +999,12 @@
   <data name="lblGroupSelection" xml:space="preserve">
     <value>Pilihan Grup</value>
   </data>
+	<data name="lblIncentiveSelection" xml:space="preserve">
+    <value>Pilihan Insentif</value>
+  </data>
+	<data name="lblIncentives" xml:space="preserve">
+    <value>Insentif</value>
+  </data>
   <data name="lblharga" xml:space="preserve">
     <value>HARGA (RUPIAH)</value>
   </data>

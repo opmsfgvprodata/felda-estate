@@ -67,5 +67,6 @@ namespace MVC_SYSTEM.MasterModels
         public string fld_KodGL { get; set; }
 
         public bool? fld_Deleted { get; set; }
+        public bool? fld_InclSecondPayslip { get; set; }
     }
 }

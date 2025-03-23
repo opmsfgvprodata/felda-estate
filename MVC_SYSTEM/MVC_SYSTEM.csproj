@@ -774,6 +774,7 @@
     <Compile Include="ViewingModels\vw_MaklumatTanggungan.cs" />
     <Compile Include="ViewingModels\vw_MingguNegeri.cs" />
     <Compile Include="ViewingModels\vw_OTPekerja.cs" />
+    <Compile Include="ViewingModels\vw_SpecialInsentive.cs" />
     <Compile Include="ViewingModels\vw_PaySheetPekerja.cs" />
     <Compile Include="ViewingModels\vw_PaySheetPekerjaCustomModel.cs" />
     <Compile Include="ViewingModels\vw_PaySlipPekerja.cs" />
@@ -3391,6 +3392,9 @@
     <Content Include="Views\WorkerInfo\_BuruhKontraktorDelete.cshtml" />
     <Content Include="Views\Report\EstKedudukanPkjMengikutWlyhReport.cshtml" />
     <Content Include="Views\Report\_EstKedudukanPkjMengikutWlyhReport.cshtml" />
+    <Content Include="Views\Report\_DailyWorkReport.cshtml" />
+    <Content Include="Views\GenTextFile\eWalletOthers.cshtml" />
+    <Content Include="Views\GenTextFile\_eWalletOthers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Asset\Upload\120\" />

@@ -65,6 +65,10 @@ namespace MVC_SYSTEM.Controllers
                     filename = "ewallet";
                     controllername = "GenTextFile";
                     break;
+                case "ewalletothers":
+                    filename = "eWalletOthers";
+                    controllername = "GenTextFile";
+                    break;
                 case "cdmas":
                     //modified by faeza 28.03.2022
                     //filename = "Index";
@@ -358,6 +362,270 @@ namespace MVC_SYSTEM.Controllers
             string contentType = string.Empty;
             contentType = "application/txt";
             return File(CurrentFileName.FilePath, contentType, CurrentFileName.FileName);
+        }
+
+        public ActionResult eWalletOthers()
+        {
+            ViewBag.Report = "class = active";
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            int drpyear = 0;
+            int drprangeyear = 0;
+            int month = timezone.gettimezone().Month;
+
+            drpyear = timezone.gettimezone().Year - int.Parse(GetConfig.GetData("yeardisplay")) + 1;
+            drprangeyear = timezone.gettimezone().Year;
+
+            var yearlist = new List<SelectListItem>();
+            for (var i = drpyear; i <= drprangeyear; i++)
+            {
+                if (i == timezone.gettimezone().Year)
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    yearlist.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                }
+            }
+
+            ViewBag.YearList = yearlist;
+
+            var statusList = new List<SelectListItem>();
+            statusList = new SelectList(
+                db.tblOptionConfigsWebs
+                    .Where(x => x.fldOptConfFlag1 == "statusaktif" && x.fldDeleted == false &&
+                                x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID)
+                    .OrderBy(o => o.fldOptConfDesc)
+                    .Select(s => new SelectListItem { Value = s.fldOptConfValue, Text = s.fldOptConfDesc }),
+                "Value", "Text").ToList();
+
+            var monthList = new SelectList(
+                db.tblOptionConfigsWebs.Where(x => x.fldOptConfFlag1 == "monthlist" && x.fldDeleted == false &&
+                                                   x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID),
+                "fldOptConfValue", "fldOptConfDesc", month);
+
+            List<SelectListItem> IncentiveList = new List<SelectListItem>();
+            IncentiveList = new SelectList(db.tbl_JenisInsentif.Where(x => x.fld_InclSecondPayslip == true && x.fld_JenisInsentif == "P" && x.fld_Deleted == false && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID).OrderBy(o => o.fld_KodInsentif).Select(s => new SelectListItem { Value = s.fld_KodInsentif, Text = s.fld_Keterangan }), "Value", "Text").ToList(); IncentiveList.Insert(0, (new SelectListItem { Text = "Sila Pilih", Value = "0" }));
+            ViewBag.IncentiveList = IncentiveList;
+
+            ViewBag.MonthList = monthList;
+            ViewBag.StatusList = statusList;
+
+            return View();
+        }
+
+        public ViewResult _eWalletOthers(int? MonthList, int? YearList, string IncentiveList, string print)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            //int? DivisionID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            string LdgName = "";
+            string LdgCode = "";
+            string TelNo, NewTelNo, NoKp, NewNoKp = "";
+
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value,
+                NegaraID.Value);
+            MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
+            //DivisionID = GetNSWL.GetDivisionSelection(getuserid, NegaraID, SyarikatID, WilayahID, LadangID);
+            MVC_SYSTEM_Viewing dbview2 = new MVC_SYSTEM_Viewing();
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            //List<vw_PaySheetPekerjaCustomModel> PaySheetPekerjaList = new List<vw_PaySheetPekerjaCustomModel>();
+            List<vw_SpecialInsentive> InsentifPekerjaList = new List<vw_SpecialInsentive>();
+
+            ViewBag.MonthList = MonthList;
+            ViewBag.YearList = YearList;
+            ViewBag.NamaSyarikat = db.tbl_Syarikat
+                .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID)
+                .Select(s => s.fld_NamaSyarikat)
+                .FirstOrDefault();
+            ViewBag.NoSyarikat = db.tbl_Syarikat
+                .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID)
+                .Select(s => s.fld_NoSyarikat)
+                .FirstOrDefault();
+            LdgName = db.tbl_Ladang
+                .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_ID == LadangID)
+                .Select(s => s.fld_LdgName)
+                .FirstOrDefault();
+            LdgCode = db.tbl_Ladang
+                .Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_ID == LadangID)
+                .Select(s => s.fld_LdgCode)
+                .FirstOrDefault();
+            ViewBag.Ladang = LdgName.Trim();
+            ViewBag.NegaraID = NegaraID;
+            ViewBag.SyarikatID = SyarikatID;
+            ViewBag.UserID = getuserid;
+            ViewBag.UserName = User.Identity.Name;
+            ViewBag.Date = DateTime.Now.ToShortDateString();
+            ViewBag.Print = print;
+            ViewBag.Description = LdgCode + " - Salary payment for " + MonthList + "/" + YearList;
+            if (MonthList == null && YearList == null && IncentiveList == null)
+            {
+                ViewBag.Message = "Sila pilih bulan, tahun, dan insentif";
+                //ViewBag.Message = GlobalResEstate.msgChooseWork;
+                //return View();
+                return View(InsentifPekerjaList);
+            }
+            else
+            {
+                //IOrderedQueryable<ViewingModels.vw_PaySheetPekerja> salaryData;
+                var incentiveData = dbview.vw_SpecialInsentive
+                    .Where(x => x.fld_Year == YearList && x.fld_Month == MonthList &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID &&
+                                x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && 
+                                x.fld_KodInsentif == IncentiveList &&
+                                x.fld_PaymentMode == "3")
+                    .OrderBy(x => x.fld_Nama);
+
+
+                foreach (var incentive in incentiveData)
+                {
+                    //remove space &special char NoTel
+                    TelNo = incentive.fld_Notel;
+                    NewTelNo = Regex.Replace(TelNo, @"[^0-9]+", "");
+
+                    if (NewTelNo.Substring(0, 1) == "0")
+                    {
+                        TelNo = "6" + NewTelNo;
+                    }
+                    else
+                    {
+                        TelNo = NewTelNo;
+                    }
+
+                    //remove space & special char NoKp
+                    NoKp = incentive.fld_Nokp;
+                    NewNoKp = Regex.Replace(NoKp, @"[^0-9a-zA-Z]+", "");
+
+                    InsentifPekerjaList.Add(
+                        new vw_SpecialInsentive()
+                        {
+                            fld_Nopkj = incentive.fld_Nopkj,
+                            fld_Nama = incentive.fld_Nama,
+                            fld_Notel = TelNo,
+                            fld_Nokp = NewNoKp,
+                            fld_Last4Pan = incentive.fld_Last4Pan,
+                            fld_GajiBersih = incentive.fld_GajiBersih
+                        });
+
+                }
+
+                ViewBag.RecordNo = InsentifPekerjaList.Count();
+
+                if (InsentifPekerjaList.Count() == 0)
+                {
+                    ViewBag.Message = GlobalResEstate.msgNoRecord;
+                }
+                return View(InsentifPekerjaList);
+            }
+        }
+
+        public JsonResult GetEwalletRecordOthers(int Month, int Year, string Incentive)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            //int? DivisionID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            string msg = "";
+            string statusmsg = "";
+            decimal? TotalSalary = 0;
+            int CountData = 0;
+
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
+            //DivisionID = GetNSWL.GetDivisionSelection(getuserid, NegaraID, SyarikatID, WilayahID, LadangID);
+            List<vw_PaySheetPekerjaCustomModel> PaySheetPekerjaList = new List<vw_PaySheetPekerjaCustomModel>();
+
+                var incentiveData = dbview.vw_SpecialInsentive
+                    .Where(x => x.fld_Year == Year && x.fld_Month == Month &&
+                                x.fld_NegaraID == NegaraID &&
+                                x.fld_SyarikatID == SyarikatID &&
+                                x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && 
+                                x.fld_KodInsentif == Incentive &&
+                                x.fld_PaymentMode == "3")
+                    .OrderBy(x => x.fld_Nama);
+
+            var LadangDetail = db.tbl_Ladang.Where(x => x.fld_ID == LadangID && x.fld_WlyhID == WilayahID).FirstOrDefault();
+
+            //string filename = "MBBOPMS" + LadangDetail.fld_LdgCode + stringmonth + stringyear + ".txt";
+
+            if (incentiveData.Count() != 0)
+            {
+                TotalSalary = incentiveData.Sum(s => s.fld_GajiBersih);
+                CountData = incentiveData.Count();
+                msg = GlobalResEstate.msgDataFound;
+                statusmsg = "success";
+            }
+            else
+            {
+                msg = GlobalResEstate.msgDataNotFound;
+                statusmsg = "warning";
+            }
+
+            dbview.Dispose();
+            return Json(new { msg, statusmsg, salary = TotalSalary, recordno = CountData });
+
+        }
+
+        [HttpPost]
+        public ActionResult _eWalletOthers(int Month, int Year, string Incentive)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(User.Identity.Name);
+            //int? DivisionID = 0;
+            string host, catalog, user, pass = "";
+            string msg = "";
+            string statusmsg = "";
+            string filePath = "";
+            string filename = "";
+
+            string stringyear = "";
+            string stringmonth = "";
+            string link = "";
+            stringyear = Year.ToString();
+            stringmonth = Month.ToString();
+            stringmonth = (stringmonth.Length == 1 ? "0" + stringmonth : stringmonth);
+
+            ViewBag.GenTextFile = "class = active";
+
+            try
+            {
+                GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+                Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+                MVC_SYSTEM_Viewing dbview = MVC_SYSTEM_Viewing.ConnectToSqlServer(host, catalog, user, pass);
+                //DivisionID = GetNSWL.GetDivisionSelection(getuserid, NegaraID, SyarikatID, WilayahID, LadangID);
+
+                var incentiveData = dbview.vw_SpecialInsentive.Where(x => x.fld_Year == Year && x.fld_Month == Month && x.fld_KodInsentif == Incentive && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_PaymentMode == "3").OrderBy(x => x.fld_Nama).ToList();
+
+                var LadangDetail = db.tbl_Ladang.Where(x => x.fld_ID == LadangID && x.fld_WlyhID == WilayahID).FirstOrDefault();
+
+                filePath = GetGenerateEwalletFile.GenFileEwalletOthers(incentiveData, LadangDetail, stringmonth, stringyear, Incentive, NegaraID, SyarikatID, WilayahID, LadangID, out filename);
+
+                link = Url.Action("Download", "GenTextFile", new { filePath, filename });
+
+                dbr.Dispose();
+
+                msg = GlobalResEstate.msgGenerateSuccess;
+                statusmsg = "success";
+            }
+            catch (Exception ex)
+            {
+                geterror.catcherro(ex.Message, ex.StackTrace, ex.Source, ex.TargetSite.ToString());
+                msg = GlobalResEstate.msgGenerateFailed;
+                statusmsg = "warning";
+            }
+
+            return Json(new { msg, statusmsg, link });
         }
 
 

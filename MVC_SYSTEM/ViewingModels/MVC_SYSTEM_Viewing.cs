@@ -147,6 +147,7 @@ namespace MVC_SYSTEM.ViewingModels
         public virtual DbSet<vw_CutiUmumLdgDetails> vw_CutiUmumLdgDetails { get; set; }
         public virtual DbSet<tbl_CutiUmumMaster> tbl_CutiUmumMaster { get; set; }
         public virtual DbSet<vw_CutiUmumKelayakan> vw_CutiUmumKelayakan { get; set; }
+        public virtual DbSet<vw_SpecialInsentive> vw_SpecialInsentive { get; set; }
 
     }
 }

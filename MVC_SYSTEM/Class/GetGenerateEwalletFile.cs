@@ -149,6 +149,138 @@ namespace MVC_SYSTEM.Class
             return filePath;
         }
 
+        public string GenFileEwalletOthers(List<vw_SpecialInsentive> vw_SpecialInsentives, MasterModels.tbl_Ladang tbl_Ladang, string bulan, string tahun, string Incentive, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, out string filename)
+        {
+            decimal? TotalSalary = vw_SpecialInsentives.Sum(s => s.fld_GajiBersih);
+            decimal TotalSalaryC = Math.Round((decimal)TotalSalary, 0);
+            int TotalSalaryInt = int.Parse(TotalSalaryC.ToString());
+            decimal TotalSHA256 = 0;
+            decimal Last4pan = 0;
+            decimal TotalPan = 0;
+            string month = "";
+            string day = "";
+            string TelNo = "";
+            string NewTelNo = "";
+            string NoKp = "";
+            string NewNoKp = "";
+            decimal? Salary = 0;
+            decimal Last4panTimeSalary = 0;
+
+            DateTime NowDate = timezone.gettimezone();
+            string yy = NowDate.Year.ToString();
+            string mm = NowDate.Month.ToString();
+            string dd = NowDate.Day.ToString();
+            if (mm.Length == 1)
+            {
+                month = "0" + mm;
+            }
+            else
+            {
+                month = mm;
+            }
+
+            if (dd.Length == 1)
+            {
+                day = "0" + dd;
+            }
+            else
+            {
+                day = dd;
+            }
+
+            string filePath = "~/eWalletFile/" + tahun + "/" + bulan + "/" + LadangID.ToString() + "/";
+            string path = HttpContext.Current.Server.MapPath(filePath);
+            filename = "PAY" + yy + month + day + "01" + ".txt";
+            string filecreation = path + filename;
+
+            TryToDelete(filecreation);
+            if (!Directory.Exists(path))
+            {
+                //If No any such directory then creates the new one
+                Directory.CreateDirectory(path);
+            }
+
+            string Header1 = "StaffId,";
+            string Header2 = "CustomerName,";
+            string Header3 = "IdentificationNumber,";
+            string Header4 = "MobileNumber,";
+            string Header5 = "LastFourPAN,";
+            string Header6 = "SalaryAmount,";
+            string Header7 = "PaymentDescription";
+
+            string Body1 = "";//fld_noPkj
+            string Body2 = "";//fld_nama
+            string Body3 = "";//fld_nokp
+            string Body4 = "";//fld_notel
+            string Body5 = "";//fld_last4pan
+            string Body6 = "";//fld_gajibersih
+            string Body7 = "";//description
+
+            string Footer = "";
+
+            using (StreamWriter writer = new StreamWriter(filecreation, true))
+            {
+                writer.Write(Header1);
+                writer.Write(Header2);
+                writer.Write(Header3);
+                writer.Write(Header4);
+                writer.Write(Header5);
+                writer.Write(Header6);
+                writer.WriteLine(Header7);
+
+                foreach (var eWalletOthersFileDetail in vw_SpecialInsentives)
+                {
+                    Last4pan = decimal.Parse(eWalletOthersFileDetail.fld_Last4Pan);
+                    Salary = eWalletOthersFileDetail.fld_GajiBersih;
+
+                    Last4panTimeSalary = (decimal)(Last4pan * Salary);
+
+                    //remove space & special char NoTel
+                    TelNo = eWalletOthersFileDetail.fld_Notel;
+                    NewTelNo = Regex.Replace(TelNo, @"[^0-9]+", "");
+
+                    if (NewTelNo.Substring(0, 1) == "0")
+                    {
+                        TelNo = "6" + NewTelNo;
+                    }
+                    else
+                    {
+                        TelNo = NewTelNo;
+                    }
+
+                    //remove space & special char NoKp
+                    NoKp = eWalletOthersFileDetail.fld_Nokp;
+                    NewNoKp = Regex.Replace(NoKp, @"[^0-9a-zA-Z]+", "");
+
+                    Body1 = eWalletOthersFileDetail.fld_Nopkj + ",";
+                    Body2 = eWalletOthersFileDetail.fld_Nama.ToUpper() + ",";
+                    Body3 = NewNoKp.ToUpper() + ",";
+                    Body4 = TelNo + ",";
+                    Body5 = eWalletOthersFileDetail.fld_Last4Pan + ",";
+                    Body6 = Salary + ",";
+                    Body7 = tbl_Ladang.fld_LdgCode.Trim() + "- Salary payment for " + bulan + "/" + tahun;
+
+                    writer.Write(Body1);
+                    writer.Write(Body2);
+                    writer.Write(Body3);
+                    writer.Write(Body4);
+                    writer.Write(Body5);
+                    writer.Write(Body6);
+                    writer.WriteLine(Body7);
+
+                    TotalPan += Last4panTimeSalary;
+                }
+
+                TotalSHA256 = TotalPan;
+                var sha256 = ComputeSha256Hash(TotalSHA256.ToString());
+
+                Footer = sha256;
+
+                writer.Write(Footer);
+            }
+
+            return filePath;
+        }
 
         //commented by faeza 02.08.2022 - previous algorithm - Algorithm 1 - top up portal 3.0
         //public string GenFileEwallet(List<vw_PaySheetPekerja> vw_PaySheetPekerja, MasterModels.tbl_Ladang tbl_Ladang, string bulan, string tahun, int? NegaraID, int? SyarikatID, int? WilayahID, int? LadangID, out string filename)

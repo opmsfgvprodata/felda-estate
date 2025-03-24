@@ -32,7 +32,7 @@
                         <br />
                         (@GlobalResEstate.lblEstateName : @ViewBag.Ladang)
                         <br />
-                        e-Wallet Report @GlobalResEstate.hdrForMonth @ViewBag.MonthList/@ViewBag.YearList
+                        Laporan e-Wallet @GlobalResEstate.hdrForMonth @ViewBag.MonthList/@ViewBag.YearList
                     </th>
                 </tr>
                 <tr>
@@ -40,10 +40,10 @@
                     <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">@GlobalResEstate.hdrNoPkj</th>
                     <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">@GlobalResEstate.hdrName</th>
                     <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">@GlobalResEstate.hdrNoKp</th>
-                    <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">Mobile Number</th>
-                    <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">Last 4 Pan</th>
-                    <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">Net Total (RM)</th>
-                    <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">Payment Description</th>
+                    <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">No. Telefon</th>
+                    <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">4 Pan Terakhir</th>
+                    <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">Jumlah Bersih (RM)</th>
+                    <th rowspan="1" style="margin: 2px !important; padding: 5px !important; text-align: center; vertical-align: middle !important; border: 1px solid red;" border="1">Keterangan Bayaran</th>
                 </tr>
                 <tr>
                 </tr>
@@ -73,7 +73,7 @@
                         <td align="center" style="margin: 2px !important; padding: 4px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: left; border-right: none; border-left: none">@item.fld_Notel</td>
                         <td align="center" style="margin: 2px !important; padding: 4px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.fld_Last4Pan</td>
                         <td align="center" style="margin: 2px !important; padding: 4px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: right; border-right: none; border-left: none">@item.fld_GajiBersih</td>
-                        <td align="center" style="margin: 2px !important; padding: 4px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: left; border-right: none; border-left: none">@ViewBag.Description</td>
+                        <td align="center" style="margin: 2px !important; padding: 4px !important; vertical-align: middle !important; border: 1px dotted gray; text-align: left; border-right: none; border-left: none">@item.fld_Keterangan</td>
                     </tr>
                 }
 

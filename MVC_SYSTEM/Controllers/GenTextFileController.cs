@@ -513,7 +513,8 @@ namespace MVC_SYSTEM.Controllers
                             fld_Notel = TelNo,
                             fld_Nokp = NewNoKp,
                             fld_Last4Pan = incentive.fld_Last4Pan,
-                            fld_GajiBersih = incentive.fld_GajiBersih
+                            fld_GajiBersih = incentive.fld_GajiBersih,
+                            fld_Keterangan = incentive.fld_Keterangan
                         });
 
                 }

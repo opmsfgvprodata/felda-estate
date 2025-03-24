@@ -258,7 +258,7 @@ namespace MVC_SYSTEM.Class
                     Body4 = TelNo + ",";
                     Body5 = eWalletOthersFileDetail.fld_Last4Pan + ",";
                     Body6 = Salary + ",";
-                    Body7 = tbl_Ladang.fld_LdgCode.Trim() + "- Salary payment for " + bulan + "/" + tahun;
+                    Body7 = eWalletOthersFileDetail.fld_Keterangan;
 
                     writer.Write(Body1);
                     writer.Write(Body2);

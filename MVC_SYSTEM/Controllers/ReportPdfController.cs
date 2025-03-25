@@ -1254,6 +1254,804 @@ namespace MVC_SYSTEM.Controllers
             return new FileStreamResult(output, "application/pdf");
         }
 
+        public FileStreamResult PaySlipPdf2(int? RadioGroup, int? MonthList, int? YearList, string SelectionList, string StatusList, string WorkCategoryList, string IncentiveList)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID;
+            int? getuserid = GetIdentity.ID(User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+            MVC_SYSTEM_Models dbr = MVC_SYSTEM_Models.ConnectToSqlServer(host, catalog, user, pass);
+            MVC_SYSTEM_SP_Models dbsp = MVC_SYSTEM_SP_Models.ConnectToSqlServer(host, catalog, user, pass);
+
+            Document pdfDoc = new Document(PageSize.A4, 10, 10, 10, 5);
+            MemoryStream ms = new MemoryStream();
+            MemoryStream output = new MemoryStream();
+            PdfWriter pdfWriter = PdfWriter.GetInstance(pdfDoc, ms);
+            Chunk chunk = new Chunk();
+            Paragraph para = new Paragraph();
+            pdfDoc.Open();
+            var pkjList = new List<Models.tbl_Pkjmast>();
+            var nswl = db.vw_NSWL.Where(x => x.fld_LadangID == LadangID).FirstOrDefault();
+            if (WorkCategoryList == "0" || WorkCategoryList == null)
+            {
+                if (RadioGroup == 0)
+                {
+                    //individu
+                    if (StatusList == "0")
+                    {
+                        // aktif & xaktif
+                        if (SelectionList == "0")
+                        {
+                            //semua individu
+                            pkjList = dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1).ToList();
+
+                        }
+                        else
+                        {
+                            //selected individu
+                            pkjList = dbr.tbl_Pkjmast.Where(x => x.fld_Nopkj == SelectionList && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1).ToList();
+                        }
+
+                    }
+                    else
+                    {
+                        // aktif/xaktif
+                        if (SelectionList == "0")
+                        {
+                            //semua individu
+                            pkjList = dbr.tbl_Pkjmast.Where(x => x.fld_Kdaktf == StatusList && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1).ToList();
+                        }
+                        else
+                        {
+                            //selected individu
+                            pkjList = dbr.tbl_Pkjmast.Where(x => x.fld_Kdaktf == StatusList && x.fld_Nopkj == SelectionList && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1).ToList();
+                        }
+                    }
+                }
+                else
+                {
+                    //group
+                    if (SelectionList == "0")
+                    {
+                        //semua group
+                        pkjList = dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1).ToList();
+                    }
+                    else
+                    {
+                        //selected group
+                        var kumpID = dbr.tbl_KumpulanKerja.Where(x => x.fld_KodKumpulan == SelectionList && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_KumpulanID).FirstOrDefault();
+                        pkjList = dbr.tbl_Pkjmast.Where(x => x.fld_KumpulanID == kumpID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1).ToList();
+                    }
+                }
+            }
+            else
+            {
+                pkjList = dbr.tbl_Pkjmast.Where(x => x.fld_Ktgpkj == WorkCategoryList && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1).ToList();
+            }
+            if (pkjList.Count() > 0)
+            {
+                string[] flag1 = new string[] { "KesukaranMembaja", "KesukaranMenuai", "KesukaranMemunggah", "designation", "jantina" };
+                List<MasterModels.tblOptionConfigsWeb> webConfigList = GetConfig.GetWebConfigList(flag1, NegaraID, SyarikatID);
+                var pktHargaKesukaran = dbr.tbl_PktHargaKesukaran.Where(x => x.fld_LadangID == LadangID).ToList();
+                var pkjNoList = pkjList.Select(s => s.fld_Nopkj).Distinct().ToList();
+                var getpkjInfo2 = dbr.tbl_Pkjmast.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_StatusApproved == 1);
+                var hardWorkDatas = dbr.tbl_Kerja.Where(x => pkjNoList.Contains(x.fld_Nopkj) && x.fld_Tarikh.Value.Month == MonthList && x.fld_Tarikh.Value.Year == YearList && x.fld_LadangID == LadangID && x.fld_HrgaKwsnSkar > 0.00m && !string.IsNullOrEmpty(x.fld_HrgaKwsnSkar.Value.ToString())).ToList();
+                var attWorkDatas = dbr.tbl_Kerjahdr.Where(x => pkjNoList.Contains(x.fld_Nopkj) && x.fld_Tarikh.Value.Month == MonthList && x.fld_Tarikh.Value.Year == YearList && x.fld_LadangID == LadangID).ToList();
+                var hardWorkDataIDs = hardWorkDatas.Select(s => s.fld_ID).ToList();
+                var hardWorkDatasNew = dbr.tbl_KerjaKesukaran.Where(x => hardWorkDataIDs.Contains(x.fld_KerjaID.Value)).ToList();
+
+                var tbl_KumpulanKerja = dbr.tbl_KumpulanKerja.Where(x => x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).ToList();
+                var NamaSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).Select(s => s.fld_NamaSyarikat).FirstOrDefault();
+                var NoSyarikat = db.tbl_Syarikat.Where(x => x.fld_SyarikatID == SyarikatID && x.fld_NegaraID == NegaraID && x.fld_Deleted == false).Select(s => s.fld_NoSyarikat).FirstOrDefault();
+                var NamaLadang = db.tbl_Ladang.Where(x => x.fld_ID == LadangID && x.fld_Deleted == false).Select(s => s.fld_LdgCode + "-" + s.fld_LdgName).FirstOrDefault();
+
+                List<Payslip_Result> payslipList = new List<Payslip_Result>();
+
+                if (MonthList != null && YearList != null)
+                {
+                    var workers = new List<Worker>();
+                    foreach (var pkjNo in pkjNoList)
+                    {
+                        workers.Add(new Worker { WorkerID = pkjNo });
+                    }
+                    var workersDT = workers.ToDataTable();
+
+                    string constr = Connection.GetConnectionString(WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+                    var con = new SqlConnection(constr);
+                    try
+                    {
+                        DynamicParameters parameters = new DynamicParameters();
+                        parameters.Add("NegaraID", NegaraID);
+                        parameters.Add("SyarikatID", SyarikatID);
+                        parameters.Add("WilayahID", WilayahID);
+                        parameters.Add("LadangID", LadangID);
+                        parameters.Add("Month", MonthList);
+                        parameters.Add("Year", YearList);
+                        parameters.Add("Workers", workersDT.AsTableValuedParameter("[dbo].[Workers]"));
+                        parameters.Add("Incentive", IncentiveList);
+                        con.Open();
+                        payslipList = SqlMapper.Query<Payslip_Result>(con, "sp_Payslip_V2_Others", parameters).ToList();
+                        con.Close();
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+
+                foreach (var pkj in pkjNoList)
+                {
+                    var getpkjInfo = getpkjInfo2.Where(x => x.fld_Nopkj == pkj);
+                    var result = payslipList.Where(x => x.fldNopkj == pkj).ToList();
+                    if (result.Count() > 0)
+                    {
+                        var NamaPkj = getpkjInfo.Select(s => s.fld_Nama).FirstOrDefault();
+                        var NoKwsp = getpkjInfo.Select(s => s.fld_Nokwsp).FirstOrDefault();
+                        var NoSocso = getpkjInfo.Select(s => s.fld_Noperkeso).FirstOrDefault();
+                        var NoKp = getpkjInfo.Select(s => s.fld_Nokp).FirstOrDefault();
+
+                        int? kumpID = getpkjInfo.Select(s => s.fld_KumpulanID).FirstOrDefault();//desc
+                        string ktgrPkj = getpkjInfo.Select(s => s.fld_Ktgpkj).FirstOrDefault();//desc
+                        string jntnaPkj = getpkjInfo.Select(s => s.fld_Kdjnt).FirstOrDefault();//desc
+
+                        var Kump = tbl_KumpulanKerja.Where(x => x.fld_KumpulanID == kumpID && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fld_WilayahID == WilayahID && x.fld_LadangID == LadangID && x.fld_deleted == false).Select(s => s.fld_Keterangan).FirstOrDefault();
+                        var Kategori = webConfigList.Where(x => x.fldOptConfFlag1 == "designation" && x.fldOptConfValue == ktgrPkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfDesc).FirstOrDefault();
+                        var Jantina = webConfigList.Where(x => x.fldOptConfFlag1 == "jantina" && x.fldOptConfValue == jntnaPkj && x.fld_NegaraID == NegaraID && x.fld_SyarikatID == SyarikatID && x.fldDeleted == false).Select(s => s.fldOptConfDesc).FirstOrDefault();
+
+
+                        pdfDoc.NewPage();
+                        //Header
+                        pdfDoc = Header(pdfDoc, NamaSyarikat, "(" + NoSyarikat + ")\n" + nswl.fld_LdgCode + " - " + nswl.fld_NamaLadang, "Laporan Slip Gaji Pekerja Bagi Bulan " + MonthList + "/" + YearList + "");
+                        //Header
+                        PdfPTable table = new PdfPTable(6);
+                        table.WidthPercentage = 100;
+                        table.SpacingBefore = 10f;
+                        float[] widths = new float[] { 0.5f, 1, 0.5f, 1, 0.5f, 1 };
+                        table.SetWidths(widths);
+                        PdfPCell cell = new PdfPCell();
+                        chunk = new Chunk("ID Pekerja: ", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(pkj, FontFactory.GetFont("Arial", 8, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Nama Pekerja: ", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(NamaPkj, FontFactory.GetFont("Arial", 8, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("No KWSP: ", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(NoKwsp, FontFactory.GetFont("Arial", 8, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Kod Kumpulan: ", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(Kump, FontFactory.GetFont("Arial", 8, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Jawatan: ", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(Kategori, FontFactory.GetFont("Arial", 8, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("No Socso: ", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(NoSocso, FontFactory.GetFont("Arial", 8, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Jantina: ", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(Jantina, FontFactory.GetFont("Arial", 8, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("No KP / Passport: ", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(NoKp, FontFactory.GetFont("Arial", 8, Font.NORMAL, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        cell = new PdfPCell();
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        cell = new PdfPCell();
+                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        pdfDoc.Add(table);
+
+                        table = new PdfPTable(8);
+                        table.WidthPercentage = 100;
+                        table.SpacingBefore = 5f;
+                        widths = new float[] { 4f, 1, 1, 1, 1, 1, 4f, 1 };
+                        table.SetWidths(widths);
+
+                        chunk = new Chunk("Pendapatan", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Colspan = 6;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Potongan", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Colspan = 2;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Keterangan", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Kuantiti", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Unit", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Kadar (RM)", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Gandaan", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Jumlah (RM)", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Keterangan", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Jumlah (RM)", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Border = Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        var deductiondata = new List<sp_Payslip_Result>();
+                        int i = 1;
+                        foreach (var item in result.Where(x => x.fldNopkj == pkj && x.fldFlag == 3))
+                        {
+                            deductiondata.Add(new sp_Payslip_Result { fldID = i, fldKeterangan = item.fldKeterangan, fldJumlah = item.fldJumlah });
+                            i++;
+                        }
+
+                        int f = 1;
+                        foreach (var item in result.Where(x => x.fldNopkj == pkj && x.fldFlag <= 2))
+                        {
+                            if (item.fldKeterangan != "AIPS")
+                            {
+                                decimal? hardWorkPrice = 0;
+                                decimal? totalAmount = 0;
+                                decimal? quantity = 0;
+                                List<tbl_Kerja> hardWorkData = null;
+                                List<tbl_KerjaKesukaran> hardWorkDataNew = null;
+                                if (item.fldKodPkt != null)
+                                {
+                                    string codeAtt = "";
+                                    switch (item.fldGandaan)
+                                    {
+                                        case 1:
+                                            codeAtt = "H01";
+                                            break;
+                                        case 2:
+                                            codeAtt = "H02";
+                                            break;
+                                        case 3:
+                                            codeAtt = "H03";
+                                            break;
+                                    }
+                                    var attWorkDate = attWorkDatas.Where(x => x.fld_Kdhdct == codeAtt && x.fld_Nopkj == item.fldNopkj).Select(s => s.fld_Tarikh).ToArray();
+                                    hardWorkData = hardWorkDatas.Where(x => x.fld_KodPkt == item.fldKodPkt && x.fld_KodAktvt == item.fldKod && attWorkDate.Contains(x.fld_Tarikh) && x.fld_Nopkj == item.fldNopkj).ToList();
+                                    var hardWorkDataIDs2 = hardWorkData.Select(s => s.fld_ID).ToList();
+                                    var hardWorkDataNewFilter = hardWorkDatasNew.Where(x => hardWorkDataIDs2.Contains(x.fld_KerjaID.Value)).ToList();
+                                    hardWorkPrice = hardWorkData.Where(x => x.fld_KodPkt == item.fldKodPkt && x.fld_Nopkj == item.fldNopkj).Sum(s => s.fld_HrgaKwsnSkar);
+                                    var hardWorkPriceIDs = hardWorkData.Where(x => x.fld_KodPkt == item.fldKodPkt).Select(s => s.fld_ID).ToList();
+                                    hardWorkDataNew = hardWorkDataNewFilter.Where(x => hardWorkPriceIDs.Contains(x.fld_KerjaID.Value)).ToList();
+                                    quantity = hardWorkDatas.Where(x => x.fld_KodPkt == item.fldKodPkt).Sum(s => s.fld_JumlahHasil);
+                                    totalAmount = item.fldJumlah - hardWorkPrice;
+                                }
+                                else
+                                {
+                                    totalAmount = item.fldJumlah;
+                                }
+
+                                if (item.fldKodPkt != null)
+                                {
+                                    chunk = new Chunk(item.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                }
+                                else
+                                {
+                                    chunk = new Chunk(item.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                }
+
+
+                                cell = new PdfPCell(new Phrase(chunk));
+                                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                cell.BorderColor = BaseColor.BLACK;
+                                table.AddCell(cell);
+
+                                chunk = new Chunk(GetTriager.GetDashForNull(item.fldKuantiti.ToString()), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                cell = new PdfPCell(new Phrase(chunk));
+                                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                cell.BorderColor = BaseColor.BLACK;
+                                table.AddCell(cell);
+
+                                chunk = new Chunk(GetTriager.GetDashForNull(item.fldUnit), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                cell = new PdfPCell(new Phrase(chunk));
+                                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                cell.BorderColor = BaseColor.BLACK;
+                                table.AddCell(cell);
+
+                                chunk = new Chunk(GetTriager.GetDashForNull(item.fldKadar.ToString()), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                cell = new PdfPCell(new Phrase(chunk));
+                                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                cell.BorderColor = BaseColor.BLACK;
+                                table.AddCell(cell);
+
+                                chunk = new Chunk(GetTriager.GetDashForNull(item.fldGandaan.ToString()), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                cell = new PdfPCell(new Phrase(chunk));
+                                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                cell.BorderColor = BaseColor.BLACK;
+                                table.AddCell(cell);
+
+                                chunk = new Chunk(GetTriager.GetTotalForMoney(totalAmount), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                cell = new PdfPCell(new Phrase(chunk));
+                                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                cell.BorderColor = BaseColor.BLACK;
+                                table.AddCell(cell);
+
+                                var getdeduction = deductiondata.Where(x => x.fldID == f).FirstOrDefault();
+                                if (getdeduction != null)
+                                {
+                                    //farahin - comment - 15/09/2021
+                                    //chunk = new Chunk(item.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                    //farahin modified - 15/09/2021
+                                    chunk = new Chunk(getdeduction.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                    cell = new PdfPCell(new Phrase(chunk));
+                                    cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                    cell.Border = Rectangle.BOTTOM_BORDER;
+                                    cell.BorderColor = BaseColor.BLACK;
+                                    table.AddCell(cell);
+
+                                    chunk = new Chunk(GetTriager.GetTotalForMoney(getdeduction.fldJumlah), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                    cell = new PdfPCell(new Phrase(chunk));
+                                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                    cell.Border = Rectangle.BOTTOM_BORDER;
+                                    cell.BorderColor = BaseColor.BLACK;
+                                    table.AddCell(cell);
+                                }
+                                else
+                                {
+                                    cell = new PdfPCell();
+                                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                    cell.Border = 0;
+                                    table.AddCell(cell);
+
+                                    cell = new PdfPCell();
+                                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                    cell.Border = 0;
+                                    table.AddCell(cell);
+                                }
+
+                                f++;
+
+                                if (hardWorkPrice > 0)
+                                {
+                                    var hardWorkCode = hardWorkData.Select(s => s.fld_KodKwsnSkar).FirstOrDefault();
+                                    if (hardWorkCode == "**")
+                                    {
+                                        foreach (var item2 in hardWorkDataNew.GroupBy(g => new { g.fld_KodKesukaran, g.fld_Kadar }).Select(s => new { kod = s.Key.fld_KodKesukaran, kadar = s.Key.fld_Kadar, amount = s.Sum(am => am.fld_Jumlah) }).ToList())
+                                        {
+                                            var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.kod).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
+                                            var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == item2.kod).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
+                                            var desc = item.fldKeterangan + " (" + hardWorkDesc + ")";
+
+                                            chunk = new Chunk(desc, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+
+                                            chunk = new Chunk(GetTriager.GetDashForNull("-"), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+
+                                            chunk = new Chunk("-", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+
+                                            chunk = new Chunk(GetTriager.GetDashForNull(item2.kadar.ToString()), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+
+                                            chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+
+                                            chunk = new Chunk(GetTriager.GetTotalForMoney(item2.amount), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+
+                                            getdeduction = deductiondata.Where(x => x.fldID == f).FirstOrDefault();
+                                            if (getdeduction != null)
+                                            {
+                                                //farahin - comment - 15/09/2021
+                                                //chunk = new Chunk(item.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                                //farahin modified - 15/09/2021
+                                                chunk = new Chunk(getdeduction.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                                cell = new PdfPCell(new Phrase(chunk));
+                                                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                                cell.BorderColor = BaseColor.BLACK;
+                                                table.AddCell(cell);
+
+                                                chunk = new Chunk(GetTriager.GetTotalForMoney(getdeduction.fldJumlah), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                                cell = new PdfPCell(new Phrase(chunk));
+                                                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                                cell.Border = Rectangle.BOTTOM_BORDER;
+                                                cell.BorderColor = BaseColor.BLACK;
+                                                table.AddCell(cell);
+                                            }
+                                            else
+                                            {
+                                                cell = new PdfPCell();
+                                                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                                cell.Border = 0;
+                                                table.AddCell(cell);
+
+                                                cell = new PdfPCell();
+                                                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                                cell.Border = 0;
+                                                table.AddCell(cell);
+                                            }
+
+                                            f++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var hardWorkDesc = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_KeteranganHargaKesukaran).FirstOrDefault();
+                                        var hardWorkRate = pktHargaKesukaran.Where(x => x.fld_KodHargaKesukaran == hardWorkCode).Select(s => s.fld_HargaKesukaran).FirstOrDefault();
+                                        var desc = item.fldKeterangan + " (" + hardWorkDesc + ")";
+
+                                        chunk = new Chunk(desc, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                        cell = new PdfPCell(new Phrase(chunk));
+                                        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                        cell.Border = Rectangle.BOTTOM_BORDER;
+                                        cell.BorderColor = BaseColor.BLACK;
+                                        table.AddCell(cell);
+
+                                        chunk = new Chunk(GetTriager.GetDashForNull("-"), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                        cell = new PdfPCell(new Phrase(chunk));
+                                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                        cell.Border = Rectangle.BOTTOM_BORDER;
+                                        cell.BorderColor = BaseColor.BLACK;
+                                        table.AddCell(cell);
+
+                                        chunk = new Chunk("-", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                        cell = new PdfPCell(new Phrase(chunk));
+                                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                        cell.Border = Rectangle.BOTTOM_BORDER;
+                                        cell.BorderColor = BaseColor.BLACK;
+                                        table.AddCell(cell);
+
+                                        chunk = new Chunk(GetTriager.GetDashForNull(hardWorkRate.ToString()), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                        cell = new PdfPCell(new Phrase(chunk));
+                                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                        cell.Border = Rectangle.BOTTOM_BORDER;
+                                        cell.BorderColor = BaseColor.BLACK;
+                                        table.AddCell(cell);
+
+                                        chunk = new Chunk("", FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                        cell = new PdfPCell(new Phrase(chunk));
+                                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                        cell.Border = Rectangle.BOTTOM_BORDER;
+                                        cell.BorderColor = BaseColor.BLACK;
+                                        table.AddCell(cell);
+
+                                        chunk = new Chunk(GetTriager.GetTotalForMoney(hardWorkPrice), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                        cell = new PdfPCell(new Phrase(chunk));
+                                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                        cell.Border = Rectangle.BOTTOM_BORDER;
+                                        cell.BorderColor = BaseColor.BLACK;
+                                        table.AddCell(cell);
+
+                                        getdeduction = deductiondata.Where(x => x.fldID == f).FirstOrDefault();
+                                        if (getdeduction != null)
+                                        {
+                                            //farahin - comment - 15/09/2021
+                                            //chunk = new Chunk(item.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            //farahin modified - 15/09/2021
+                                            chunk = new Chunk(getdeduction.fldKeterangan, FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+
+                                            chunk = new Chunk(GetTriager.GetTotalForMoney(getdeduction.fldJumlah), FontFactory.GetFont("Arial", 7, Font.NORMAL, BaseColor.BLACK));
+                                            cell = new PdfPCell(new Phrase(chunk));
+                                            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = Rectangle.BOTTOM_BORDER;
+                                            cell.BorderColor = BaseColor.BLACK;
+                                            table.AddCell(cell);
+                                        }
+                                        else
+                                        {
+                                            cell = new PdfPCell();
+                                            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = 0;
+                                            table.AddCell(cell);
+
+                                            cell = new PdfPCell();
+                                            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                            cell.Border = 0;
+                                            table.AddCell(cell);
+                                        }
+
+                                        f++;
+                                    }
+                                }
+                            }
+                        }
+
+                        chunk = new Chunk("Jumlah Pendapatan", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Colspan = 5;
+                        cell.Border = Rectangle.TOP_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        decimal? TotalPendapatan = result.Where(x => x.fldFlag == 2).Select(s => s.fldJumlah).Sum();
+
+                        chunk = new Chunk(GetTriager.GetTotalForMoney(TotalPendapatan), FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Colspan = 1;
+                        cell.Border = Rectangle.TOP_BORDER | Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk("Potongan", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Colspan = 1;
+                        cell.Border = Rectangle.TOP_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        decimal? TotalPotongan = deductiondata.Select(s => s.fldJumlah).Sum();
+
+                        chunk = new Chunk(GetTriager.GetTotalForMoney(TotalPotongan), FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Colspan = 1;
+                        cell.Border = Rectangle.TOP_BORDER | Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        decimal GajiBersih = TotalPendapatan.Value - TotalPotongan.Value;
+
+                        chunk = new Chunk("Gaji Bersih", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Colspan = 7;
+                        cell.Border = 0;
+                        table.AddCell(cell);
+
+                        chunk = new Chunk(GetTriager.GetTotalForMoney(GajiBersih), FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                        cell = new PdfPCell(new Phrase(chunk));
+                        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        cell.Colspan = 1;
+                        cell.Border = Rectangle.BOTTOM_BORDER;
+                        cell.BorderColor = BaseColor.RED;
+                        table.AddCell(cell);
+
+                        pdfDoc.Add(table);
+
+                        Paragraph line = new Paragraph(new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(0.0F, 100.0F, BaseColor.BLACK, Element.ALIGN_LEFT, 1)));
+                        pdfDoc.Add(line);
+
+                    }
+                }
+            }
+            else
+            {
+                PdfPTable table = new PdfPTable(1);
+                table.WidthPercentage = 100;
+                PdfPCell cell = new PdfPCell();
+                chunk = new Chunk("No Data Found", FontFactory.GetFont("Arial", 8, Font.BOLD, BaseColor.BLACK));
+                cell = new PdfPCell(new Phrase(chunk));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Border = 0;
+                table.AddCell(cell);
+                pdfDoc.Add(table);
+            }
+            //pdfDoc = Footer(pdfDoc, chunk, para);
+            pdfWriter.CloseStream = false;
+            pdfDoc.Close();
+            byte[] file = ms.ToArray();
+            output.Write(file, 0, file.Length);
+            output.Position = 0;
+            return new FileStreamResult(output, "application/pdf");
+        }
 
 
         public Document WorkerPaySlipContent(Document pdfDoc, List<sp_Payslip_Result> item)
